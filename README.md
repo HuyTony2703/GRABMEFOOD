@@ -92,14 +92,17 @@ Test Node dùng đường dẫn tương đối tới file `.ts`, không cần lo
 
 - `.git/`: lịch sử và trạng thái Git; không xóa khi dọn source.
 - `.figma/`, `vite.figma.config.ts`, `vite.config.ts`: quy trình Figma Make; cả hai
-  cấu hình Vite đều cần vì wrapper import cấu hình nền.
+  cấu hình Vite đều cần vì wrapper import cấu hình nền. `vite.figma.config.ts` đọc
+  trực tiếp `.figma/make/site.json` và `.figma/make/migrated-package-aliases.json`,
+  nên xóa thư mục này sẽ làm hỏng `npm run dev` và `npm run build`.
 - `.specify/`, `.opencode/`, `.impeccable/`, `specs/`: công cụ, đặc tả và bằng chứng
   phát triển được giữ theo phương án dọn an toàn.
 - `node_modules/`: dependencies cài cục bộ, đã được Git ignore; không chỉnh file bên trong.
 - `dist/`: kết quả build, được tạo lại và Git ignore; không sửa tay.
 
 Các file cấu hình cần ở root được giữ tại root thay vì gom vào một thư mục khiến
-công cụ không tự tìm thấy. `PRODUCT.md`, `DESIGN.md`, `AGENTS.md`, `CLAUDE.md`,
-`guidelines/` và `ATTRIBUTIONS.md` vẫn giữ vị trí phục vụ công cụ/hướng dẫn/ghi công.
+công cụ không tự tìm thấy: `tsconfig.json`, hai cấu hình Vite, `.mise.toml`,
+`index.html`, `package.json` và các file khóa package. `PRODUCT.md`, `DESIGN.md`,
+`AGENTS.md` và `ATTRIBUTIONS.md` giữ vị trí phục vụ hướng dẫn và ghi công thư viện.
 
 Chi tiết lần dọn: [docs/maintenance/REPOSITORY_CLEANUP.md](docs/maintenance/REPOSITORY_CLEANUP.md).

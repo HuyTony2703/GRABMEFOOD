@@ -15,4 +15,15 @@ are reflected through hot reload.
 
 ## Project Guidelines
 
-Read and always follow the instructions in the [project guidelines](guidelines/Guidelines.md) unless the user requests otherwise.
+- Keep pages and components grouped by feature under `src/app/`; put shared data
+  logic in `src/app/lib/` and cross-page state in `src/app/contexts/`.
+- Import internal modules with the `@/` alias instead of deep relative paths.
+- Reuse the existing React/Vite/Tailwind/Radix stack. Do not add dependencies or
+  swap the toolchain without an explicit request.
+- Never invent data, prices, ratings or successful service responses. Actions that
+  have no backend must say so and stay disabled.
+- Keep URLs, existing Vietnamese content and the current business scope (discovery
+  and reviews, not ordering or delivery).
+- Before handing work off, run `npm test`, `npm run typecheck`,
+  `npm run check:structure` and, for UI changes, `npm run build`.
+- Read `README.md` for the current layout and commands.
