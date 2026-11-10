@@ -1,0 +1,11 @@
+{
+  "title": "GRABMEFOOD",
+  "description": "Discover nearby restaurants with personalized search filters, real-time promotions, and user-friendly navigation to enhance your culinary adventures.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
