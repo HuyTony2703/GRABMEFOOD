@@ -6,7 +6,7 @@ import {
   averageScore,
   ratingDistribution,
   formatPrice,
-} from "../src/app/components/insights/insightCalculations.ts"
+} from "../../src/app/components/insights/insightCalculations.ts"
 
 test("reads both price formats already used by the project", () => {
   assert.equal(parseMenuPrice("65,000đ"), 65000)
