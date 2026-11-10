@@ -1,5 +1,9 @@
 # GRABMEFOOD — kiểm kê và mở rộng thẻ
 
+> Tài liệu lịch sử trước đợt desktop redesign. Các đường dẫn và giới hạn dưới đây
+> phản ánh thời điểm kiểm kê, không phải trạng thái hiện tại. Xem `README.md` ở gốc
+> để biết cấu trúc và lệnh chạy hiện tại.
+
 ## 1. Phạm vi và mục đích
 
 Đã đọc 26 page component, router, App, dữ liệu quán/món, các component nghiệp vụ,

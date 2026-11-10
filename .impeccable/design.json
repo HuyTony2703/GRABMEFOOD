@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T00:00:00Z",
+  "title": "Design System: GrabMeFood — approved target, not implemented UI",
+  "extensions": {
+    "shadows": [
+      {
+        "name": "sticky-header",
+        "value": "0 1px 3px rgb(0 0 0 / 0.08)",
+        "purpose": "Đề xuất: tách header sticky với nội dung cuộn khi cần."
+      },
+      {
+        "name": "floating-surface",
+        "value": "0 8px 24px rgb(0 0 0 / 0.16)",
+        "purpose": "Đề xuất: menu và dialog, không dùng cho từng card trong list."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-feedback",
+        "value": "150ms ease-out",
+        "purpose": "Chỉ chuyển màu/opacity để phản hồi; bỏ chuyển động không thiết yếu khi reduced motion."
+      }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "768px" },
+      { "name": "desktop", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button — proposed",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Thiết kế đích đã duyệt: đỏ–trắng ở cả sáng/tối, vùng bấm tối thiểu 44px. Minh họa dùng token host; ứng dụng chưa được triển khai theo tài liệu.",
+      "html": "<button class=\"ds-primary\" type=\"button\">Áp dụng</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 16px;border:0;border-radius:8px;background:var(--color-primary);color:var(--color-primary-foreground);font:500 14px/1.5 Roboto,Arial,sans-serif;cursor:pointer;transition:background-color 150ms ease-out}.ds-primary:hover,.ds-primary:active{background:#B91C1C}.ds-primary:focus-visible{outline:2px solid var(--color-foreground);outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Secondary Button — proposed",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Hành động phụ; cùng kích thước và vị trí focus với nút chính.",
+      "html": "<button class=\"ds-secondary\" type=\"button\">Đặt lại</button>",
+      "css": ".ds-secondary{min-height:44px;padding:8px 16px;border:1px solid var(--color-foreground);border-radius:8px;background:var(--color-secondary);color:var(--color-secondary-foreground);font:500 14px/1.5 Roboto,Arial,sans-serif;cursor:pointer}.ds-secondary:hover,.ds-secondary:active{background:var(--color-accent);color:var(--color-foreground)}.ds-secondary:focus-visible{outline:2px solid var(--color-foreground);outline-offset:2px}"
+    },
+    {
+      "name": "Search Input — proposed",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label thật, chiều cao 48px, cỡ chữ 16px; label không bị thay bằng placeholder.",
+      "html": "<label class=\"ds-label\" for=\"ds-query\">Tìm món ăn, quán ăn</label><input class=\"ds-input\" id=\"ds-query\" type=\"search\" placeholder=\"Ví dụ: phở gà\" />",
+      "css": ".ds-label{display:block;margin-bottom:8px;color:var(--color-foreground);font:500 14px/1.5 Roboto,Arial,sans-serif}.ds-input{width:100%;min-width:0;min-height:48px;padding:8px 12px;border:1px solid var(--color-muted-foreground);border-radius:8px;background:var(--color-input-background);color:var(--color-foreground);font:400 16px/1.5 Roboto,Arial,sans-serif}.ds-input::placeholder{color:var(--color-foreground)}.ds-input:focus-visible{outline:2px solid var(--color-foreground);outline-offset:2px}"
+    },
+    {
+      "name": "Navigation — proposed",
+      "kind": "nav",
+      "description": "Đích hiện tại có underline và aria-current, không chỉ đổi màu.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Điều hướng chính\"><a href=\"/\" aria-current=\"page\">Trang chủ</a><a href=\"/map\">Bản đồ</a><a href=\"/favorites\">Yêu thích</a></nav>",
+      "css": ".ds-nav{display:flex;flex-wrap:wrap;gap:8px;background:var(--color-card);color:var(--color-foreground)}.ds-nav a{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;color:inherit;text-decoration:none;font:500 14px/1.5 Roboto,Arial,sans-serif}.ds-nav a[aria-current=page]{text-decoration:underline;text-underline-offset:6px}.ds-nav a:hover{background:var(--color-accent)}.ds-nav a:focus-visible{outline:2px solid var(--color-foreground);outline-offset:2px}"
+    },
+    {
+      "name": "Selection Chip — proposed",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Ví dụ trạng thái chọn; dấu chọn và aria-pressed cùng thể hiện trạng thái, không chỉ màu.",
+      "html": "<button class=\"ds-chip\" type=\"button\" aria-pressed=\"true\"><span aria-hidden=\"true\">✓</span> Dưới 50.000 ₫</button>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border:1px solid currentColor;border-radius:9999px;background:var(--color-accent);color:var(--color-foreground);font:500 14px/1.5 Roboto,Arial,sans-serif;cursor:pointer}.ds-chip:hover{text-decoration:underline}.ds-chip:active{border-width:2px}.ds-chip:focus-visible{outline:2px solid var(--color-foreground);outline-offset:2px}"
+    },
+    {
+      "name": "Discovery Card — proposed",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Minh họa cấu trúc chữ, không phải một quán thật và không chứa số đánh giá giả.",
+      "html": "<article class=\"ds-card\"><h3><a href=\"#ds-example\">Tên quán minh họa</a></h3><p>Khoảng giá tham khảo</p><p class=\"ds-meta\">Khu vực đang xem · Dữ liệu mẫu</p></article>",
+      "css": ".ds-card{padding:16px;border:1px solid var(--color-border);border-radius:14px;background:var(--color-card);color:var(--color-card-foreground);font:400 16px/1.5 Roboto,Arial,sans-serif}.ds-card h3{margin:0 0 8px;font-size:16px;font-weight:500;line-height:1.5}.ds-card p{margin:0 0 8px}.ds-card a{color:inherit;text-decoration:underline;text-underline-offset:3px}.ds-card a:hover{text-decoration-thickness:2px}.ds-card a:focus-visible{outline:2px solid var(--color-foreground);outline-offset:2px}.ds-meta{color:var(--color-muted-foreground);font-size:14px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Chọn món và quán rõ ràng, dễ so sánh",
+    "overview": "Gần gũi nhờ ảnh đồ ăn và tiếng Việt, đáng tin nhờ thông tin có ngữ cảnh, dễ dùng nhờ thao tác ổn định. Tìm kiếm, nội dung và hành động quan trọng có thứ bậc rõ ràng; không lấy hiệu ứng hay khuyến mãi làm trung tâm.",
+    "keyCharacteristics": [
+      "Desktop-first, hỗ trợ sáng/tối, đầy đủ responsive và khả năng truy cập.",
+      "Giữ tên, logo, Roboto, bảng màu thương hiệu và nghiệp vụ khám phá.",
+      "Giữ ảnh món/quán, giá–đánh giá–vị trí và insight ngân sách hữu ích.",
+      "Tái sử dụng token và bộ UI hiện có; không tạo hệ theme song song.",
+      "Không thêm dữ liệu, card, nội dung hoặc nút chỉ để lấp khoảng trống."
+    ],
+    "rules": [],
+    "dos": [
+      "Dùng YAML làm giá trị đích; khi triển khai ánh xạ vào token và primitive hiện có.",
+      "Thiết kế đầy đủ sáng/tối và kiểm tra riêng từng theme, kể cả lỗi và overlay."
+    ],
+    "donts": [
+      "Không coi code hiện tại, default thư viện hoặc bảng dark có sẵn là chuẩn đúng mặc định.",
+      "Không thêm giỏ hàng, thanh toán, phí giao hàng hoặc CTA đặt món vào sản phẩm khám phá."
+    ]
+  }
+}
