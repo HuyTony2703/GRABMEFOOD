@@ -20,6 +20,11 @@ The existing web interface supports browsing restaurants and dishes, searching a
 
 ## Capabilities and Constraints
 
+- Desktop-only presentation is confirmed as of 2026-11-13: narrow windows and phones
+  retain the desktop layout with horizontal scrolling, not a mobile UI or access block.
+- Display dishes only when an existing restaurant/menu relationship is valid. Preserve
+  unlinked source records without displaying them. Standalone dish URLs are compatibility
+  entries only; redirect solely through a unique explicit relationship to a menu item.
 - Preserve the discovery-only purpose and Vietnamese content.
 - Production use is intended, but production requirements and verified integrations are not yet decided.
 - Live restaurant data, geolocation, authentication, review services, privacy requirements, and deployment requirements remain open decisions. Do not describe them as verified or operational without evidence.

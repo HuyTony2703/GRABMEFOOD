@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: GrabMeFood
-description: "Hệ thống thiết kế đã duyệt cho toàn bộ màn hình GrabMeFood: desktop-first, giữ màu thương hiệu, dùng token và UI hiện có."
+description: "Hệ thống thiết kế GrabMeFood: desktop-only theo xác nhận 2026-11-13, giữ màu thương hiệu, dùng token và UI hiện có."
 colors:
   primary: "#DC2626"
   primary-hover: "#B91C1C"
@@ -201,14 +201,15 @@ không lấy hiệu ứng hay khuyến mãi làm trung tâm.
 Áp dụng cho toàn bộ màn hình hiện có theo
 `specs/001-desktop-ui-redesign/spec.md`: khám phá, bản đồ, ngẫu nhiên, yêu thích,
 chi tiết, tài khoản, cài đặt, hướng dẫn, hỗ trợ, điều khoản, thông báo và trạng thái lỗi.
-Desktop-first không giảm khả năng sử dụng trên mobile. Không bỏ các màn hình phụ
-khỏi nghiệm thu hoặc ép mọi loại trang dùng cùng một bố cục.
+Phạm vi thiết bị được cập nhật ngày 2026-11-13 theo `specs/002-improve-discovery-ui/spec.md`:
+chỉ có bố cục desktop, màn hình hẹp vẫn truy cập bằng cuộn ngang, không có giao diện
+mobile riêng hoặc màn hình chặn. Không bỏ màn hình phụ khỏi nghiệm thu.
 
 Người dùng là người dùng tiếng Việt đang chọn món/quán. Không suy diễn độ tuổi,
 nghề nghiệp hoặc persona chưa nghiên cứu. Không bắt đăng nhập để tìm kiếm/xem chi tiết.
 
 **Key Characteristics:**
-- Desktop-first, hỗ trợ sáng/tối, đầy đủ responsive và khả năng truy cập.
+- Desktop-only, hỗ trợ sáng/tối, bàn phím và focus; không tuyên bố đạt reflow khi cuộn ngang.
 - Giữ tên, logo, Roboto, bảng màu thương hiệu và nghiệp vụ khám phá.
 - Giữ ảnh món/quán, giá–đánh giá–vị trí và insight ngân sách hữu ích.
 - Tái sử dụng token và bộ UI hiện có; không tạo hệ theme song song.
@@ -307,8 +308,8 @@ Google Fonts bị chặn; không chặn nội dung vì font chưa tải.
 - `label`: nút, tab, nhãn trường và điều hướng.
 - `caption`: thông tin phụ không thiết yếu; không dùng cho giá, địa chỉ hay thao tác chính.
 
-Các kích thước/weight/line-height nằm trong YAML; `page-title-compact` áp dụng trên
-mobile, các vai trò còn lại giữ cỡ chữ tương đương giữa các thiết bị. Cỡ chữ được
+Các kích thước/weight/line-height nằm trong YAML; `page-title-compact` được giữ như
+token lịch sử, không dùng để chuyển sang giao diện mobile. Cỡ chữ được
 diễn đạt bằng rem để tôn trọng cài đặt người dùng; root mặc định hiện tại là 16px.
 
 Dùng sentence case; không viết hoa toàn bộ nhãn tiếng Việt. Nội dung dài giới hạn
@@ -323,18 +324,18 @@ thang điểm và số đánh giá khi có, không chỉ có hình sao. Không t
 
 ## Layout
 
-### Desktop-first, không phải mobile kéo giãn
+### Desktop-only, không phải giao diện mobile kéo giãn
 
 Các kích thước sau là đề xuất mới, không phải breakpoint đã có trong các trang.
-Khung nội dung tối đa 1280px, căn giữa. Gutter 24px trên desktop/tablet và 16px trên
-mobile. Nhịp khoảng cách dựa trên 4px; dùng scale YAML thay vì giá trị tùy ý.
+Khung trang tối thiểu 1024 CSS px, nội dung tối đa 1280px căn giữa, gutter 24px.
+Màn hình hẹp cuộn ngang để truy cập cùng bố cục desktop. Nhịp khoảng cách dựa trên 4px.
 
 | Thành phần | Quy tắc |
 | --- | --- |
 | Icon và nhãn | Gap 8px |
 | Nội dung card | Padding 16px |
 | Nhóm form | Gap 16–24px |
-| Lưới card | Gap 24px desktop, 16px mobile |
+| Lưới card | Gap 24px |
 | Các section | Cách nhau 32–48px |
 | Nút độc lập | Cao tối thiểu 44px |
 | Icon button | Vùng bấm tối thiểu 44×44px |
@@ -347,9 +348,8 @@ lỗi nhiều dòng không được chồng lên hàng kế tiếp.
 
 | Vùng hiển thị | Bố cục đích |
 | --- | --- |
-| Từ 1024px | Header desktop, nội dung nhiều cột; lưới tổng thể 12 cột. |
-| 768–1023px | Lưới gọn 2–3 cột nếu đủ chỗ; điều hướng gọn và bộ lọc trong sheet. |
-| Dưới 768px | Một cột/list kết quả, header gọn và điều hướng dưới. |
+| Từ 1024px | Header desktop, nội dung nhiều cột; lưới card 3 cột, từ 1280px dùng 4 cột. |
+| Dưới 1024px | Giữ nguyên bố cục desktop tối thiểu 1024px, cho phép cuộn ngang. |
 
 Desktop: logo ở đầu header; tìm kiếm là vùng trung tâm dễ thấy; tài khoản là đích có
 nhãn. Khu vực hiện có được trình bày đúng cơ sở dữ liệu, không tự biến thành tính năng
@@ -371,26 +371,24 @@ Hồ sơ, thông báo và đánh giá dùng danh sách/nhóm phù hợp, không 
 card ảnh. Trang hỗ trợ giữ vùng hội thoại và ô nhập trong không gian đọc được;
 không tự giả phản hồi từ dịch vụ hỗ trợ chưa có.
 
-Mobile: tìm kiếm và thông tin khu vực ở trên, bộ lọc cạnh vùng tìm kiếm; các tác vụ theo
-ngữ cảnh như lưu/chỉ đường nằm gần thông tin quán hoặc vùng hành động cuối màn.
-Điều hướng dưới chỉ dùng cho các đích chính, không lặp trên desktop. Mọi vùng cố định
-phải có khoảng bù nội dung và `env(safe-area-inset-bottom)`; không che phần tử đang focus.
+Không có thanh điều hướng dưới, header mobile hoặc khoảng bù safe-area dành riêng cho
+mobile. Tác vụ lưu/chỉ đường ở gần thông tin món/quán. Vùng cố định không được che
+focus hoặc nội dung; nếu vùng hẹp không đủ chỗ cho nút lên đầu thì tạm ẩn nút.
 
 Sheet bộ lọc giữ tiêu đề/đóng ở trên, nội dung cuộn ở giữa, “Đặt lại” và “Áp dụng” ở
 dưới. Trên desktop không mở một sheet rộng toàn màn hình. Không cố định cả danh mục,
 filter, tab và header thành một khối chiếm phần lớn chiều cao viewport.
 
-Trang chi tiết tận dụng hai cột khi đủ chỗ: nội dung món/thực đơn và thông tin quán;
-mobile chuyển một cột theo thứ tự đọc hợp lý. Trang bản đồ desktop có danh sách cạnh
-bản đồ nếu có thể trình bày từ dữ liệu hiện có; mobile xếp vùng thông tin theo thứ tự
-đọc và cho truy cập thông tin mà không bắt buộc thao tác pin. Không bổ sung một
+Trang chi tiết dùng hai cột cho nội dung món và thông tin quán khi có dữ liệu;
+giữ nguyên bố cục đó ở vùng hẹp bằng cuộn ngang. Bản đồ có danh sách cạnh bản đồ,
+cho truy cập thông tin mà không bắt buộc thao tác pin. Không bổ sung một
 chức năng bản đồ hay vị trí mới để hoàn thiện bố cục. Không che thông tin quán bằng
 navigation hoặc các lớp nổi.
 
-**Tiêu chí kiểm tra:** tại 320, 390, 768, 1024 và 1440px, không có cuộn ngang toàn trang,
-không mất nội dung khi zoom chữ 200%, và reflow tại độ rộng tương đương 320 CSS px.
-Đây là mục tiêu cần kiểm thử, không phải kết quả đã đạt. Bản đồ được phép có thao tác
-hai chiều nhưng danh sách thay thế phải reflow. Kiểm tra cả bàn phím ảo và viewport thấp.
+**Tiêu chí kiểm tra:** tại 320, 390, 768, 1024 và 1440px, sáng/tối và chữ 100/200%,
+cùng bố cục desktop và mọi nội dung/điều khiển truy cập được. Cho phép cuộn ngang khi
+thiếu chỗ; focus ngoài vùng nhìn thấy phải cuộn vào vùng thấy được. Không cắt/ẩn nội
+dung để che tràn. Không coi cuộn ngang là bằng chứng đạt tiêu chí WCAG reflow.
 
 ## Elevation & Depth
 
@@ -490,6 +488,11 @@ ngữ nghĩa vì khác breakpoint.
 
 ### Card món/quán và thông tin hỗ trợ quyết định
 
+Từ 2026-11-13 chỉ hiển thị món có quan hệ thực đơn–quán hợp lệ. Thẻ món phải nêu tên
+quán và dẫn tới chi tiết món tại quán; giữ dữ liệu món độc lập chưa liên kết nhưng
+không render/count. URL món cũ chỉ chuyển hướng qua quan hệ tường minh duy nhất;
+không suy ra từ tên hoặc ID. Yêu thích phân biệt theo cặp quán–món.
+
 | Card món | Card quán |
 | --- | --- |
 | Ảnh → tên món → giá → điểm/số đánh giá | Ảnh → tên quán → khoảng giá → điểm/số đánh giá |
@@ -516,8 +519,7 @@ chi phí bữa ăn. Không tăng diện tích biểu đồ chỉ để làm tran
 
 Giữ các đích Trang chủ, Bản đồ, Ngẫu nhiên, Yêu thích, Tôi ở giai đoạn đề xuất; chưa có
 dữ liệu để khẳng định một đích phải được loại bỏ hoặc trở thành quan trọng nhất.
-Desktop dùng header/navigation, mobile dùng thanh dưới có icon và nhãn; tablet dùng
-navigation gọn theo không gian, không ép cả header desktop lên viewport hẹp.
+Mọi độ rộng đều dùng header/navigation desktop; không còn navigation mobile/tablet riêng.
 
 Đích đang mở có dấu hiệu ngoài màu và `aria-current="page"`. Chi tiết có nút quay lại
 giữ ngữ cảnh kết quả khi có, và đích dự phòng hợp lý khi mở link trực tiếp. Không
@@ -525,7 +527,7 @@ giữ ngữ cảnh kết quả khi có, và đích dự phòng hợp lý khi m�
 
 Ở chi tiết quán, “Chỉ đường” hiện có nằm cạnh địa chỉ khi hoạt động; “Lưu quán” hiện có
 nằm cạnh tên hoặc vùng hành động. Không thêm nút lưu trên mọi card chỉ để cân bố cục.
-Mobile có thể dùng thanh hành động cuối màn nếu không xung đột nav và bàn phím ảo.
+Không thêm thanh hành động mobile cuối màn.
 Chỉ cho phép thao tác được tích hợp thực sự; trạng thái demo phải được nói rõ.
 
 ### Dialog, xác nhận và phản hồi
@@ -578,7 +580,7 @@ Dữ liệu mẫu/chưa tích hợp có nhãn gần nội dung liên quan, khôn
 - Ưu tiên tìm kiếm, thông tin so sánh và khả năng phục hồi trước hiệu ứng.
 - Giữ nhận diện đỏ, ảnh món và tiếng Việt; dùng màu có tiết chế và có ý nghĩa.
 - Thiết kế đầy đủ sáng/tối và kiểm tra riêng từng theme, kể cả lỗi và overlay.
-- Kiểm thử bàn phím, screen reader, zoom/reflow, focus không bị che và nội dung tiếng Việt dài.
+- Kiểm thử bàn phím, screen reader, zoom, cuộn ngang truy cập được, focus và tiếng Việt dài.
 - Ghi rõ kiểm tra nào đã chạy. Lint tài liệu không chứng minh UI đạt WCAG hoặc responsive.
 - Khi thiếu dữ liệu ưu tiên, đo/kiểm chứng giả định thay vì tạo persona hoặc mục tiêu giả.
 - Tách nghiệm thu sửa lỗi hành vi với thay đổi trình bày trên toàn bộ màn hình hiện có.

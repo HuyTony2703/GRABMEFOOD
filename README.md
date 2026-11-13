@@ -3,6 +3,18 @@
 Website khám phá món ăn và quán ăn, dùng React + TypeScript + Vite + Tailwind CSS.
 Dữ liệu hiện là minh họa; không có luồng đặt hàng, thanh toán hoặc giao hàng.
 
+## Phạm vi giao diện và món ăn
+
+- Chỉ duy trì giao diện desktop, khung tối thiểu 1024 CSS px. Cửa sổ hẹp/điện thoại
+  vẫn mở được bố cục desktop bằng cuộn ngang, không có thanh điều hướng mobile.
+- Món hiển thị phải thuộc thực đơn của một quán trong dữ liệu hiện có. Món chưa có
+  quan hệ quán hợp lệ được giữ trong nguồn nhưng không hiện trong danh sách/count.
+- Chi tiết món dùng `/restaurant/:restaurantId/dish/:dishId`. URL cũ `/dish/:id`
+  chỉ chuyển hướng nếu có đúng một ánh xạ hợp lệ được khai báo; hiện chưa có ánh xạ
+  như vậy, nên các link cũ hiện thông báo cùng liên kết tìm kiếm, không tự ghép quán.
+- Yêu thích món dùng khóa cặp quán–món trong phiên. Seed ID món độc lập cũ không tự
+  chuyển thành món tại quán; hãy lưu món từ trang chi tiết để thêm vào danh sách.
+
 ## Chạy trên máy
 
 Dùng Node.js **22.18+ hoặc 24+** để chạy cả ứng dụng và các test TypeScript trực tiếp.
@@ -51,7 +63,7 @@ src/
     pages/                    # Trang, chia theo chức năng
       auth/                   # Đăng nhập, đăng ký
       discovery/              # Trang chủ, tìm kiếm, danh sách, bản đồ, ngẫu nhiên
-      details/                # Chi tiết món/quán/món tại quán
+      details/                # Chi tiết quán/món tại quán và xử lý URL món cũ
       favorites/              # Yêu thích
       notifications/          # Thông báo
       onboarding/             # Chào mừng, hướng dẫn ban đầu
@@ -107,3 +119,17 @@ công cụ không tự tìm thấy: `tsconfig.json`, hai cấu hình Vite, `.mis
 `AGENTS.md` và `ATTRIBUTIONS.md` giữ vị trí phục vụ hướng dẫn và ghi công thư viện.
 
 Chi tiết lần dọn: [docs/maintenance/REPOSITORY_CLEANUP.md](docs/maintenance/REPOSITORY_CLEANUP.md).
+
+## Nhóm thay đổi và đưa lên GitHub
+
+- **Cấu hình/dọn repo**: `.gitignore`, cấu hình Vite; không commit output build,
+  dependencies đã cài hoặc trạng thái máy cục bộ.
+- **Ứng dụng**: `src/`, giữ trang/component theo chức năng và vai trò như cấu trúc trên.
+- **Kiểm thử**: `tests/unit/`, `tests/contracts/`, `tests/browser/`.
+- **Tài liệu**: README, PRODUCT, DESIGN, `docs/` và `specs/`.
+
+Không gom cấu hình root vào thư mục mới làm công cụ không tìm thấy. Giữ Figma Make,
+công cụ phát triển và lockfile đang dùng. Trước khi push, kiểm tra test/typecheck/cấu
+trúc/build, file nhạy cảm và diff; chỉ push bình thường, không force-push.
+
+Biên bản chuẩn bị: [docs/maintenance/GITHUB_PREPARATION.md](docs/maintenance/GITHUB_PREPARATION.md).
