@@ -17,7 +17,6 @@ import { useState, useRef, useEffect } from "react"
 import {
   nearbyRestaurants,
   saleRestaurants,
-  todaysFoods,
   type Restaurant,
 } from "@/app/data/restaurants"
 
@@ -31,16 +30,6 @@ import { getRestaurantMenu } from "@/app/lib/catalog"
 import { useFavorites } from "@/app/contexts/FavoritesContext"
 import { BackLink } from "@/app/components/layout/BackLink"
 import { ContentImage } from "@/app/components/media/ContentImage"
-
-interface MenuItem {
-  id: string
-
-  name: string
-
-  price: string
-
-  image: string
-}
 
 interface Review {
   id: string
@@ -110,7 +99,7 @@ export function RestaurantDetailPage() {
 
   const restaurant = allRestaurants.find((r) => r.id === id)
 
-  const menuItems: MenuItem[] = getRestaurantMenu(id)
+  const menuItems = getRestaurantMenu(id)
 
   const reviews: Review[] = [
     {
@@ -250,7 +239,7 @@ export function RestaurantDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
             <Clock className="w-5 h-5 text-foreground" aria-hidden="true" />
             <div>
@@ -332,12 +321,7 @@ export function RestaurantDetailPage() {
             <div className="discovery-grid">
               {menuItems.map((item) => (
                 <div key={item.id} id={`menu-item-${item.id}`}>
-                  <DishCard
-                    dish={{
-                      ...item,
-                      href: `/restaurant/${id}/dish/${item.id}`,
-                    }}
-                  />
+                  <DishCard dish={item} />
                 </div>
               ))}
             </div>

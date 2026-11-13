@@ -60,7 +60,10 @@ export function SearchResultsPage() {
         <Button
           variant="outline"
           type="button"
-          onClick={() => setFilterOpen(true)}
+          onClick={(event) => {
+            event.currentTarget.focus()
+            setFilterOpen(true)
+          }}
         >
           Bộ lọc
         </Button>

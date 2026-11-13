@@ -6,7 +6,7 @@ export function ErrorPage() {
   const error = useRouteError() as any
 
   return (
-    <div className="bg-background flex items-center justify-center py-12">
+    <div data-page-error className="bg-background flex items-center justify-center py-12">
       <div className="text-center">
         <h1 className="mb-4">
           {error ? "Không thể hiển thị trang" : "Không tìm thấy trang"}

@@ -3,6 +3,13 @@ import {
   saleRestaurants,
   todaysFoods,
 } from "@/app/data/restaurants"
+import { legacyDishDetails } from "@/app/data/legacyDishes"
+import {
+  buildScopedDishes,
+  resolveLegacyDish,
+  resolveLinkedDishes,
+  type DishRelationship,
+} from "@/app/lib/dishCatalog"
 
 // Presentation adapters only: no values or persistent record schemas are changed.
 export const allRestaurants = [...nearbyRestaurants, ...saleRestaurants]
@@ -46,22 +53,9 @@ export const phoSampleMenu = [
   },
 ]
 export function getRestaurantMenu(id?: string) {
-  return (
-    allRestaurants.find((restaurant) => restaurant.id === id)?.dishes ??
-    (id === "1" ? phoSampleMenu : [])
-  )
+  return menuDishes.filter((dish) => dish.restaurantId === id)
 }
-export const menuDishes = allRestaurants.flatMap((restaurant) =>
-  (restaurant.dishes ?? []).map((dish) => ({
-    ...dish,
-    href: `/restaurant/${restaurant.id}/dish/${dish.id}`,
-    restaurantName: restaurant.name,
-  })),
-)
-export const todayDishes = todaysFoods.map((dish) => ({
-  ...dish,
-  href: `/dish/${dish.id}`,
-}))
+export const menuDishes = buildScopedDishes(allRestaurants, { "1": phoSampleMenu })
 
 // Existing search fixtures, with their real detail IDs rather than unrelated numeric IDs.
 export const phoDishes = [
@@ -105,10 +99,9 @@ export const phoDishes = [
     price: "60-95k",
     image: "https://images.unsplash.com/photo-1748264106369-3b5fc990b3b9?w=400",
   },
-].map((dish) => ({ ...dish, href: `/dish/${dish.id}` }))
-export const discoveryDishes = [...todayDishes, ...menuDishes, ...phoDishes]
+]
 // Existing favorite fixtures 1–3 retain their own values; do not overwrite today's records.
-export const favoriteDishChoices = [
+export const legacyFavoriteDishes = [
   {
     id: "1",
     name: "Cơm Tấm Sườn Nướng",
@@ -116,7 +109,6 @@ export const favoriteDishChoices = [
     reviews: 1567,
     price: "35-60k",
     image: todaysFoods[0].image,
-    href: "/dish/1",
   },
   {
     id: "2",
@@ -125,7 +117,6 @@ export const favoriteDishChoices = [
     reviews: 2134,
     price: "40-70k",
     image: todaysFoods[1].image,
-    href: "/dish/2",
   },
   {
     id: "3",
@@ -134,14 +125,25 @@ export const favoriteDishChoices = [
     reviews: 982,
     price: "25-45k",
     image: todaysFoods[2].image,
-    href: "/dish/3",
   },
-  ...menuDishes,
-  ...phoDishes,
-  ...todayDishes,
-  ...phoSampleMenu.map((dish) => ({
-    ...dish,
-    id: `menu:1:${dish.id}`,
-    href: `/restaurant/1/dish/${dish.id}`,
-  })),
 ]
+
+// No verified standalone-to-menu relationships exist in the current source.
+// Add only explicit, source-backed links; names or matching IDs are not evidence.
+export const legacyDishRelationships: readonly DishRelationship[] = []
+const legacyDishRecords = [
+  ...legacyDishDetails,
+  ...todaysFoods,
+  ...phoDishes,
+  ...legacyFavoriteDishes,
+]
+export function resolveLegacyDishId(id?: string) {
+  return resolveLegacyDish(id, legacyDishRecords, legacyDishRelationships, menuDishes)
+}
+export const todayDishes = resolveLinkedDishes(
+  todaysFoods,
+  legacyDishRelationships,
+  menuDishes,
+)
+export const discoveryDishes = menuDishes
+export const favoriteDishChoices = menuDishes

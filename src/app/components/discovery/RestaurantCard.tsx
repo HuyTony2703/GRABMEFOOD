@@ -17,19 +17,27 @@ export function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
         <h3>{restaurant.name}</h3>
         <p className="card-price">{formatPriceRange(restaurant.price)}</p>
         <div className="card-metadata">
-          <span>
-            <Star size={16} aria-hidden="true" />
-            {restaurant.rating}/5
-          </span>
-          <span>{restaurant.reviews.toLocaleString("vi-VN")} đánh giá</span>
+          {restaurant.rating != null && (
+            <span>
+              <Star size={16} aria-hidden="true" />
+              {restaurant.rating}/5
+            </span>
+          )}
+          {restaurant.reviews != null && (
+            <span>{restaurant.reviews.toLocaleString("vi-VN")} đánh giá</span>
+          )}
         </div>
-        <p className="text-sm">{cuisineLabel(restaurant.cuisine)}</p>
-        <p className="card-metadata">
-          <span>
-            <MapPin size={16} aria-hidden="true" />
-            {restaurant.distance} · khoảng cách mẫu
-          </span>
-        </p>
+        {restaurant.cuisine && (
+          <p className="text-sm">{cuisineLabel(restaurant.cuisine)}</p>
+        )}
+        {restaurant.distance && (
+          <p className="card-metadata">
+            <span>
+              <MapPin size={16} aria-hidden="true" />
+              {restaurant.distance} · khoảng cách mẫu
+            </span>
+          </p>
+        )}
         {restaurant.onSale && restaurant.discount && (
           <p className="text-sm">Ưu đãi mẫu: {restaurant.discount}</p>
         )}

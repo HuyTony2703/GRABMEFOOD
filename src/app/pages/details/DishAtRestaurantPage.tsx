@@ -15,6 +15,8 @@ import { useState, useRef, useEffect } from "react"
 
 import { ReviewDistributionCard } from "@/app/components/insights/ReviewDistributionCard"
 import { allRestaurants, getRestaurantMenu } from "@/app/lib/catalog"
+import { dishPairKey } from "@/app/lib/dishCatalog"
+import { formatPriceRange } from "@/app/lib/discovery"
 import { RecordDetail } from "@/app/components/details/RecordDetail"
 import { ContentState, UnavailableNote } from "@/app/components/feedback/ContentState"
 import { ShareButton } from "@/app/components/details/ShareButton"
@@ -74,7 +76,7 @@ export function DishAtRestaurantPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const favorites = useFavorites()
-  const favoriteId = restaurantId === "1" ? `menu:1:${dishId}` : (dishId ?? "")
+  const favoriteId = dishPairKey(restaurantId ?? "", dishId ?? "")
   const isLoved = favorites.has("dish", favoriteId)
 
   // Mock data - trong thực tế sẽ fetch từ API
@@ -253,10 +255,10 @@ export function DishAtRestaurantPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xl text-foreground">{dish.price}</span>
+            <span className="text-xl text-foreground">{formatPriceRange(scopedDish.price)}</span>
             {dish.onSale && dish.originalPrice && (
               <span className="text-sm text-foreground line-through">
-                {dish.originalPrice}
+                {formatPriceRange(dish.originalPrice)}
               </span>
             )}
           </div>

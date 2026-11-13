@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { BottomNav } from "@/app/components/layout/BottomNav"
+import { Link } from "react-router"
 import { DishCard, type DishCardRecord } from "@/app/components/discovery/DishCard"
 import { ContentState } from "@/app/components/feedback/ContentState"
 import { useFavorites } from "@/app/contexts/FavoritesContext"
@@ -11,12 +11,12 @@ export function RandomPage() {
   const [selected, setSelected] = useState<string[]>([])
   const [result, setResult] = useState<DishCardRecord | null>(null)
   const saved = favoriteDishChoices.filter((dish) =>
-    favorites.has("dish", dish.id),
+    favorites.has("dish", dish.favoriteKey),
   )
   const candidates =
     mode === "all"
       ? favoriteDishChoices
-      : saved.filter((dish) => selected.includes(dish.id))
+      : saved.filter((dish) => selected.includes(dish.favoriteKey))
   return (
     <div>
       <div className="page-heading">
@@ -60,19 +60,19 @@ export function RandomPage() {
           )}
           <div className="filter-options">
             {saved.map((dish) => (
-              <label className="filter-option" key={dish.id}>
+               <label className="filter-option" key={dish.favoriteKey}>
                 <input
                   type="checkbox"
-                  checked={selected.includes(dish.id)}
+                  checked={selected.includes(dish.favoriteKey)}
                   onChange={() =>
                     setSelected((old) =>
-                      old.includes(dish.id)
-                        ? old.filter((id) => id !== dish.id)
-                        : [...old, dish.id],
+                      old.includes(dish.favoriteKey)
+                        ? old.filter((id) => id !== dish.favoriteKey)
+                        : [...old, dish.favoriteKey],
                     )
                   }
                 />
-                {dish.name}
+                {dish.name} — {dish.restaurantName}
               </label>
             ))}
           </div>
@@ -97,7 +97,12 @@ export function RandomPage() {
           Đặt lại
         </Button>
       </div>
-      {!candidates.length && <p>Hãy chọn ít nhất một món để tiếp tục.</p>}
+      {!candidates.length && (
+        <ContentState title="Chưa có món tại quán để chọn">
+          <p>Chọn ít nhất một món đã lưu hoặc chuyển sang nguồn “Toàn bộ”.</p>
+          <Link className="underline" to="/search">Khám phá món tại quán</Link>
+        </ContentState>
+      )}
       <div aria-live="polite">
         {result ? (
           <section className="max-w-md">
@@ -110,7 +115,6 @@ export function RandomPage() {
           </p>
         )}
       </div>
-      <BottomNav />
     </div>
   )
 }

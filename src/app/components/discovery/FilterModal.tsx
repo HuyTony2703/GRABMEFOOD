@@ -27,7 +27,6 @@ export function FilterModal({
   const opener = useRef<HTMLElement | null>(null)
   useEffect(() => {
     if (isOpen) {
-      opener.current = (document.activeElement as HTMLElement)
       const params = new URLSearchParams(location.search)
       setDistance(params.get("distance") ?? "")
       setPrice(params.get("price") ?? "")
@@ -166,6 +165,9 @@ export function FilterModal({
     >
       <DialogContent
         className="filter-dialog"
+        onOpenAutoFocus={() => {
+          opener.current = document.activeElement as HTMLElement
+        }}
         onCloseAutoFocus={(event) => {
           event.preventDefault()
           opener.current?.focus()

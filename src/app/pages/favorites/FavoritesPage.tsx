@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import { BottomNav } from "@/app/components/layout/BottomNav"
 import { useFavorites } from "@/app/contexts/FavoritesContext"
 import { RestaurantCard } from "@/app/components/discovery/RestaurantCard"
 import { DishCard } from "@/app/components/discovery/DishCard"
@@ -17,7 +16,7 @@ export function FavoritesPage() {
   const [selected, setSelected] = useState<string[]>([])
   const [confirm, setConfirm] = useState(false)
   const dishes = favoriteDishChoices.filter((dish) =>
-    favorites.has("dish", dish.id),
+    favorites.has("dish", dish.favoriteKey),
   )
   const restaurants = allRestaurants.filter((restaurant) =>
     favorites.has("restaurant", restaurant.id),
@@ -68,7 +67,9 @@ export function FavoritesPage() {
             <div className="search-toolbar">
               <Button
                 variant="outline"
-                onClick={() => setSelected(list.map((item) => item.id))}
+                onClick={() => setSelected(list.map((item) =>
+                  "favoriteKey" in item ? item.favoriteKey : item.id,
+                ))}
               >
                 Chọn tất cả
               </Button>
@@ -97,17 +98,17 @@ export function FavoritesPage() {
           <div className="discovery-grid mt-6">
             {tab === "dish"
               ? dishes.map((dish) => (
-                  <div key={dish.id}>
+                  <div key={dish.favoriteKey}>
                     {editing && (
                       <label className="filter-option mb-2">
                         <input
                           type="checkbox"
-                          checked={selected.includes(dish.id)}
+                           checked={selected.includes(dish.favoriteKey)}
                           onChange={() =>
                             setSelected((old) =>
-                              old.includes(dish.id)
-                                ? old.filter((id) => id !== dish.id)
-                                : [...old, dish.id],
+                              old.includes(dish.favoriteKey)
+                                ? old.filter((id) => id !== dish.favoriteKey)
+                                : [...old, dish.favoriteKey],
                             )
                           }
                         />
@@ -119,7 +120,7 @@ export function FavoritesPage() {
                       className="mt-2"
                       variant="outline"
                       onClick={() => {
-                        setSelected([dish.id])
+                        setSelected([dish.favoriteKey])
                         setConfirm(true)
                       }}
                     >
@@ -173,7 +174,6 @@ export function FavoritesPage() {
         }}
         confirmText="Bỏ lưu"
       />
-      <BottomNav />
     </div>
   )
 }

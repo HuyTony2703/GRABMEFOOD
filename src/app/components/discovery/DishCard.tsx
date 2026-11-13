@@ -2,16 +2,8 @@ import { Link, useLocation } from "react-router"
 import { Star } from "lucide-react"
 import { ContentImage } from "@/app/components/media/ContentImage"
 import { formatPriceRange } from "@/app/lib/discovery"
-export interface DishCardRecord {
-  id: string
-  name: string
-  image?: string
-  price?: string
-  rating?: number
-  reviews?: number
-  href: string
-  restaurantName?: string
-}
+import type { ScopedDish } from "@/app/lib/dishCatalog"
+export type DishCardRecord = ScopedDish
 export function DishCard({ dish }: { dish: DishCardRecord }) {
   const location = useLocation()
   return (

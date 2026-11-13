@@ -20,19 +20,17 @@ export function RecordDetail({
     reviews?: number
     image: string
   }
-  restaurant?: {
+  restaurant: {
     id: string
     name: string
   }
-  favoriteId?: string
+  favoriteId: string
 }) {
   const favorites = useFavorites()
-  const key = favoriteId ?? record.id
+  const key = favoriteId
   return (
     <article>
-      <BackLink
-        fallback={restaurant ? `/restaurant/${restaurant.id}` : "/search"}
-      />
+      <BackLink fallback={`/restaurant/${restaurant.id}`} />
       <div className="detail-grid mt-6">
         <ContentImage src={record.image} alt={record.name} eager />
         <div>
@@ -49,11 +47,9 @@ export function RecordDetail({
               ? ` · ${record.reviews.toLocaleString("vi-VN")} đánh giá trong dữ liệu mẫu`
               : ""}
           </p>
-          {restaurant && (
-            <Link className="underline" to={`/restaurant/${restaurant.id}`}>
-              {restaurant.name}
-            </Link>
-          )}
+          <Link className="underline" to={`/restaurant/${restaurant.id}`}>
+            Tại {restaurant.name}
+          </Link>
           <Button
             className="my-4"
             variant="outline"

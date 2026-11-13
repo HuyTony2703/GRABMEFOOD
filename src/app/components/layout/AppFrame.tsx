@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react"
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useMatches,
+} from "react-router"
 import { Home, Map, Dices, Heart, User, Search } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
+import { AccountEntry } from "@/app/components/layout/AccountEntry"
+import { SiteFooter } from "@/app/components/layout/SiteFooter"
+import { BackToTop } from "@/app/components/layout/BackToTop"
 
 export const primaryNavigation = [
   { to: "/", label: "Trang chủ", icon: Home },
@@ -14,10 +24,18 @@ export const primaryNavigation = [
 export function AppFrame() {
   const location = useLocation()
   const navigate = useNavigate()
+  const matches = useMatches()
   const [query, setQuery] = useState("")
   const auth = ["/login", "/register", "/welcome", "/onboarding"].includes(
     location.pathname,
   )
+  const siteTools =
+    !auth &&
+    !matches.some(
+      (match) =>
+        (match.handle as { hideSiteTools?: boolean } | undefined)
+          ?.hideSiteTools,
+    )
   const layout = auth
     ? "auth"
     : /\/settings\/(terms|guide)$/.test(location.pathname)
@@ -35,7 +53,9 @@ export function AppFrame() {
   }, [location.search])
 
   return (
-    <div className={`app-frame ${auth ? "" : "with-mobile-nav"}`}>
+    <div
+      className={`app-frame ${siteTools ? "has-site-tools" : ""}`}
+    >
       <a className="skip-link" href="#main-content">
         Đến nội dung chính
       </a>
@@ -71,12 +91,13 @@ export function AppFrame() {
             <br />
             <strong>Quận 1, TP.HCM</strong>
           </p>
+          {siteTools && <AccountEntry />}
         </div>
         <nav
           className="app-container desktop-navigation"
           aria-label="Điều hướng chính"
         >
-          {primaryNavigation.map(({ to, label, icon: Icon }) => (
+          {primaryNavigation.filter(({ to }) => to !== "/profile").map(({ to, label, icon: Icon }) => (
             <NavLink key={to} to={to} end={to === "/"}>
               <Icon size={20} aria-hidden="true" />
               {label}
@@ -98,6 +119,8 @@ export function AppFrame() {
         )}
         <Outlet />
       </main>
+      {siteTools && <SiteFooter />}
+      {siteTools && <BackToTop />}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react"
 type Kind = "dish" | "restaurant"
 const initialDishes = ["1", "2", "3", "d1", "d6", "pho-ga", "pho-bo-tai"]
+// Retain legacy seed IDs without guessing scoped favorites. New saves use dishPairKey.
 const initialRestaurants = ["1", "2", "5", "6", "14", "4", "8"]
 const Context = createContext<{
   has: (kind: Kind, id: string) => boolean

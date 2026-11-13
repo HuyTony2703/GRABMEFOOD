@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router"
-import { BottomNav } from "@/app/components/layout/BottomNav"
 import { RestaurantCard } from "@/app/components/discovery/RestaurantCard"
 import { Button } from "@/app/components/ui/button"
 import { allRestaurants } from "@/app/lib/catalog"
@@ -80,7 +79,6 @@ export function MapPage() {
           referrerPolicy="no-referrer-when-downgrade"
         />
       </div>
-      <BottomNav />
     </div>
   )
 }

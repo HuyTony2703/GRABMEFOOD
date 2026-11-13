@@ -6,6 +6,24 @@ export interface Criteria {
   types?: string
   sort?: string
 }
+
+// Keep source order and identity; never manufacture records to fill a row.
+export function selectAdditionalMenuDishes<T extends {
+  href: string
+  restaurantName?: string
+},>(menu: T[], displayed: { href: string }[]): T[] {
+  const seen = new Set(displayed.map((dish) => dish.href))
+  return menu
+    .filter((dish) => {
+      if (!dish.restaurantName?.trim() ||
+          !/^\/restaurant\/[^/]+\/dish\/[^/]+$/.test(dish.href) ||
+          seen.has(dish.href))
+        return false
+      seen.add(dish.href)
+      return true
+    })
+    .slice(0, 3)
+}
 interface Searchable {
   name: string
   cuisine?: string

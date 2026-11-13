@@ -1,5 +1,4 @@
 import { Link } from "react-router"
-import { BottomNav } from "@/app/components/layout/BottomNav"
 import { Button } from "@/app/components/ui/button"
 import { ContentImage } from "@/app/components/media/ContentImage"
 import { SampleReviewList } from "@/app/components/profile/SampleReviewList"
@@ -29,7 +28,7 @@ export function ProfilePage() {
         Chưa có tài khoản được xác thực. Hồ sơ, huy hiệu và số liệu bên dưới chỉ
         minh họa giao diện.
       </p>
-      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 my-6">
+      <dl className="grid grid-cols-4 gap-4 my-6">
         {[
           ["Đánh giá", "127"],
           ["Ảnh", "348"],
@@ -49,7 +48,6 @@ export function ProfilePage() {
         </Link>
       </div>
       <SampleReviewList recent />
-      <BottomNav />
     </section>
   )
 }

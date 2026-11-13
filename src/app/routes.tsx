@@ -22,7 +22,7 @@ import { RestaurantDetailPage } from "@/app/pages/details/RestaurantDetailPage"
 
 import { SearchResultsPage } from "@/app/pages/discovery/SearchResultsPage"
 
-import { DishDetailPage } from "@/app/pages/details/DishDetailPage"
+import { LegacyDishPage } from "@/app/pages/details/LegacyDishPage"
 
 import { DishAtRestaurantPage } from "@/app/pages/details/DishAtRestaurantPage"
 
@@ -148,7 +148,7 @@ export const router = createBrowserRouter([
       {
         path: "/dish/:id",
 
-        Component: DishDetailPage,
+        Component: LegacyDishPage,
 
         errorElement: <ErrorPage />,
       },
@@ -259,6 +259,7 @@ export const router = createBrowserRouter([
 
       {
         path: "*",
+        handle: { hideSiteTools: true },
         Component: ErrorPage,
       },
     ],
