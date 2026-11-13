@@ -23,3 +23,11 @@ logs/
 
 # Impeccable live-session state (local only); design tokens and audit reports are tracked.
 /.impeccable/live/
+
+# Operating-system metadata and editor swap files are not project source.
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
