@@ -3,6 +3,7 @@ import { spawn } from "node:child_process"
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import assert from "node:assert/strict"
+import { checkDiscoveryUI } from "./discovery-ui-checks.mjs"
 
 const root = process.env.LOCALAPPDATA
   ? join(process.env.LOCALAPPDATA, "Temp", "opencode")
@@ -234,13 +235,13 @@ try {
   const zoomOnly = process.argv.includes("--zoom-only")
   const smoke = process.argv.includes("--smoke") || zoomOnly
   const quick = process.argv.includes("--quick")
-  const matrix = zoomOnly ? ["/search"] : smoke ? ["/"] : routes
+  const matrix = process.argv.includes("--interactions-only") ? [] : zoomOnly ? ["/search"] : smoke ? ["/"] : routes
   const widths = zoomOnly
     ? [390]
     : smoke
       ? [390, 1440]
       : quick
-        ? [390]
+        ? [390, 1440]
         : [320, 390, 768, 1024, 1440]
   for (const theme of ["light", "dark"]) {
     await send("Emulation.setEmulatedMedia", {
@@ -269,7 +270,8 @@ try {
           const visible = e => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden';
           const name = e => e.getAttribute('aria-label') || e.getAttribute('aria-labelledby') || e.innerText?.trim() || e.labels?.[0]?.innerText?.trim() || e.getAttribute('title');
           return {route:location.pathname, width:innerWidth, theme:document.documentElement.classList.contains('dark')?'dark':'light',
-            overflow:document.documentElement.scrollWidth>innerWidth+1,
+             overflow:document.documentElement.scrollWidth>innerWidth+1,
+             desktopLayout:parseFloat(getComputedStyle(document.querySelector('.app-frame')).minWidth)>=1024 && getComputedStyle(document.querySelector('.desktop-navigation')).display==='flex' && !document.querySelector('.mobile-nav'),
             overflowElements:[...document.querySelectorAll('main *')].filter(e=>visible(e)&&e.getBoundingClientRect().right>innerWidth+2).slice(0,6).map(e=>e.tagName+'.'+e.className),
             missingNames:[...document.querySelectorAll('button,input:not([type=hidden]),textarea,select')].filter(e=>visible(e)&&!e.disabled&&!name(e)).map(e=>e.outerHTML.slice(0,140)),
             h1:document.querySelector('main h1')?.textContent.trim(),
@@ -282,7 +284,8 @@ try {
         )
         results.push(snapshot)
         if (
-          snapshot.overflow ||
+          !snapshot.desktopLayout ||
+          (width >= 1024 && !zoomOnly && snapshot.overflow) ||
           snapshot.missingNames.length ||
           snapshot.contrast.issues.length ||
           snapshot.smallButtons.length
@@ -310,10 +313,10 @@ try {
     }
   }
   if (!smoke) {
-    async function go(path) {
+    async function go(path, width = 1440) {
       currentCheck = `interaction ${path}`
       await send("Emulation.setDeviceMetricsOverride", {
-        width: 390,
+        width,
         height: 850,
         deviceScaleFactor: 1,
         mobile: false,
@@ -328,11 +331,27 @@ try {
       interactions.push({ name, passed: !!value })
       if (!value) throw new Error(`Interaction failed: ${name}`)
     }
+    await checkDiscoveryUI({
+      send,
+      evaluate,
+      go,
+      check,
+      capture: async (name) => {
+        const shot = await send("Page.captureScreenshot", {
+          format: "png",
+          captureBeyondViewport: false,
+        })
+        writeFileSync(
+          join(output, `${name}.png`),
+          Buffer.from(shot.data, "base64"),
+        )
+      },
+    })
     await go("/search?q=pho&tab=dishes&price=0-50")
     check(
       "search query and range affect actual cards",
       await evaluate(
-        `document.querySelectorAll('main .discovery-card').length===4`,
+        `document.querySelectorAll('main .discovery-card').length===0 && document.querySelector('.content-state').innerText.includes('Không có kết quả')`,
       ),
     )
     await evaluate(
@@ -408,7 +427,7 @@ try {
     check(
       "Apply updates URL, query and results",
       await evaluate(
-        `location.search.includes('price=50-100')&&location.search.includes('q=pho')&&document.querySelectorAll('main .discovery-card').length===5`,
+        `location.search.includes('price=50-100')&&location.search.includes('q=pho')&&document.querySelectorAll('main .discovery-card').length===2`,
       ),
     )
     const criteriaBefore = await evaluate(`location.search`)
@@ -417,7 +436,7 @@ try {
     check(
       "search result opens matching dish",
       await evaluate(
-        `location.pathname==='/dish/pho-ga'&&document.querySelector('main h1').textContent==='Phở Gà'`,
+        `location.pathname==='/restaurant/1/dish/1'&&document.querySelector('main h1').textContent==='Phở Bò Tái'`,
       ),
     )
     await evaluate(
@@ -445,15 +464,15 @@ try {
       check(
         `unknown identity stays not-found: ${path}`,
         await evaluate(
-          `document.querySelector('main h1').textContent.includes('Không tìm thấy')`,
+           `/Không tìm thấy|Không xác định được/.test(document.querySelector('main h1').textContent) && !!document.querySelector('main a[href="/search"]')`,
         ),
       )
     }
     await go("/dish/11")
     check(
-      "today dish preserves source identity and price",
+      "unlinked legacy dish explains unavailable relationship instead of guessing owner",
       await evaluate(
-        `document.querySelector('main h1').textContent==='Cơm Tấm Sườn Nướng'&&document.querySelector('.card-price').textContent.includes('40.000')`,
+        `document.querySelector('main h1').textContent==='Không xác định được món tại quán' && !!document.querySelector('main a[href="/search"]') && !document.querySelector('main button[aria-pressed]')`,
       ),
     )
     await go("/restaurant/5/dish/d1")
@@ -487,10 +506,41 @@ try {
     check(
       "random result has a real detail destination",
       await evaluate(
-        `!!document.querySelector('main .discovery-card[href^="/"]')`,
+        `!!document.querySelector('main .discovery-card[href^="/restaurant/"][href*="/dish/"]') && !document.querySelector('main .discovery-card[href^="/dish/"]')`,
       ),
     )
     await go("/favorites")
+    check(
+      "unlinked bare-ID favorites are hidden and excluded from counts",
+      await evaluate(`document.querySelector('[role=tab][data-state=active]').textContent==='Món ăn (0)' && document.querySelectorAll('main .discovery-card').length===0 && document.querySelector('.content-state').innerText.includes('Chưa có mục lưu')`),
+    )
+    await go("/restaurant/5/dish/d1")
+    await evaluate(`document.querySelector('main button[aria-pressed]').click()`)
+    await delay(100)
+    await evaluate(`document.querySelector('.desktop-navigation a[href="/favorites"]').click()`)
+    await delay(200)
+    check(
+      "saved scoped dish retains owner, price and unique favorite identity",
+      await evaluate(`document.querySelectorAll('main .discovery-card').length===1 && document.querySelector('main .discovery-card').getAttribute('href')==='/restaurant/5/dish/d1' && document.querySelector('main .discovery-card').innerText.includes('Hủ Tiếu Bé Bơ')`),
+    )
+    await evaluate(`document.querySelector('.desktop-navigation a[href="/random"]').click()`)
+    await delay(150)
+    await evaluate(`[...document.querySelectorAll('input[name="random-mode"]')][1].click()`)
+    await delay(100)
+    check(
+      "random saved pool starts empty until a scoped favorite is selected",
+      await evaluate(`document.querySelectorAll('main input[type=checkbox]').length===1 && [...document.querySelectorAll('main button')].find(e=>e.textContent.startsWith('Chọn ngẫu nhiên')).disabled && document.querySelector('main input[type=checkbox]').closest('label').innerText.includes('Hủ Tiếu Bé Bơ')`),
+    )
+    await evaluate(`document.querySelector('main input[type=checkbox]').click()`)
+    await delay(100)
+    await evaluate(`[...document.querySelectorAll('main button')].find(e=>e.textContent.startsWith('Chọn ngẫu nhiên')).click()`)
+    await delay(100)
+    check(
+      "random from selected favorites preserves exact restaurant-dish destination",
+      await evaluate(`document.querySelector('main .discovery-card').getAttribute('href')==='/restaurant/5/dish/d1'`),
+    )
+    await evaluate(`document.querySelector('.desktop-navigation a[href="/favorites"]').click()`)
+    await delay(150)
     await evaluate(
       `([...document.querySelectorAll('main button')].find(e=>e.textContent==='Chỉnh sửa danh sách')).click()`,
     )
@@ -502,7 +552,7 @@ try {
     check(
       "favorite bulk selection uses current kind",
       await evaluate(
-        `[...document.querySelectorAll('main button')].some(e=>e.textContent==='Xóa 7 mục đã chọn'&&!e.disabled)`,
+        `[...document.querySelectorAll('main button')].some(e=>e.textContent==='Xóa 1 mục đã chọn'&&!e.disabled)`,
       ),
     )
     await evaluate(
@@ -534,6 +584,20 @@ try {
       await evaluate(
         `document.querySelectorAll('main .discovery-card').length===6`,
       ),
+    )
+    await evaluate(`document.querySelector('[role=tab][data-state=inactive]').dispatchEvent(new MouseEvent('mousedown',{bubbles:true,button:0}))`)
+    await delay(100)
+    await evaluate(`[...document.querySelectorAll('main button')].find(e=>e.textContent.startsWith('Bỏ lưu Hủ Tiếu Nam Vang')).click()`)
+    await delay(100)
+    check(
+      "scoped favorite removal requires confirmation",
+      await evaluate(`!!document.querySelector('[role=alertdialog]') && document.querySelectorAll('main .discovery-card').length===1`),
+    )
+    await evaluate(`[...document.querySelectorAll('[role=alertdialog] button')].find(e=>e.textContent==='Bỏ lưu').click()`)
+    await delay(150)
+    check(
+      "confirmed scoped favorite removal updates cards and count",
+      await evaluate(`document.querySelectorAll('main .discovery-card').length===0 && document.querySelector('[role=tab][data-state=active]').textContent==='Món ăn (0)'`),
     )
     for (const path of ["/login", "/register", "/settings/support"]) {
       await go(path)
@@ -569,12 +633,15 @@ try {
       "/register",
       "/restaurant/1",
     ]) {
-      await go(path)
+      await go(path, 390)
       await evaluate(`document.documentElement.style.fontSize='32px'`)
       await delay(100)
       check(
-        `200% text reflows at 390px: ${path}`,
-        await evaluate(`document.documentElement.scrollWidth<=innerWidth+1`),
+        `desktop content remains reachable with 200% text at 390px: ${path}`,
+        await evaluate(`(() => {
+          const controls = [...document.querySelectorAll('main a[href],main button:not(:disabled),main input:not(:disabled),main select,main textarea')].filter(e=>e.getClientRects().length);
+          return controls.every(e=>{ e.focus(); e.scrollIntoView({block:'nearest',inline:'nearest'}); const r=e.getBoundingClientRect(); return document.activeElement===e && r.right>0 && r.left<innerWidth && r.bottom>0 && r.top<innerHeight; }) && !document.querySelector('.mobile-nav') && getComputedStyle(document.querySelector('.desktop-navigation')).display==='flex';
+        })()`),
       )
       await evaluate(`document.documentElement.style.fontSize=''`)
     }

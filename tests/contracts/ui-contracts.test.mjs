@@ -18,12 +18,12 @@ test("all original route paths remain with a shared frame", () => {
 })
 test("unknown detail identifiers never substitute another record", () => {
   assert.match(
-    source("src/app/pages/details/DishDetailPage.tsx"),
-    /if \(!dish\)\s+return/,
+    source("src/app/pages/details/LegacyDishPage.tsx"),
+    /result.status === "unique"/,
   )
   assert.doesNotMatch(
-    source("src/app/pages/details/DishDetailPage.tsx"),
-    /\|\| dishesData\["1"\]/,
+    source("src/app/pages/details/LegacyDishPage.tsx"),
+    /dishesData|todayDish|RecordDetail/,
   )
   assert.match(
     source("src/app/pages/details/RestaurantDetailPage.tsx"),
@@ -39,7 +39,6 @@ test("sensitive actions never log credentials or fake successful service submiss
     "auth/LoginPage",
     "auth/RegisterPage",
     "settings/SupportChatPage",
-    "details/DishDetailPage",
     "details/DishAtRestaurantPage",
     "details/RestaurantDetailPage",
   ]) {
@@ -61,7 +60,8 @@ test("canonical discovery records and scoped menu ownership are explicit", () =>
     catalog,
     /allRestaurants = \[\.\.\.nearbyRestaurants, \.\.\.saleRestaurants\]/,
   )
-  assert.match(catalog, /id === "1" \? phoSampleMenu : \[\]/)
+  assert.match(catalog, /buildScopedDishes\(allRestaurants, \{ "1": phoSampleMenu \}\)/)
+  assert.match(catalog, /legacyDishRelationships: readonly DishRelationship\[\] = \[\]/)
   assert.match(catalog, /id: "pho-ga"/)
   assert.doesNotMatch(
     source("src/app/pages/discovery/MapPage.tsx"),
