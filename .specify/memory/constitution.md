@@ -1,18 +1,3 @@
-<!--
-Sync Impact Report (temporary review material; remove before committing)
-Version change: unversioned scaffold -> 1.0.0 (initial project constitution)
-Modified principles: unnamed scaffold slots replaced by:
-- I. Discovery-Only Product Scope
-- II. Vietnamese-First, Accessible Discovery
-- III. Evidence Before Capability Claims
-- IV. Functional Integrity and Verifiable Changes
-- V. Simple, Consistent Implementation
-Added sections: Product and Technical Constraints; Development Workflow and Quality Gates;
-populated Governance.
-Removed sections: none; illustrative scaffold comments removed.
-Deferred items: TODO(RATIFICATION_DATE): project owner must confirm the original adoption date.
-Scope: constitution only; dependent templates and commands were not modified.
--->
 # GRABMEFOOD Constitution
 
 ## Core Principles
@@ -53,23 +38,43 @@ passing a static scan alone MUST NOT be treated as proof of usable behavior.
 
 ### V. Simple, Consistent Implementation
 
-Changes MUST follow the existing React, TypeScript, Vite, and Tailwind CSS structure and reuse
-existing components and accessible primitives when suitable. New dependencies or abstractions
-MUST have a documented need that existing code cannot reasonably satisfy. Work MUST remain
-within the requested scope and MUST preserve unrelated user changes. Refactoring MUST NOT
-silently expand into redesign, new integrations, or production deployment.
+V2 work MUST follow the approved SCRUM-5 architecture: Next.js/TypeScript/Tailwind,
+NestJS Gateway/Catalog/Community/Notification, pnpm monorepo, RabbitMQ, and Supabase Cloud
+for Postgres/Auth/Storage. Frontend/services/RabbitMQ remain localhost; Supabase Local
+MUST NOT be a prerequisite of the default run/demo. Each service MUST own its schema and DB role; business
+cross-schema reads/writes/joins/foreign keys MUST NOT substitute for HTTP/events.
+Frontend business requests MUST go through Gateway. Layout, CSS, components, assets and
+content from the legacy application MUST NOT be reused for V2. Library primitives remain
+subject to the approved stack and design, not permission to retain legacy UI.
+New dependencies or abstractions MUST have a documented need and owner approval before
+installation. Work MUST preserve unrelated user changes and stay in the assigned task.
+No new integration, deployment or destructive cleanup is authorized by this principle.
 
 ## Product and Technical Constraints
 
-- `PRODUCT.md` records the discovery-only audience, purpose, and undecided production facts.
-  Specifications MUST distinguish confirmed requirements from assumptions and open decisions.
-- `src/main.tsx` is the browser entry; `src/app/routes.tsx` defines screen boundaries.
-  Development and build commands use `vite.figma.config.ts` through `package.json`.
-- Project work MUST follow `AGENTS.md` and applicable rules in `guidelines/Guidelines.md`.
-  Commented examples in the guidelines MUST NOT be treated as adopted requirements.
-- Live data, geolocation, authentication, reviews, privacy, and deployment requirements remain
-  open decisions. A feature introducing any of these MUST document its data sources, permissions,
-  failure behavior, and applicable privacy requirements before claiming production support.
+- Spec Kit is the source of product requirements/plans/tasks; Jira tracks assignments and
+  acceptance. PRODUCT.md MUST follow accepted specs, not override them. Contracts/ADR govern
+  technical boundaries; approved direction/design artifacts govern UI. Draft proposals MUST
+  remain distinguishable from owner-approved decisions.
+- `src/main.tsx`, `src/app/routes.tsx`, `vite.figma.config.ts` and current npm commands
+  describe the legacy runtime, not an approved V2 foundation. Until the infrastructure task,
+  that runtime MUST remain unchanged outside explicitly assigned work.
+- Project work MUST follow `AGENTS.md`; conflicts MUST be surfaced before dependent work.
+- V2 uses Supabase Cloud, reproducible migrations/bootstrap/seed, and newly created demo content.
+  Migration credentials MUST be separate from each service's limited runtime credentials.
+  Direct PostgreSQL connections MUST enforce backend authorization, not assume `auth.uid()`.
+  TLS/pool limits/plan quotas and Internet availability MUST be checked before demo.
+  Remote migrations/seed/config/deploy require separate target-specific approval.
+  There is no legacy backend/database/Storage to migrate, per owner confirmation in SCRUM-6.
+  Legacy backup/restore was explicitly waived; this MUST NOT be described as successful restore
+  or generalized into permission to erase data or waive future V2 reliability tests.
+- Approved V2 authentication is email/password with verification and recovery through Cloud
+  Auth email, not social login/OTP/2FA. Gmail custom SMTP is owner-configured but delivery
+  remains unverified. Product notifications are in-app only.
+- Approved community interaction is comments/replies/mentions, not star ratings or a separate
+  scored review feature. V2 MUST NOT display fabricated ratings.
+- A feature MUST document its sources, permissions, failure behavior and privacy before
+  claiming operational support. No map page/SDK, booking, hotels, payment or delivery is in scope.
 - Existing image assets and external records MUST NOT be assumed licensed, accurate, or approved
   for production solely because they are present in the repository.
 
@@ -89,12 +94,23 @@ silently expand into redesign, new integrations, or production deployment.
    integration decision or relevant validation remains unresolved.
 6. Reviews MUST record compliance, verification results, remaining risks, and approved exceptions.
    Existing noncompliance MUST be recorded when relevant; it is not permission to reproduce it.
+7. Before each task, requirements MUST be compared with actual code/configuration/schema.
+   Business, security, architecture, data, design or acceptance ambiguity MUST be raised to
+   the owner before dependent work; if clear, state the scope and continue without invented
+   questions. Do not rerun Spec Kit workflows when suitable artifacts already exist.
+8. Each bug fix MUST have a reproducible record and an appropriate regression test that
+   fails before and passes after the fix. Tests MUST NOT be weakened to hide a defect.
+9. Before delete/reset, the exact target, allowlist, impact and backup status MUST be
+    presented and owner confirmation obtained. Destructive/rebuild tests MUST use an isolated,
+    identified, separately approved target; absent that target, report blocked. Main-project
+    emptiness is not approval. No remote mutation or deploy is authorized by Cloud adoption.
+    Documentation MUST NOT be claimed to enforce tool permissions.
 
 ## Governance
 
 This constitution governs project scope and engineering decisions. Conflicting project guidance
 MUST be identified and resolved explicitly rather than silently bypassing these principles.
-`PRODUCT.md`, `AGENTS.md`, and `guidelines/Guidelines.md` supply supporting context and operating
+`PRODUCT.md` and `AGENTS.md` supply supporting context and operating
 guidance; they do not implicitly amend this constitution.
 
 Amendments MUST document the proposed change, rationale, affected principles, and any migration
@@ -112,4 +128,4 @@ Any exception MUST state its scope, rationale, risk, owner approval, and resolut
 Dependent templates and commands MUST read this constitution at runtime; updating it does not
 authorize changes to those files or implementation of deferred features.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): confirm original adoption date with project owner | **Last Amended**: 2026-11-10
+**Version**: 3.0.0 | **Ratified**: TODO(RATIFICATION_DATE): confirm original adoption date with project owner | **Last Amended**: 2026-11-15
