@@ -3,6 +3,31 @@
 Website khám phá món ăn và quán ăn, dùng React + TypeScript + Vite + Tailwind CSS.
 Dữ liệu hiện là minh họa; không có luồng đặt hàng, thanh toán hoặc giao hàng.
 
+## V2 — thiết kế đã duyệt, scaffold kỹ thuật đã kiểm tra
+
+SCRUM-59 và SCRUM-60 đã Done theo nghiệm thu thiết kế/tài liệu được owner duyệt.
+SCRUM-19 đã chuyển Done theo approval riêng của owner. SCRUM-63 đã có scaffold
+độc lập và kiểm tra local; xem [hướng dẫn V2](v2/README.md) và
+[evidence63](docs/maintenance/SCRUM-63-validation.md). SCRUM-64 chưa nghiệm thu.
+64 có preflight/CI/Compose/Dockerfile/entrypoint;5images đã build,6containers local
+scaffold đã chạy đồng thời/healthy và stop/start/persistence test PASS. Actual CI
+còn thiếu; approved split S giữ live Cloud gates tại65/67–70, không gọi Cloud PASS.
+Xem [runtime evidence64](docs/maintenance/SCRUM-64-runtime-validation.md).
+Done thiết kế không phải bằng chứng PostgreSQL/TLS/Auth/SMTP hoặc capacity runtime đã đạt.
+
+Các lệnh/cấu trúc bên dưới mô tả **legacy**, không phải runtime V2.
+V2 ở `v2/`, không reuse code/assets legacy: Next.js tại `http://localhost:3000`,
+Gateway/Catalog/Community/Notification và RabbitMQ chạy localhost; PostgreSQL/Auth/
+Storage dùng Supabase Cloud. Docker vẫn cần cho thành phần local; không yêu cầu
+Supabase Local. Internet và project Cloud khả dụng là prerequisites của demo.
+Không startup kèm remote migration/seed/reset; những thao tác này cần duyệt riêng.
+Nguồn chuẩn: [spec V2](specs/003-grabmefood-v2/spec.md),
+[kiến trúc đã duyệt](docs/architecture.md), [ADR Cloud](docs/adr/0001-supabase-cloud.md).
+MCP chỉ đọc đã cấu hình ở repo và báo connected. Metadata trả API URL
+`https://bdhavbwmxbttymerizvx.supabase.co`, không có bảng trong
+`public/catalog/community/notification` và migrations rỗng. Không suy ra Auth/
+Storage rỗng. Chưa kiểm kết nối PostgreSQL từ ứng dụng hoặc Gmail SMTP, chưa có callback V2.
+
 ## Phạm vi giao diện và món ăn
 
 - Chỉ duy trì giao diện desktop, khung tối thiểu 1024 CSS px. Cửa sổ hẹp/điện thoại

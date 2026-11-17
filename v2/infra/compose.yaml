@@ -1,0 +1,157 @@
+name: grabmefood-v2
+
+x-environment: &environment
+  NODE_ENV: production
+  NEXT_TELEMETRY_DISABLED: '1'
+  HOST: 0.0.0.0
+  CONTAINER_BIND: 'true'
+  WEB_ORIGIN: http://localhost:3000
+  SUPABASE_PROJECT_REF: bdhavbwmxbttymerizvx
+  SUPABASE_URL: https://bdhavbwmxbttymerizvx.supabase.co
+
+x-app: &app
+  platform: linux/amd64
+  init: true
+  restart: 'no'
+  read_only: true
+  tmpfs: ['/tmp']
+  cap_drop: [ALL]
+  security_opt: ['no-new-privileges:true']
+  stop_grace_period: 20s
+  networks: [local]
+  logging:
+    driver: local
+    options:
+      max-size: 5m
+      max-file: '2'
+  labels:
+    io.grabmefood.health-scope: process-liveness-not-business-readiness
+    io.grabmefood.profile: demo-lite
+  healthcheck:
+    test: [CMD, node, /app/container-liveness.mjs]
+    interval: 10s
+    timeout: 3s
+    retries: 6
+    start_period: 30s
+
+services:
+  web:
+    <<: *app
+    image: grabmefood-v2-web:scaffold
+    pull_policy: never
+    build:
+      context: ${GMF_ARTIFACT_DIR:-../reports/runtime-artifacts}
+      dockerfile: ../../infra/Dockerfile
+      target: web-runtime
+      args: { ARTIFACT: web }
+    environment:
+      <<: *environment
+      HOSTNAME: 0.0.0.0
+      PORT: '3000'
+      HEALTH_PATH: /api/health/live
+    ports: ['127.0.0.1:3000:3000']
+    mem_limit: 512m
+    memswap_limit: 512m
+
+  gateway:
+    <<: *app
+    image: grabmefood-v2-gateway:scaffold
+    pull_policy: never
+    build:
+      context: ${GMF_ARTIFACT_DIR:-../reports/runtime-artifacts}
+      dockerfile: ../../infra/Dockerfile
+      target: nest-runtime
+      args: { ARTIFACT: gateway }
+    environment:
+      <<: *environment
+      PORT: '3001'
+      HEALTH_PATH: /health/live
+    ports: ['127.0.0.1:3001:3001']
+    mem_limit: 256m
+    memswap_limit: 256m
+
+  catalog:
+    <<: *app
+    image: grabmefood-v2-catalog:scaffold
+    pull_policy: never
+    build:
+      context: ${GMF_ARTIFACT_DIR:-../reports/runtime-artifacts}
+      dockerfile: ../../infra/Dockerfile
+      target: nest-runtime
+      args: { ARTIFACT: catalog }
+    environment:
+      <<: *environment
+      PORT: '3002'
+      HEALTH_PATH: /health/live
+      DB_POOL_MAX: '4'
+    ports: ['127.0.0.1:3002:3002']
+    mem_limit: 256m
+    memswap_limit: 256m
+
+  community:
+    <<: *app
+    image: grabmefood-v2-community:scaffold
+    pull_policy: never
+    build:
+      context: ${GMF_ARTIFACT_DIR:-../reports/runtime-artifacts}
+      dockerfile: ../../infra/Dockerfile
+      target: nest-runtime
+      args: { ARTIFACT: community }
+    environment:
+      <<: *environment
+      PORT: '3003'
+      HEALTH_PATH: /health/live
+      DB_POOL_MAX: '4'
+    ports: ['127.0.0.1:3003:3003']
+    mem_limit: 256m
+    memswap_limit: 256m
+
+  notification:
+    <<: *app
+    image: grabmefood-v2-notification:scaffold
+    pull_policy: never
+    build:
+      context: ${GMF_ARTIFACT_DIR:-../reports/runtime-artifacts}
+      dockerfile: ../../infra/Dockerfile
+      target: nest-runtime
+      args: { ARTIFACT: notification }
+    environment:
+      <<: *environment
+      PORT: '3004'
+      HEALTH_PATH: /health/live
+      DB_POOL_MAX: '2'
+    ports: ['127.0.0.1:3004:3004']
+    mem_limit: 256m
+    memswap_limit: 256m
+
+  rabbitmq:
+    platform: linux/amd64
+    image: docker.io/library/rabbitmq:4.4.0-management@sha256:753099a19b577c322117f793f864b3129cbba96d40317221a69d73976e3c843c
+    pull_policy: never
+    hostname: rabbitmq
+    restart: 'no'
+    environment:
+      RABBITMQ_DEFAULT_USER: gmf_demo
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEMO_PASSWORD:?Supply local broker password explicitly; never use validation canary for startup}
+    ports: ['127.0.0.1:5672:5672', '127.0.0.1:15672:15672']
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+    networks: [local]
+    mem_limit: 512m
+    memswap_limit: 512m
+    stop_grace_period: 30s
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    logging:
+      driver: local
+      options:
+        max-size: 5m
+        max-file: '2'
+
+networks:
+  local: {}
+volumes:
+  rabbitmq-data: {}

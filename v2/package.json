@@ -1,0 +1,28 @@
+{
+  "name": "@grabmefood/v2",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.5.0",
+  "engines": { "node": ">=24.16.0 <25", "pnpm": "11.5.0" },
+  "scripts": {
+    "build:packages": "pnpm --filter @grabmefood/contracts --filter @grabmefood/config --workspace-concurrency=1 build",
+    "build": "pnpm -r --workspace-concurrency=1 build",
+    "typecheck": "pnpm run build:packages && pnpm -r --workspace-concurrency=1 typecheck",
+    "lint": "eslint .",
+    "test": "pnpm run build:packages && jest --runInBand",
+    "test:infra": "node --test tests/infra/*.test.mjs",
+    "test:smoke": "node scripts/smoke.mjs",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:infra && pnpm build && pnpm test:smoke"
+  },
+  "devDependencies": {
+    "@grabmefood/config": "workspace:*",
+    "@grabmefood/contracts": "workspace:*",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.19.2",
+    "eslint": "9.39.1",
+    "jest": "30.5.2",
+    "ts-jest": "29.4.15",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.2"
+  }
+}

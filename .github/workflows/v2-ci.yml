@@ -1,0 +1,44 @@
+name: V2 static, unit and build
+
+on:
+  pull_request:
+    paths: ['v2/**', '.github/workflows/v2-ci.yml']
+  push:
+    paths: ['v2/**', '.github/workflows/v2-ci.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v2-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: v2
+        shell: bash
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, resolved from GitHub metadata
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.16.0'
+      # CI-runner-only tool install: never change the developer's global toolchain.
+      - name: Install exact approved pnpm in runner temp
+        run: |
+          npm install --prefix "$RUNNER_TEMP/gmf-tools" --ignore-scripts --no-audit --no-fund pnpm@11.5.0
+          echo "$RUNNER_TEMP/gmf-tools/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Frozen dependencies without lifecycle scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Lint, typecheck, unit, build and local-process smoke
+        run: pnpm verify
+      # No Cloud secrets, Docker image builds/pulls, remote integration, SQL or deployment.
