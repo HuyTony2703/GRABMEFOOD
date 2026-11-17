@@ -5,6 +5,18 @@ Dữ liệu hiện là minh họa; không có luồng đặt hàng, thanh toán 
 
 ## V2 — thiết kế đã duyệt, scaffold kỹ thuật đã kiểm tra
 
+**Cập nhật 2026-11-17, sau lần publication đầu:** Docker scaffold/runtime đã PASS;
+GitHub Actions [run43998300249](https://github.com/HuyTony2703/GRABMEFOOD/actions/runs/43998300249)
+đã **completed / success**, job `verify` SUCCESS trong51giây, trên đúng SHA
+`b5aa94165b4d7f65637b1cc21d5018656d6a7f22`. Nguồn: GitHub run/job API và
+[runtime report](docs/maintenance/SCRUM-64-runtime-validation.md#bổ-sung-2026-11-17--actual-github-ci-và-owner-acceptance).
+Owner đã duyệt nghiệm thu kỹ thuật SCRUM-64 theo split S. Đây không phải
+Cloud-ready: live connectivity/TLS/roles/isolation vẫn chưa PASS và thuộc65/67–70.
+Run trên chứng minh trạng thái tại SHA đã nêu, không tự là CI của commit tài liệu
+sau đó; nếu push docs kích hoạt run khác, kết quả được ghi riêng tại Jira64/21.
+
+### Mốc bàn giao trước CI — giữ lịch sử, không phải trạng thái hiện hành
+
 SCRUM-59 và SCRUM-60 đã Done theo nghiệm thu thiết kế/tài liệu được owner duyệt.
 SCRUM-19 đã chuyển Done theo approval riêng của owner. SCRUM-63 đã có scaffold
 độc lập và kiểm tra local; xem [hướng dẫn V2](v2/README.md) và

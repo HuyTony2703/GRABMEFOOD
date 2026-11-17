@@ -7,6 +7,25 @@ grants/authenticated TLS/isolation→69–70 vẫn bắt buộc; Cloud chưa ver
 Các gate Cloud chưa đạt ở phần lịch sử không còn precondition đóng64.
 Source/image không đổi trong lần publication này, không rebuild local.
 
+## Bổ sung 2026-11-17 — CI đã PASS sau publication
+
+Nguồn GitHub run/job API xác nhận
+[run43998300249](https://github.com/HuyTony2703/GRABMEFOOD/actions/runs/43998300249)
+**completed / success** tại SHA
+`b5aa94165b4d7f65637b1cc21d5018656d6a7f22`.
+Job [verify](https://github.com/HuyTony2703/GRABMEFOOD/actions/runs/43998300249/job/133755737897)
+SUCCESS từ01:48:10Z đến01:49:01Z (51giây): frozen dependencies, lint/typecheck/
+unit/infra/build/local-process smoke và cleanup đều success.
+Owner đã duyệt phần kỹ thuật64 theo split S; README/runtime report nay bổ sung
+kết quả sau các mốc thiếu CI bên dưới, không viết lại lịch sử.
+
+Đây là CI thật, tách khỏi Docker runtime local và local tests. Không Cloud
+secrets, deployment hoặc remote migration/seed/reset; không chứng minh live
+TLS/service roles/isolation, Auth/SMTP hay full-workload capacity. Runtime report:
+[actual CI và owner acceptance](../docs/maintenance/SCRUM-64-runtime-validation.md#bổ-sung-2026-11-17--actual-github-ci-và-owner-acceptance).
+Nếu docs-only commit này kích hoạt CI mới, phải đối chiếu SHA/run mới riêng;
+không gán run43998300249 cho commit sau. Jira64/21 ghi kết quả publication/closure.
+
 SCRUM-63: Next/Nest skeletons, contracts/config và env/ports. Không giao diện sản
 phẩm, business APIs, session/Auth implementation, DB migrations hoặc Cloud probes.
 Không import source/CSS/ảnh/data legacy. Root Vite và lockfiles legacy giữ nguyên.
@@ -63,13 +82,16 @@ query/body/cookie/Authorization hoặc browser identity headers. CORS chỉ exac
 origin cho health GET, không thay internal auth ở task61. SIGINT/SIGTERM shutdown
 hook; smoke Windows dùng test-only IPC app.close, không giả POSIX/Docker signal test.
 
-## SCRUM-64 — đang thực hiện, chưa nghiệm thu
+## SCRUM-64 — cấu hình và lịch sử trước actual CI
 
 Default CI ở `../.github/workflows/v2-ci.yml`: pinned action SHAs, Node24.16.0/
 pnpm11.5.0, frozen install không lifecycle scripts; lint/typecheck/Jest + infra
 policy tests/build/local-process smoke. Không Cloud secrets, Docker pulls/builds,
-remote integration hoặc deployment. Workflow chưa được push/chạy trên GitHub;
-local `pnpm verify` không phải evidence GitHub Actions run.
+remote integration hoặc deployment.
+
+> Mốc trước publication, giữ lịch sử: Workflow chưa được push/chạy trên GitHub;
+> local `pnpm verify` không phải evidence GitHub Actions run.
+> Kết quả actual CI bổ sung ngày2026-11-17 ở section đầu đã thay trạng thái này.
 
 `pnpm test:infra` kiểm policy/Compose parser với inert fixtures, không Cloud/
 Docker mutation. Không chạy đồng thời tests Node trên host với build experiment.
@@ -109,10 +131,10 @@ record `infra/demo-lite.json`: production/no watch, build tách runtime,
 Web512/Gateway256/Catalog256/Community256/Notification256/RabbitMQ512MiB,
 tổng2048MiB. Caps đã actual inspect/measure trong6containers ở bài scaffold test;
 không coi đó là full-feature/Cloud capacity verification.
-Compose/Dockerfile và entrypoint đã có; resource/Cloud gates còn thiếu;
-không vượt gate bằng liveness hoặc health giả.
+Mốc trước kiểm runtime: Compose/Dockerfile và entrypoint đã có; resource/Cloud
+gates còn thiếu; không vượt gate bằng liveness hoặc health giả.
 
-### Orchestration (đã kiểm local scaffold; Cloud/CI còn thiếu)
+### Orchestration (local scaffold đã kiểm; các kết quả lịch sử)
 
 `infra/compose.yaml` có đúng6services local, loopback published ports, named
 RabbitMQ volume, pins/caps đã duyệt và no automatic restart để không che OOM.
@@ -146,7 +168,7 @@ Project `gmf64-runtime-20261116-a` đã **6/6healthy đồng thời60giây**, HT
 live200/ready503/business404, stop/start và durable broker message PASS,
 OOMfalse/restarts0. Sau test graceful-stop đúng project, không delete data;
 hiện containers retained/stopped, không mặc định đang chạy.
-Cloud/GitHubCI vẫn unverified; overall runtimeVerified flag giữfalse, riêng
+Tại mốc runtime này, Cloud/GitHubCI vẫn unverified; overall runtimeVerified flag giữfalse, riêng
 localScaffoldVerification ghi scopedPASS. Chi tiết/raw logs:
 [budget evidence](../docs/maintenance/SCRUM-64-budget-validation.md).
 [current runtime evidence](../docs/maintenance/SCRUM-64-runtime-validation.md).
@@ -158,7 +180,8 @@ start full demo** khi Cloud/business readiness chưa verified. Thêm
 assemble5runtime images tuần tự;
 mọi thao tác đều sau preflight, không auto pull ở `up`, không reset/prune/down.
 Node/Rabbit exact pins đã pull; controlled build và short local scaffold runtime
-đã kiểm thật. Full business/Cloud/CI/long-duration workload vẫn chưa verified.
+đã kiểm thật. Tại mốc trước actual CI, full business/Cloud/CI/long-duration workload
+vẫn chưa verified. CI sau đó PASS như section đầu; các phần còn lại vẫn unverified.
 
 `scripts/runtime-smoke.ps1 -DockerDataPath <path> -ArtifactDirectory <successful
 Linux tar folder> -RunId <unique-lowercase-id>` chạy project test mới, generates

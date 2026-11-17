@@ -1,4 +1,43 @@
-# SCRUM-64 — local Docker scaffold runtime verified, task chưa Done
+# SCRUM-64 — local scaffold/runtime và CI evidence
+
+## Bổ sung 2026-11-17 — actual GitHub CI và owner acceptance
+
+Phần này bổ sung sau runtime report gốc; các số đo và kết quả chưa-CI bên dưới
+được giữ nguyên làm lịch sử, không phải trạng thái gate hiện hành.
+
+| Evidence | Kết quả / nguồn |
+| --- | --- |
+| Code SHA đã được CI kiểm | `b5aa94165b4d7f65637b1cc21d5018656d6a7f22` |
+| Actual GitHub Actions | [run43998300249](https://github.com/HuyTony2703/GRABMEFOOD/actions/runs/43998300249), event `push`, branch `main`, completed / **success** |
+| Job | [verify / 133755737897](https://github.com/HuyTony2703/GRABMEFOOD/actions/runs/43998300249/job/133755737897), **success**, 2026-11-17T01:48:10Z→01:49:01Z (51giây) |
+| Steps | Setup/checkout/setup-node/exact pnpm/frozen dependencies/lint+typecheck+unit+infra+build+local-process smoke/post cleanup đều success theo GitHub API |
+| Local runtime riêng | Project `gmf64-runtime-20261116-a`:5images/6healthy đồng thời60s, HTTP200/503/404, stop/start/persistence/noOOM như report gốc |
+| Provenance | GitHub run/job API readback; Jira64 comment10066, review10069; Jira21 comment10067, review10068; local ignored `v2/reports/ci-43998300249/{result,verification}.json` |
+
+Raw CI logs tải bị network timeout trong lần kiểm trước; dùng structured API
+run/job/step làm nguồn, không bịa thêm log evidence. Warning không chặn: hai
+action pins khai báo Node20, runner ép Node24; không tự đổi pins.
+
+**Owner acceptance bổ sung trong hội thoại ngày2026-11-17:** owner duyệt nghiệm
+thu phần kỹ thuật64 theo split S, yêu cầu đồng bộ tài liệu rồi đóng64; parent21
+chỉ đóng sau khi mọi children/acceptance đạt. Đây không là thay đổi acceptance.
+Phạm vi đạt: independent scaffold, guarded Compose/runtime/resources/logging/
+shutdown/broker persistence, offline config-negative guards và actual CI.
+Live Cloud connectivity/chain+hostname/quotas vẫn thuộc47/65; role/schema
+creation22/67–68; grants/authenticated role TLS/isolation23/69–70 còn mandatory,
+**chưa PASS**. Role existence/credentials chưa xác minh; host TLS attempt1 DNS
+blocked, không dùng admin login hoặc handshake thay role proof. Không Cloud-ready.
+
+Lần cập nhật này chỉ sửa README/runtime report, không code/runtime/workflow,
+không rebuild/replay Docker, không remote mutation. Run43998300249 chỉ chứng
+minh code tại SHA trên. Nếu commit tài liệu kích hoạt CI mới, Jira64/21 sẽ ghi
+SHA/run/job/conclusion mới riêng sau hoàn tất, không gán kết quả cũ cho commit mới.
+Theo owner approval, chỉ transition64 sau docs sync/check/publication và đủ AC;
+kiểm toàn bộ children/AC21 trước transition21. Không bắt đầu65 theo closure này.
+
+## Lịch sử runtime report — trước actual GitHub CI
+
+Tiêu đề lúc bàn giao: “local Docker scaffold runtime verified, task chưa Done”.
 
 **2026-11-17 approved split S:** local evidence dưới đây giữ nguyên; live Cloud
 integration không còn closure prerequisite64/21, chuyển bắt buộc65/67–70 theo
