@@ -1,5 +1,14 @@
 # Data model — SCRUM-60 design, no applied migration
 
+> **Owner-approved security simplification 2026-11-19:** Supabase Auth owns
+> account/session behavior. The Community custom `app_sessions`,
+> `auth_contexts`, and `credential_operations` records and C09–C11 advanced
+> session/credential constraints below are historical and superseded. Do not
+> implement them. Preserve the Community profile/business data, service-owned
+> tables, Storage metadata, and all unrelated data contracts. Any remaining
+> account-to-profile linkage uses the Auth user ID as an external reference;
+> there is no FK into Supabase Auth internals.
+
 Nguồn [spec](spec.md), [contracts](contracts/README.md), ADR-0001/0002.
 Schema boundaries là ràng buộc bắt buộc; bảng dưới là thiết kế không phải kết quả
 `list_tables` mới. Cloud Auth giữ email/password/verification primitives; app
@@ -23,7 +32,7 @@ trong owner transaction. Metadata/hashes không được chứa password/raw han
 | offerings | dish_id:UUID, restaurant_id:UUID, price_vnd?:bigint, available:boolean, revision:int | FK dishes/restaurants; pair unique; dish/restaurant/available/price |
 | categories / areas | name:text, normalized_name:text | normalized_name/id search |
 | dish_categories | dish_id:UUID, category_id:UUID | composite PK; both local FK |
-| media | object_key:text, owner_entity_id?:UUID, state:media_state, mime:text, byte_size:bigint, source:text, license:text | object_key unique; pending state |
+| media | object_key:text, dish_id?:UUID, restaurant_id?:UUID, state:media_state, mime:text, byte_size:bigint, source:text, license:text | object_key unique; XOR owner local FK; pending state |
 | dish_media / restaurant_media | entity_id:UUID, media_id:UUID, position:int | composite PK; local FK; position≥0 |
 | outbox | xem shared reliability dictionary | producer=Catalog |
 
@@ -32,6 +41,29 @@ trong owner transaction. Metadata/hashes không được chứa password/raw han
 **C02**: price_vnd nullable hoặc integer≥0; UNIQUE(dish_id,restaurant_id); public offering cần available=true và cả dish/restaurant published; filter area/price/category cùng một offering.
 
 **C03**: media_state ∈ {pending,ready,failed}; byte_size≤5242880 và >0; mime ∈ {image/jpeg,image/png,image/webp}; object_key unique; catalog source/license nonempty; chỉ attach media ready thuộc đúng owner.
+
+Owner-approved draft-first: `media` luôn thuộc đúng một dish hoặc restaurant đã
+tồn tại: CHECK XOR hai FK local, không owner-null staging. Ownership không phải
+attachment: upload xong vẫn chưa gắn; `dish_media`/`restaurant_media` chỉ gắn
+đúng owner nhờ composite local FK. DB XOR/FK không tự bảo đảm state `ready`.
+Service kiểm ready/owner/revision trong transaction attach và phối hợp khóa với
+state update; recheck lúc publish và mọi request ảnh. Không tự xóa attachment
+hoặc đổi publication state khi media mất ready; không expose bytes/DTO trái điều kiện.
+Publish cho phép zero ảnh nhưng reject nếu bất kỳ attachment nào invalid.
+
+```mermaid
+erDiagram
+  CATALOG_AREAS ||--o{ CATALOG_RESTAURANTS : contains
+  CATALOG_DISHES ||--o{ CATALOG_OFFERINGS : offered
+  CATALOG_RESTAURANTS ||--o{ CATALOG_OFFERINGS : sells
+  CATALOG_DISHES ||--o{ CATALOG_MEDIA : owns_dish_media
+  CATALOG_RESTAURANTS ||--o{ CATALOG_MEDIA : owns_restaurant_media
+  CATALOG_DISHES ||--o{ CATALOG_DISH_MEDIA : attaches
+  CATALOG_RESTAURANTS ||--o{ CATALOG_RESTAURANT_MEDIA : attaches
+```
+
+Mỗi media có đúng một trong hai quan hệ owner; ERD không thể hiện XOR trực tiếp.
+Media ownership và attachment là quan hệ khác nhau.
 
 Publication chỉ expose validated ready media; draft bytes không public bypass.
 Catalog/Community media đọc qua owner-authorized proxy routes; storage bucket private,
@@ -47,7 +79,7 @@ published/available paths, bigint numeric sorting null-last. Không cross-schema
 
 | Entity | Fields ngoài C00 | Quan hệ/index |
 | --- | --- | --- |
-| profiles | auth_user_id:UUID, display_name:text, handle?:text, avatar_media_id?:UUID, verified:boolean, role:app_role, generation:int, admission_blocked:boolean, revision:int | auth_user_id unique external ref; handle unique nonnull; local media FK |
+| profiles | auth_user_id:UUID, display_name:text, handle?:text, avatar_media_id?:UUID, verified:boolean, role:app_role, revision:int | auth_user_id unique external ref; handle unique nonnull; local media FK |
 | preferences | profile_id:UUID, theme:theme, reply:boolean, mention:boolean, restaurant_update:boolean, admin_broadcast:boolean, revision:int | profile_id unique local FK |
 | onboarding | profile_id:UUID, state:onboarding_state, step?:text | profile_id unique local FK |
 | avatar_media | object_key:text, profile_id:UUID, state:media_state, mime:text, byte_size:bigint | object_key unique; local profiles FK |
@@ -57,9 +89,6 @@ published/available paths, bigint numeric sorting null-last. Không cross-schema
 | mentions | comment_id:UUID, mentioned_profile_id:UUID | composite PK; local FKs |
 | reports | comment_id:UUID, reporter_id:UUID, reason:text, state:report_state | local FKs; state/created_at/id |
 | moderation_audit | comment_id:UUID, actor_id:UUID, action:text, reason:text, previous_hidden:boolean, new_hidden:boolean | local FKs; append-only |
-| app_sessions | profile_id:UUID, handle_digest:bytes, generation:int, state:session_state, last_authorized_at:timestamp, absolute_expires_at:timestamp, revoked_at?:timestamp, token_ciphertext?:bytes, token_version:int | digest unique; profile/state/expiry; local profile FK |
-| auth_contexts | handle_digest:bytes, purpose:context_purpose, profile_id?:UUID, operation_id?:UUID, generation?:int, pkce_ciphertext?:bytes, state_digest:bytes, expires_at:timestamp, consumed_at?:timestamp, provider_proof_ciphertext?:bytes, encryption_key_id?:text, proof_subject?:UUID, proof_kind?:text, proof_verified_at?:timestamp, proof_expires_at?:timestamp | digest unique; expiry; profile/operation local FK; encrypted proof, no plaintext password |
-| credential_operations | profile_id:UUID, operation_id:UUID, kind:credential_kind, state:credential_state, generation:int, provider_update_confirmed:boolean, cleanup_confirmed:boolean, failure_code?:text, attempt_version:int, lease_until?:timestamp, provider_attempt_state:remote_attempt_state, dispatched_at?:timestamp | operation_id unique; one active/profile; CAS/attempt fencing; no password |
 | recipient_decisions | producer:text, event_id:UUID, input_hash:bytes, decided_at:timestamp, recipient_count:int | unique(producer,event_id); immutable including count0 |
 | decision_recipients | decision_id:UUID, profile_id:UUID, groups:text[] | composite PK; local FKs; immutable |
 | idempotency_keys | profile_id:UUID, operation:text, request_id:UUID, input_hash:bytes, resource_id:UUID | unique(profile_id,operation,request_id) |
@@ -75,11 +104,11 @@ published/available paths, bigint numeric sorting null-last. Không cross-schema
 
 **C08**: report_state ∈ {open,resolved}; reason nonempty plain text; moderation audit append-only; admin chỉ hide/restore, không sửa body; reply creation cần parent visible.
 
-**C09**: session_state ∈ {active,revoked}; handle_digest unique, raw handle không lưu; idle≤24h và absolute≤7d; token_ciphertext chỉ server-side encrypted; session generation phải bằng profile generation và admission_blocked=false khi authorize.
+**C09**: Supabase Auth là authority cho credentials/account sessions; Community profile giữ external `auth_user_id` reference duy nhất, không FK vào Auth internals; app không có custom session ledger/token custody.
 
-**C10**: context_purpose ∈ {verification,recovery,credential_operation,csrf}; context expiry≤10m và không vượt provider expiry khi có; purpose/state/PKCE bound và one-use; recovery không normal session admission.
+**C10**: Email verification, password recovery, and callback behavior use Supabase Auth supported flows; no custom account-session context ledger or stronger provider guarantees.
 
-**C11**: credential_kind ∈ {change,reset}; credential_state ∈ {protected_pending,provider_updated,succeeded,failed_protected}; operation_id unique, tối đa một active operation/profile; durable generation bump/revoke trước provider update; partial failure không hạ generation hoặc restore session; succeeded cần provider_update_confirmed và cleanup_confirmed.
+**C11**: Password change/reset and logout use Supabase Auth supported operations; do not add custom credential-operation state, refresh fencing, or durable global revocation; do not claim immediate invalidation beyond provider behavior.
 
 **C12**: recipient receipt UNIQUE(producer,event_id), input_hash immutable, recipient_count≥0; decision_recipients PK(decision_id,profile_id), groups nonempty subset{reply,mention,restaurant_update,admin_broadcast}; snapshot đầy đủ saved/preferences bền vững trước HTTP response; retry reuse cả empty decision.
 
@@ -92,7 +121,8 @@ Onboarding not_started/step null, handle null đến owner chọn, role user qua
 supported bootstrap. Test own-user persistence, không tự trao admin.
 Email không nằm public profile; verified mirrored only from provider
 proof, admission refresh synchronizes status; admin granted only approved bootstrap.
-All-session revocation mechanism ở authorization.md; not SQL Auth internals.
+Session expiry/logout follow Supabase Auth-supported behavior; the application
+does not persist an all-session revocation ledger.
 
 ## Notification — owner/runtime role Notification
 
@@ -137,30 +167,16 @@ last_error_code? text. No cross-schema shared table. Canonical envelope in event
 
 **C22**: media GET phải recheck ready/publication/attachment hoặc ledger+ownership mỗi request; draft Catalog chỉ Admin, unattached avatar chỉ chính chủ; private Storage, no signed URL tới browser; Cache-Control private,no-store; không304/shared cache.
 
-**C23**: operation reauth cần fresh proof đúng subject/purpose và expiry; operation context bind profile_id/operation_id/generation, expiry≤10m và≤proof expiry; provider_proof_ciphertext encrypted server-only, erase sau use/expiry; attempt_version≥1 CAS, lease/fencing chống concurrent resume; không restore phiên cũ hoặc recovery auto-login.
+**C23**: Auth verification, password recovery, and account-session behavior remain with Supabase Auth supported APIs; Gateway validates JWTs; no custom operation/session ledger or stronger revocation claim. Retain server-side secret handling, TLS verification, input validation and basic authorization.
 
-Auth context field constraints: credential_operation context có profile_id,
-operation_id,generation và proof subject/kind/verified_at/expires_at/encryption key
-trước write admission; proof_kind ∈ {password,recovery}, subject=profile.auth_user_id;
-expires_at≤proof_expires_at. Provider proof ciphertext chỉ nullable trước acquisition
-hoặc sau secure erasure; status-only metadata không cấp lại write authority.
-Initial verification/CSRF contexts có nullable operation/proof fields vì chưa bind
-account/operation; không được dùng chúng cho resume. Operation generation không
-thay đổi khi renew proof; terminal success immutable; lease timeout chỉ claim lại
-coordination, không mở admission. remote_attempt_state ∈ {not_dispatched,dispatched,
-confirmed,rejected,uncertain}; dispatched_at nullable trước dispatch. Persist
-dispatched trước remote call; timeout/crash→uncertain, không redispatch tới definitive
-outcome. Fresh proof không là bằng chứng attempt cũ đã kết thúc; không có supported
-reconciliation thì protected503/escalation, không SQL/admin override. T006/T030
-implement/test state guard này, không assume DB fencing fence được provider.
-No cross-service FK vì toàn bộ authority ở Community.
+The earlier C23 operation-proof/attempt-fencing specification is superseded by
+the 2026-11-19 owner amendment and is not a schema or implementation requirement.
+No cross-service FK; Auth user IDs remain external references.
 
-## ERD bổ sung cho delivery/session
+## ERD bổ sung cho delivery
 
 ```mermaid
 erDiagram
-  COMMUNITY_PROFILES ||--o{ COMMUNITY_APP_SESSIONS : owns
-  COMMUNITY_PROFILES ||--o{ COMMUNITY_CREDENTIAL_OPERATIONS : protects
   COMMUNITY_RECIPIENT_DECISIONS ||--o{ COMMUNITY_DECISION_RECIPIENTS : freezes
   NOTIFICATION_EVENT_INTAKE ||--o| NOTIFICATION_DELIVERY_DECISIONS : imports
   NOTIFICATION_DELIVERY_DECISIONS ||--o{ NOTIFICATION_DELIVERY_RECIPIENTS : stages
