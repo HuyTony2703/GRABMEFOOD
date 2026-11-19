@@ -1,311 +1,40 @@
-# GrabMeFood V2 — kiến trúc SCRUM-19
+# GrabMeFood V2 — current approved architecture amendments
 
-**Acceptance amendment S — owner-approved 2026-11-17:** supersedes historical
-live Cloud closure gate64 below.64/21 keeps actual local scaffold/resource/
-shutdown/persistence, offline safety guards and actual GitHub CI; formal live
-Connect/network/chain+hostname/quota inventory belongs47/65, role creation22/
-67–68, grants23/69, authenticated service-role TLS/isolation23/70. Keep DAG and
-all before-demo security requirements; no remote mutation permission or role
-proof from credential-free TLS.64/21 remain In Progress pending actual CI.
-Current evidence/approval: [gate review](maintenance/SCRUM-64-gate-review.md).
+## Owner-approved security simplification — 2026-11-19
 
-**Status hiện tại: SCRUM-59/60 và parent SCRUM-19 đã Done theo approval riêng
-của owner; budgets vẫn provisional, chưa runtime verification.** Gói C được giao
-63→64 sau tiền nhiệm; scaffold63 đã build/start local, chưa business runtime.
-Evidence: [SCRUM-63](maintenance/SCRUM-63-validation.md).
-**Jira SCRUM-59: Done**, workflow transition đã thành công ngày2026-11-16 sau
-final design gate verification và yêu cầu owner hoàn tất task.
-Business source: [Spec Kit V2](../specs/003-grabmefood-v2/spec.md).
-Technical research: [research.md](../specs/003-grabmefood-v2/research.md).
-Scope: SCRUM-59 ranh giới/C4/ERD trước, SCRUM-60 contracts/ADR/plan/tasks/analyze sau.
-Không có schema hoặc service V2 đã được tạo chỉ vì tài liệu này tồn tại.
+This section is the current authority for security/session implementation and
+supersedes conflicting historical descriptions later in this file and in the
+older SCRUM-59 design narrative. It does not change product features or roadmap
+structure.
 
-## Phần nền đã được duyệt
+- Web: Vite + React + TypeScript SPA. Backend: Java 21, Spring Boot 3.5.16,
+  Maven multi-module, one Gateway/BFF and separate Catalog, Community, and
+  Notification services. RabbitMQ and Supabase Cloud topology are retained.
+- Supabase Auth owns credentials, verification/recovery email, and account
+  session behavior. Spring Gateway validates Supabase JWTs and is the browser
+  API edge. Community owns profile/business data, not custom session authority
+  or provider-token custody.
+- Do not build a Community session ledger, token custody, refresh fencing, or
+  durable global revocation. Logout/expiry follow Supabase Auth-supported
+  behavior; never claim immediate global invalidation beyond provider guarantees.
+- Keep TLS certificate chain and hostname verification, server-side secrets,
+  input validation, basic least-privilege service access, RLS for user-private
+  data, and essential cross-user negative tests. Keep secure cookie protections
+  and CSRF checks for cookie-authenticated mutations. No additional
+  production-hardening infrastructure is required.
+- Preserve all user-facing features, Supabase Storage, seed/demo data and media,
+  Gateway/Catalog/Community/Notification boundaries, API behavior unrelated to
+  advanced session internals, Jira order/dependencies, and SCRUM-49/75/76 gates.
+- Existing historical architecture and session protocol entries below remain
+  records of earlier decisions, not implementation authority where they
+  conflict with this amendment. SCRUM-120 remains blocked; no Cloud operation
+  follows from this amendment.
 
-- Next.js/TypeScript/Tailwind; NestJS Gateway + Catalog + Community + Notification.
-- pnpm monorepo độc lập `v2/` theo lựa chọn A của chủ dự án.
-- Supabase Cloud PostgreSQL/Auth/Storage, project `bdhavbwmxbttymerizvx`;
-  web/services/RabbitMQ localhost và Docker Compose cho các thành phần local.
-  Không yêu cầu Supabase Local, không K8s/Redis/Elasticsearch mặc định.
-  [ADR-0001](adr/0001-supabase-cloud.md) ghi quyết định đã duyệt, không cấp quyền remote mutation.
-- Mỗi business service có schema/DB role riêng; không business cross-schema
-  reads/writes/joins/FK. Giao tiếp HTTP/events, frontend business traffic đi Gateway.
-- Không reuse code/UI/assets/data legacy; root Vite giữ nguyên đến gói cleanup.
+## Historical architecture record
 
-## C4 context và container — bản nháp ranh giới
+The remaining sections preserve prior evidence and decisions. Apply the
+current amendment above wherever a prior session/security statement conflicts.
 
-```mermaid
-flowchart LR
-  person[Browser khách / user / admin] -->|opaque HttpOnly cookie| web
-  subgraph local["Localhost / v2"]
-    web[Next.js BFF :3000] --> gateway[NestJS Gateway]
-    gateway --> catalog[Catalog]
-    gateway --> community[Community + session authority]
-    gateway --> notification[Notification]
-    catalog -->|HTTP authorization| community
-    notification -->|HTTP authorization| community
-    catalog --> broker[RabbitMQ]
-    community --> broker
-    broker --> notification
-  end
-  subgraph cloud["Supabase Cloud / bdhavbwmxbttymerizvx"]
-    cdb[(catalog schema / runtime role)]
-    udb[(community schema / runtime role)]
-    ndb[(notification schema / runtime role)]
-    auth[Managed Auth]
-    storage[Managed Storage]
-  end
-  catalog -->|PostgreSQL TLS| cdb
-  community -->|PostgreSQL TLS| udb
-  notification -->|PostgreSQL TLS| ndb
-  community -->|HTTPS supported APIs| auth
-  catalog -->|HTTPS catalog media| storage
-  community -->|HTTPS avatar| storage
-  mail[Gmail custom SMTP / email recipient]
-  auth --> mail
-```
-
-Postgres Cloud có business schemas/roles tách biệt, không một role chung đọc mọi
-schema. Auth/Storage internals do Supabase quản lý. Diagram là thiết kế, chưa có
-runtime. Browser không ghi business DB hoặc nhận privileged keys/token Auth.
-MCP là control-plane ngoài đường request ứng dụng, không là DB client runtime.
-Policy repo chỉ cho 5 metadata reads. Sau đề nghị read/write ngày2026-11-16,
-owner đã đồng ý giữ metadata-only cho SCRUM-59; MCP đã reconcile về V2 (xem dưới).
-
-| Container | Ownership đã chốt trong roadmap | Không được sở hữu/làm |
-| --- | --- | --- |
-| Web | Render/BFF transport; UI system ở task UI sau | Business SQL, ORM domain, DB/privileged keys |
-| Gateway | Routing/aggregation, trust boundary, JWT verification, request ID | Business tables hoặc bypass owner services |
-| Catalog | Dishes/restaurants/offerings/categories/areas/media metadata/outbox | Community favorites/profile/comments hoặc inbox SQL |
-| Community | Profiles/preferences/immutable handles/favorites/comments/replies/mentions/reports/outbox, app-session/revocation ledger, server-only token custody | Catalog content/prices hoặc inbox tables |
-| Notification | Inbox/read state/broadcast, follow projection, processed events | Đọc favorites gốc hoặc sửa profile/preferences SQL |
-| Supabase Auth/Storage | Managed identity primitives/object bytes và system schemas | Nơi để agents drop/write internals hoặc business cross-schema shortcuts |
-| RabbitMQ | Event transport durable | Nguồn sự thật cho authorization hoặc bằng chứng consumer commit |
-
-App-session authority/token custody trong Community và server-only BFF đã được
-owner duyệt **A**. Không thêm service. Exact HTTP contracts/fields thuộc SCRUM-60.
-
-## Trust boundaries và credential ownership — SCRUM-59
-
-1. Browser → BFF: cookie opaque entropy cao, chỉ hash handle trong ledger;
-   HttpOnly/SameSite, Secure khi HTTPS (localhost HTTP exception chỉ dev).
-   Không browser Supabase JS/tokens/localStorage. Callback phải bind PKCE/state/
-   purpose và allowlist return path; chống CSRF/origin trên mutation, no-store cho
-   session/private responses. Không đưa code/token vào logs/analytics.
-2. BFF → Gateway → owner service: không tin user/admin header từ browser;
-   private actions có authorization đồng bộ Community, service identity được xác
-   thực. Network localhost không tự là trusted; chặn direct business-service bypass.
-   JWT nếu dùng làm identity credential phải kiểm signature/issuer/audience/expiry,
-   không thay thế ledger. Service auth mechanics/timeouts chốt ở SCRUM-60.
-3. Community → Auth: supported API, request-scoped client; normal app-session chỉ
-   được admission sau password login thành công, không auto enroll từ JWT/refresh/
-   verification/recovery callback. Recovery-only session không được private actions.
-4. Durable revocation: logout chỉ session hiện tại; đổi/reset khóa admission,
-   vô hiệu generation cũ, điều phối Auth update/global signout, yêu cầu fresh login.
-   Refresh/admission phải serialize/recheck để không hồi sinh phiên. Partial failure
-   lưu state phục hồi, fail-closed; session invalid 401, auth dependency unavailable
-   503, không private side effect. Không positive authorization cache hoặc event async
-   làm authority. Request được authorize trước revocation có thể hoàn tất.
-5. Owner service → Cloud DB: credential runtime chỉ schema của mình, không owner/
-   superuser/DDL mặc định, migration principal riêng và không nằm trong runtime
-   containers. Không assume PostgreSQL role có `auth.uid()`. Mọi quyền user/admin
-   kiểm ở backend. Không cross-service SQL/FK kể cả connection cùng engine.
-6. Catalog/Community → Storage: metadata và quyền do owner service kiểm, object
-   bytes do managed Storage. Không dùng private signed URL/JWT-only Data API làm
-   đường bypass revocation. Bucket/path/MIME/size/public-media policy và upload
-   transport chi tiết thuộc contracts/Storage tasks; chưa phê duyệt direct upload.
-7. Cloud/network/broker: TLS xác thực certificate, không disable verification.
-   Secrets tách env local theo service ngoài Git; không in DSN. RabbitMQ nội bộ,
-   ack sau commit/idempotency, không coi publisher confirm là consumer commit.
-   Outage không được giả successful write hoặc empty result.
-
-## Schema/ERD boundary tối thiểu
-
-```mermaid
-erDiagram
-  CATALOG_RESTAURANTS ||--o{ CATALOG_OFFERINGS : has
-  CATALOG_DISHES ||--o{ CATALOG_OFFERINGS : sold_at
-  CATALOG_AREAS ||--o{ CATALOG_RESTAURANTS : classifies
-  COMMUNITY_PROFILES ||--|| COMMUNITY_PREFERENCES : owns
-  COMMUNITY_PROFILES ||--o{ COMMUNITY_FAVORITES : owns
-  COMMUNITY_PROFILES ||--o{ COMMUNITY_COMMENTS : authors
-  COMMUNITY_PROFILES ||--o{ COMMUNITY_APP_SESSIONS : admits
-  COMMUNITY_PROFILES ||--o{ COMMUNITY_CREDENTIAL_OPERATIONS : coordinates
-  COMMUNITY_COMMENTS ||--o{ COMMUNITY_MENTIONS : contains
-  COMMUNITY_COMMENTS ||--o{ COMMUNITY_REPORTS : receives
-  NOTIFICATION_INBOX ||--o{ NOTIFICATION_RECIPIENTS : delivers
-```
-
-Các tên trên là domain nodes để thấy quan hệ **nội bộ**, không phải migration
-đã triển khai. Comment có target type/UUID và parent cùng target, tối đa một tầng.
-External user/catalog IDs trong service khác chỉ là stable references; không tạo
-FK vào schema service khác hoặc `auth.users`.
-Session/revocation/credential-operation records chỉ trong Community. Catalog
-media và Community avatar metadata có object reference, không FK Storage internals.
-Outbox nằm trong schema producer; Notification tự sở hữu follow projection,
-processed events, recipients/read states; không query favorites/preferences gốc.
-
-Data dictionary, indexes, exact constraints và quyền runtime/migration sẽ được
-đối chiếu thành `data-model.md`/contracts sau khi ranh giới đã rõ; không tự coi
-ERD tối thiểu này là toàn bộ schema V2.
-
-## Localhost resource budget — owner duyệt provisional, chưa đo runtime
-
-Snapshot lịch sử59: 15.71 GiB RAM, free khoảng 4.98 GiB lúc kiểm; 20 CPU logic;
-C free 17.76 GiB, D free 61.25 GiB. Docker Engine chưa được xác minh, WSL chưa cài.
-Update64: owner bật Desktop; actual version/info xác nhận Engine29.9.3 chạy Linux/
-WSL2, VM7.609GiB capacity. Owner sau đó xác nhận Docker data trên C tại
-`C:\Users\HUY\AppData\Local\Docker\wsl` và duyệt2image pins. Resource recheck:
-hostfree≈3.22–3.83GiB<6, Cfree≈12.947GiB<15; không full-stack PASS.
-Profile `demo-lite` (declared container caps2GiB/runtime-only guard4GiB/build
-guard6GiB) **đã được owner duyệt tiếp theo**, preflight explicit profile/phase
-đã hỗ trợ; chưa Compose enforcement/runtime measurement. Không override disk15GiB.
-Xem [evidence64](maintenance/SCRUM-64-validation.md).
-Update tiếp64: owner tự chuyển data bằng Desktop sang `D:\DockerDesktopWSL`;
-folder/VHD metadata và Engine đã kiểm, diskD≈59.129GiB PASS≥15. Windows/temp
-vẫnC≈14.82–14.84GiB, build contextD; không áp guard Docker15 lên C nữa.
-RAM lúc recheck≈2.79–2.81GiB khiến cả runtime4/build6 bị chặn, không overall PASS.
-Preflight đã dùng explicit path, không hardcode C; không đổi guard/code để bỏ qua.
-
-Cloud-adjusted guard đã duyệt provisional trước full stack: RAM hữu dụng >=15 GiB, RAM trống
->=6 GiB; ít nhất 15 GiB trống tại Docker data và 10 GiB nơi workspace.
-Không tự đóng ứng dụng, đổi VHD location hoặc chỉnh WSL để đạt guard.
-
-| Nhóm runtime | Budget RAM dự kiến (MiB) |
-| --- | ---: |
-| Next.js production web | 384 |
-| Gateway | 256 |
-| Catalog / Community / Notification | 384 mỗi service |
-| RabbitMQ | 512 |
-| Postgres / Auth / Storage / Studio / SMTP inbox local | 0 — không chạy trong topology mặc định |
-| Tổng services local ước tính | 2304 |
-
-Thêm overhead VM/runtime và build: mục tiêu local steady-state <=4 GiB,
-build tuần tự, peak khoảng 6 GiB. Đây là **target**, không phải `docker stats`
-đã đo. Dev/hot reload/E2E có thể cần thêm; phải đo trước khi pin container limits.
-Nếu vượt budget: đo/review cách tuning, không tự bỏ service hoặc đổi stack.
-
-### Approved alternative — demo-lite tại64
-
-Owner: “Tôi duyệt profile trên và nhớ bổ sung trên jira để đồng bộ”.
-Giữ đủ6containers/Cloud/DB pools4/4/2; production, không watch/HMR, build tuần tự
-tách khỏi runtime. Web512/Gateway256/Catalog256/Community256/Notification256/
-RabbitMQ512MiB, tổng hard caps đề nghị thực thi2048MiB. Approved targets chưa
-runtime measurement/enforcement; không capacity/OOM-free guarantee.
-Default/full/build vẫn freeRAM≥6GiB; chỉ explicit demo-lite runtime≥4GiB,
-Engine phải reachable/Linux. Mọi profile giữ usableRAM15/Docker-data15/workspace10.
-Không dùng approval này để kill/prune/delete/đổi WSL hoặc mutate Cloud.
-Record: `v2/infra/demo-lite.json`; chưa chuyển64/21 Done.
-
-### Resource-budget amendment64 — owner cho phép đánh giá/điều chỉnh và chạy đo
-
-Budget6GiB trước là conservative planning target, không Docker/Node/service
-minimum chung. Owner đã cho sửa local Compose/scripts/preflight theo budget
-measured và giữ safety/acceptance, không đổi pins/architecture/WSL global.
-Demo-lite mới: build **single capped Linux container2048MiB, no swap**, Node
-old-space768MiB/Next cpus1; các runtime caps6services giữ tổng2048MiB. Default/
-unbounded fallback không được tự áp budget này.
-
-Idle5samples: Windows available min5.678GiB, WSL WS≈960.62MiB (capacityVM7.61
-không resident). Pilot build memory.peak1537.85MiB, sampled maxVMWS3649.27MiB,
-minWindowsavailable2825.84MiB, noOOM/restarts0. Residual VMdelta−cgrouppeak≈
-1150.8MiB →planning allowance1280MiB. Không coi noncoincident peaks là exact
-physical decomposition; baselineWSL không đếm thêm vào available requirement.
-Budgetphase =2048workloadcap+1280incrementalallowance+1024hostreserve
-=4352MiB=**4.25GiB available**, build/runtime tách nhau. Disk guards giữ15/10.
-Runtime allowance tạm dùng mức conservative đã thấy trong build, chưa được
-full-stack validation. Swap không được tính/containers không thêm swap.
-
-Pilot thất bại do pnpm packaging/nonTTY; fixes có regression tests nhưng rerun
-bị guard chặn do available1.24–1.59GiB khi host load thay đổi. Chưa Docker runtime/
-Cloud/CI PASS,64/21 chưa Done. Không WSL limit/settings change, kill/delete/prune.
-
-Latest64 runtime evidence: cached retry sửa actual packaging-dir collision,
-Linux build/package exit0,5/5runtime images built. Fresh test project6containers
-healthy đồng thời60s, HTTP200/503/404, stop/start và durable broker message PASS;
-OOMfalse/restarts0, cgroup caps/noSwap inspected. MinWindowsavailable4964.42MiB/
-maxVMWS2993.07MiB, no reserve breach. Sau test đúng project đã stop, data giữ.
-Đây là local scaffold only, không business/Cloud/CI/full-workload capacity.
-Task64/21 chưa Done; [runtime evidence](maintenance/SCRUM-64-runtime-validation.md).
-
-Số đo cũ C/D có thể đáp ứng disk guard mới nhưng free RAM cũ 4.98 GiB chưa đạt
-guard 6 GiB; cần đo lại ở SCRUM-64. Data location cần chủ máy chọn/chấp thuận.
-Đây là gate của SCRUM-64, không phải quyền reset hoặc di chuyển volumes.
-
-## Cloud preflight và DB connection budget
-
-- Direct metadata owner cung cấp ngày 2026-11-16, không suy từ ref:
-  host `db.bdhavbwmxbttymerizvx.supabase.co`, port `5432`, database `postgres`,
-  user `postgres`. User này là thông tin kết nối quản trị, **không phải** runtime
-  credential chung. Runtime roles riêng chưa tạo, tên/password/grants chưa chốt.
-  Session-pooler endpoint chưa được cung cấp; không tự ghép host/user.
-- Candidate pool cap (chưa pin config): Catalog 4, Community 4, Notification 2;
-  tổng 10 runtime connections cho một replica/service; Gateway/Web không có DB pool.
-  Background jobs dùng cùng cap; migration tối đa 1 riêng khi được duyệt. Giới hạn
-  ordinary lý thuyết57 theo owner SQL report bên dưới, không phải quota dành riêng
-  cho app. Phải tính other usage và operational headroom riêng trước khi chốt;
-  nhân replica phải tính lại. Không coi 11 là capacity đã nghiệm thu.
-- Kiểm IPv4/IPv6 và driver/session pooler compatibility, TLS CA/hostname, timeout,
-  backoff có giới hạn, không retry mù write không idempotent. Không tự chọn
-  transaction pooler hoặc tắt TLS để hết lỗi.
-- Kiểm project active/not paused, network/DNS, pool saturation, Storage/egress/Auth
-  quotas và email provider limits trước demo. Không đổi plan/restore project tự động.
-- Site URL mong muốn `http://localhost:3000`, callback `/auth/callback`, reset UI
-  `/auth/reset-password`; allowlist exact URLs, không wildcard rộng. Callback nhận
-  code và phân biệt verification/recovery trước khi route reset; reset page không
-  tự cấp normal app-session. Không giả rằng chỉ thêm reset page URL là đủ PKCE.
-- Gmail SMTP owner đã cấu hình Dashboard, chưa kiểm send. Test sau scaffold:
-  hai mailbox owner kiểm soát → signup → email verify → fresh login → forgot
-  password → recovery-only callback → update → mọi phiên cũ bị chặn → fresh login.
-  Kiểm expired/reused/mismatched callback, enumeration-safe errors, SMTP failure/
-  rate limit có retry guidance, không auto resend loop. Không log token/email riêng.
-- `opencode mcp list` ban đầu needs authentication, sau đó **connected**.
-  Supported read-only MCP trả API URL `https://bdhavbwmxbttymerizvx.supabase.co`;
-  `list_tables` cho public/catalog/community/notification trả `tables=[]`,
-  `list_migrations` trả `migrations=[]`. Đây là metadata evidence, không chứng minh
-  mọi schema/Auth users/Storage đều rỗng hoặc NestJS PostgreSQL kết nối được.
-  Chưa kiểm Auth Dashboard URL settings, Storage, plan hoặc email delivery;
-  direct Connect/SSL metadata đã được owner bổ sung bên dưới.
-
-### Connection capacity worksheet — 2026-11-16, approved provisional/chưa triển khai
-
-| Input | Giá trị / provenance |
-| --- | --- |
-| Compute | Nano — owner xác nhận Dashboard, không suy ra plan |
-| Server-side pool size | 15 mỗi cặp user/database — owner xác nhận |
-| Max pooler client connections | 200 — owner xác nhận, không phải PostgreSQL max_connections |
-| PostgreSQL max_connections | 60 — owner chạy SQL chỉ đọc và cung cấp kết quả, AI chưa kiểm độc lập |
-| superuser_reserved_connections / reserved_connections | 3 / 0 — cùng owner SQL report |
-| Ordinary ceiling lý thuyết | 60−3−0=57; không phải app allocation |
-| Plan / peak managed-services usage / clients khác | Chưa biết; snapshots5 và8 không phải peak |
-| SSL enforcement | Owner xác nhận đã bật; chưa query kiểm độc lập |
-| CA | Owner đã tải; file local `C:\Users\HUY\Downloads\prod-ca-2021.crt`, chưa đọc/kiểm |
-
-**Một process mỗi service**, một pool duy nhất dùng chung cho requests, health
-checks, outbox/consumer/background jobs của service đó:
-
-| Process | App pool cap đề xuất | PostgreSQL backend cap bảo thủ |
-| --- | ---: | ---: |
-| Web / Gateway / RabbitMQ | 0 | 0 |
-| Catalog | 4 | 4 |
-| Community (kể cả auth/session ledger) | 4 | 4 |
-| Notification (kể cả consumer/polling) | 2 | 2 |
-| Runtime tổng | 10 | 10 |
-| Migration runner riêng, tối đa một lần chạy | 1 | 1 |
-| Runtime + migration nếu trùng thời gian | 11 | 11 |
-
-- **Direct**: 10 app connections có thể chiếm 10 PostgreSQL backends; pooler
-  settings 15/200 không giới hạn hoặc chứng minh capacity cho đường direct.
-- **Session pooler nếu cần IPv4**: giữ nguyên role riêng, cùng các app caps.
-  Với một process/role, lần lượt 4≤15, 4≤15, 2≤15. Nếu migration đi pooler, role
-  riêng 1≤15; endpoint/role support phải kiểm thật trước chọn. Không cộng thành
-  "10≤15 nên toàn DB an toàn". Ba pool service có theoretical server-side ceiling
-  3×15=45 (chưa tính migration/clients khác); app caps chủ động mới giới hạn về 10.
-  Nếu dùng nhiều pooler/mode đồng thời, phải cộng tất cả backends, không reuse
-  headroom hoặc đếm 200 như số DB sessions khả dụng.
-- Client-side: nếu chỉ ba services đi shared pooler, dự toán 10 clients; thêm
-  migration qua cùng pooler là 11. Phần còn lại của 200 chưa phải capacity được
-  cấp cho app vì có thể còn clients khác và backend limit thấp hơn. Session mode
   giữ backend theo session, không bảo đảm multiplex nhiều idle clients như
   transaction mode.
 - Formula scale/rollout: `P = 4*rCatalog + 4*rCommunity + 2*rNotification + m`,
@@ -611,3 +340,47 @@ pre-scaffold evidence để giữ19 mở. Blocker hiện tại của63 là gate 
 chưa chốt, không phải60 chưa Done hay thiếu runtime Auth/Cloud trong task thiết kế.
 Gói C đã được nêu với điều kiện sau predecessors, không bỏ gate19:
 chưa scaffold/install/start Docker/Cloud probes hoặc tạo CI ở lượt này.
+
+## Owner-approved stack amendment — SCRUM-5, 2026-11-19
+
+This section amends the historical Next.js/NestJS target below; it does not
+rewrite historical approvals or change service/data boundaries. See
+[ADR-0003](adr/0003-vite-spring-stack.md) and the normative
+[HTTP/session contracts](../specs/003-grabmefood-v2/contracts/README.md).
+
+- **Web:** Vite + React + TypeScript SPA. Next.js is not the target V2 web
+  framework. Keep the existing legacy removal gate: do not remove legacy
+  Next.js/Node until Spring Gateway auth/session works and SPA production build
+  passes.
+- **Backend:** Java 21 LTS, Spring Boot 3.5.16, Maven multi-module. One
+  Spring Gateway/BFF plus independent Catalog, Community and Notification
+  services. Spring Boot 3.5.16 is the latest 3.5 patch announced by Spring on
+  2026-06-25, but Spring identifies it as the final OSS release of that
+  generation; support must be reviewed before implementation/release. The
+  requested 3.3.x line is also unsupported: 3.3.13 was its final OSS patch
+  (2025-06-19). Sources and rationale are in ADR-0003. No extra framework.
+- **Session transport:** Supabase Auth owns account credentials and supported
+  session/refresh behavior. Spring Gateway is the browser-facing edge, validates
+  Supabase JWTs, and provides the agreed cookie/CSRF/CORS handling. Community
+  owns profile and application data, not a custom session ledger or provider
+  token custody. Use provider-supported logout and expiry; do not claim
+  immediate global revocation beyond provider guarantees.
+- Keep basic authorization at the owning service, least-privilege service
+  database access, RLS for user-private records, TLS chain/hostname verification,
+  server-side secrets, and input validation. Do not add custom refresh fencing,
+  durable revocation machinery, exhaustive distributed-failure matrices, or
+  production-hardening infrastructure for the student project.
+- **HTTP contract:** existing `/api/v1` Markdown contracts remain normative.
+  The OpenAPI representation is
+  `../specs/003-grabmefood-v2/contracts/openapi.yaml`; it records existing
+  operations and DTOs without adding business behavior. Java DTOs are the
+  implementation source of truth; CI checks provider DTO compatibility and
+  generates TypeScript frontend types from OpenAPI, with provider and consumer
+  contract tests.
+- **Database:** Flyway alone owns schema. JPA/Hibernate
+  `ddl-auto=none`; no schema generation/update. V001–V015, seed, RLS/grants,
+  DB contracts and data evidence remain unchanged. No Cloud connection,
+  preflight or apply follows from this amendment.
+- SCRUM-77 remains research-only and SCRUM-78 remains visual approval only;
+  neither is UI implementation authorization. All UI remains unstarted pending
+  its approved direction gate.
