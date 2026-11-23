@@ -103,7 +103,7 @@ Khi query khớp món, nêu món khớp dưới quán thay vì đổi kết qu�
 ### Đã lưu / random — Operate
 
 - Tách tab Quán và Món; danh sách bộ sưu tập riêng, loại bộ hiển thị rõ.
-- Random nằm trong khu đã lưu: “Toàn bộ đã lưu” hoặc “Tự chọn các mục”.
+- Random nằm trong khu đã lưu: “Toàn bộ đã lưu” hoặc “Tự chọn các mục”; không có mode riêng theo bộ (DEC-046).
 - Kết quả cho phép mở chi tiết và random tiếp; không vòng quay gây chờ, không tuyên bố tránh lặp.
 - Không mục hợp lệ: giải thích “Chưa có mục khả dụng để chọn”, gợi ý lưu thêm/chọn lại.
 - Marker hiển thị “Không còn khả dụng”; thao tác bỏ marker chờ chốt OQ-07/G2-P04.
@@ -123,7 +123,7 @@ Khi query khớp món, nêu món khớp dưới quán thay vì đổi kết qu�
 - Không có Nháp/Chờ duyệt.
 - Đã chọn progress xóa: chặn hiển thị/sử dụng trước, “Đang xử lý xóa”, chỉ đủ receipts mới báo hoàn tất;
   lỗi giữ chưa hoàn tất và retry an toàn. Không phải trạng thái Nháp nội dung.
-- Xóa/khóa có bước xác nhận và tóm tắt tác động là đề xuất UX chờ duyệt.
+- Xóa/khóa có bước xác nhận và tóm tắt tác động; chỉ báo hoàn tất từng bước khi có xác nhận tương ứng (DEC-047).
 - Lỗi Auth/DB một phần phải hiện trạng thái pending/partial và nút thử lại hợp lệ,
   không toast “thành công” khi chỉ hoàn tất một bước.
 - Local command thành công và thông báo đã phát/cleanup liên dịch vụ hoàn tất là kết quả khác nhau.

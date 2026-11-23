@@ -68,6 +68,9 @@ Không giả định có phê duyệt độc lập cho các chi tiết triển k
 | DEC-042 | Duyệt hướng khảo sát danh tính máy riêng do Supabase Auth cấp để hoàn thiện P02 | Chỉ duyệt hướng nghiên cứu/đề xuất; không duyệt tạo user/role, bật Auth hook, cài tool hoặc chạy spike |
 | DEC-043 | Tiếp tục preparation P02/P03 không phụ thuộc GATE-01; chỉ chặn persistence/phân quyền cần proof | Project có JWT signing key ECC P-256 nhưng không tương đương PostgreSQL role service; không tạo/xoay key; role/schema ứng viên chưa có theo khảo sát chỉ đọc do chủ dự án cung cấp |
 | DEC-044 | Bỏ spike M1 trước implementation; tiếp tục các lát cắt độc lập và dừng phần persistence/phân quyền khi cần kết quả GATE-01 | Chủ dự án chấp nhận rủi ro role/Data API/RPC chỉ lộ ra trong implementation; không coi là proof, không đổi quyền Cloud hoặc cho phép tự chọn phương án thay thế |
+| DEC-045 | Mỗi thao tác lưu chọn một bộ sưu tập phù hợp loại; cùng mục vẫn có thể được thêm vào nhiều bộ bằng các thao tác riêng | Chủ dự án duyệt wireframe GRAB-2; không thay đổi quyền riêng tư hoặc rule nhiều bộ ở REQ-SAV-01..02 |
+| DEC-046 | Không có chế độ random trực tiếp theo bộ sưu tập; giữ hai cách theo PRD: toàn bộ mục đã lưu hoặc tự chọn các mục đã lưu | Chủ dự án duyệt wireframe GRAB-2; xác suất và xử lý item bị gỡ đồng thời vẫn TBD |
+| DEC-047 | Với thao tác admin nguy hiểm, yêu cầu xác nhận trước và nêu tác động; chỉ báo hoàn tất từng bước khi có xác nhận tương ứng, nếu chưa thì thể hiện đang/chưa hoàn tất | Chủ dự án duyệt nguyên tắc UX trong wireframe; không thay đổi authorization, workflow backend, receipts hoặc recovery contract |
 
 ### Hướng trước DEC-025 — lưu lịch sử, không dùng như ràng buộc hiện tại
 
@@ -207,8 +210,8 @@ Không cần hỏi tất cả ngay; giải quyết theo nhóm trước khi thi�
 | OQ-03 | Tích hợp map miễn phí, nguồn tên/địa chỉ, điều kiện sử dụng | Trước thu thập dữ liệu/khởi tạo key; không mặc định scrape |
 | OQ-04 | Nội dung trường quán/món, số lượng seed, nguồn/quyền ảnh | Trước chuẩn bị dataset; không tự suy ra từ Michelin |
 | OQ-05 | Gán khu vực, trùng khu vực và taxonomy | Danh mục 3 nhóm do agent chọn là danh mục ban đầu, không địa giới |
-| OQ-06 | Chọn một bộ khi random có còn là chế độ riêng? Xác suất và trường hợp mục bị gỡ đồng thời | Trước thiết kế random |
-| OQ-07 | Đổi tên/xóa bộ, tên trùng/giới hạn tên, bỏ lưu | Gom đề xuất UI + business rules |
+| OQ-06 | Đã chốt không có chế độ random riêng theo bộ (DEC-046); xác suất và trường hợp mục bị gỡ đồng thời còn mở | Trước khi chốt thuật toán/implementation random |
+| OQ-07 | Đã chốt mỗi thao tác lưu chọn một bộ (DEC-045); đổi tên/xóa bộ, tên trùng/giới hạn tên, bỏ lưu còn mở | Gom đề xuất UI + business rules |
 | OQ-08 | Xóa comment/reply đã chốt cascade; còn giới hạn chữ/số bình luận | DEC-034, không hỏi lại cascade |
 | OQ-09 | Quy tắc recipient đã chốt; còn thuật toán dedup/retry và hai mốc save | DEC-035/036; không lưu lịch sử cá nhân vô hạn mặc định |
 | OQ-10 | Đích thông báo đã xóa, retention, nhiều tab và mất kết nối | Nhóm thiết kế thông báo |
@@ -225,8 +228,8 @@ Không cần hỏi tất cả ngay; giải quyết theo nhóm trước khi thi�
 | OQ-21 | Current-state lock/visibility, cleanup completion và consistency window liên dịch vụ | G2-P16/G2-P17; không tự nới acceptance hoặc giữ dữ liệu riêng sau xóa |
 
 Các trạng thái loading/error/empty trong APP-FLOWS là đề xuất thiết kế cần review; không tự chốt copy.
-Nhóm 2 hiện có sketch text và token candidate; chưa có wireframe render hoặc acceptance UI được duyệt,
-không tuyên bố đã tái tạo giao diện Michelin.
+Wireframe text GRAB-2 đã được chủ dự án duyệt ngày 2026-11-23 làm tài liệu review, không phải
+visual baseline hoặc UI acceptance. Wireframe không tuyên bố tái tạo giao diện Michelin.
 
 ## 5. Tình trạng lựa chọn nhóm 2 sau các xác nhận bổ sung
 

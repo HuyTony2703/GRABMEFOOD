@@ -28,7 +28,7 @@ Sau đó chủ dự án duyệt riêng scaffold và dependency cho lát cắt fr
 | Vite | Frontend exact 8.3.8; client/SSR build pass | Chưa kiểm chứng deployment/host |
 | React plugin | Frontend exact plugin-react 6.3.0; build pass | Chỉ xác nhận frontend slice |
 | supabase-js | Registry 2.119.2, engine Node >=22 | Candidate trên Node 24 |
-| Vitest | Frontend exact 5.1.1; 2 files/5 tests pass trên Node 24.16.0 | Không chứng minh integration/E2E |
+| Vitest | Frontend exact 5.1.1; 4 files/29 tests pass trên Node 24.16.0 | Không chứng minh integration/E2E |
 | React Testing Library | Frontend exact 16.3.3 + DOM 10.4.2; component tests pass | Chỉ xác nhận current frontend tests |
 | PostgreSQL | Đọc project trả 17.11 | Không nâng/hạ phiên bản Cloud |
 

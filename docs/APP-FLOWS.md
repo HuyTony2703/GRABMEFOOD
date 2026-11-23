@@ -64,7 +64,7 @@ Quên mật khẩu ──> Email khôi phục ──> Đặt mật khẩu mới
 3. Xem bộ sưu tập riêng của mình; một mục có thể có trong nhiều bộ.
 4. Mục bị ẩn/xóa hiện “Không còn khả dụng”, không mở lại nội dung đã xóa.
 
-Bước chọn nhiều bộ cùng lúc là **đề xuất UX**, không là thao tác API đã chốt.
+Mỗi thao tác lưu chọn **một bộ sưu tập phù hợp loại**; muốn thêm cùng mục vào bộ khác thì thực hiện thao tác lưu riêng (DEC-045). Cùng mục vẫn có thể thuộc nhiều bộ.
 Cần quyết định chi tiết đổi tên/xóa bộ, giới hạn tên và cách bỏ lưu.
 Không có bộ sưu tập công khai/chia sẻ trong phạm vi đã xác nhận.
 
@@ -82,7 +82,7 @@ Chọn quán hoặc món
 
 Tập rỗng hoặc không còn mục hợp lệ: giải thích và gợi ý chọn lại; không lấy quán/món bên ngoài đã lưu.
 Nếu mục vừa bị gỡ trong lúc thao tác, không trả nó như kết quả khả dụng.
-Lối tắt random từ một bộ sưu tập cụ thể và thuật toán xác suất: OPEN QUESTION.
+Không có chế độ random riêng từ một bộ sưu tập; người dùng chọn toàn bộ mục đã lưu hoặc tự chọn các mục đã lưu (DEC-046). Thuật toán xác suất và xử lý mục bị gỡ đồng thời vẫn là OPEN QUESTION.
 
 ## 6. Bình luận — REQ-COM-01..03
 
@@ -124,7 +124,7 @@ Sự kiện hợp lệ ──> Thông báo riêng của người nhận ──> 
 - Khóa/mở tài khoản; xóa tài khoản kéo theo dữ liệu riêng và bình luận/reply của người đó.
 - Gửi thông báo riêng hoặc toàn bộ.
 
-**Đề xuất UX chờ duyệt:** xác nhận trước thao tác xóa/khóa, hiển thị tác động và báo đúng kết quả từng bước.
+**Nguyên tắc UX đã duyệt (DEC-047):** xác nhận trước thao tác xóa/khóa và nêu tác động; chỉ báo hoàn tất bước khi đã có xác nhận tương ứng. Nếu chưa đủ xác nhận thì thể hiện đang/chưa hoàn tất, không báo thành công sớm.
 Đã chốt không tự khóa/xóa admin, bảo vệ admin active cuối; admin đầu do chủ dự án chỉ định.
 Danh tính/admin bootstrap thực tế và kiểm tra race còn phải hoàn thiện trước implementation.
 
