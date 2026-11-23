@@ -22,14 +22,14 @@ Sau đó chủ dự án duyệt riêng scaffold và dependency cho lát cắt fr
 | Maven | User duyệt Maven; không tìm thấy `mvn` trên PATH qua Get-Command | Maven Wrapper 3.9.x, patch/checksum pin khi lập kế hoạch; chưa tải wrapper |
 | Spring Boot | Trang system requirements hiện hiển thị 4.2.0, Java 17..27, Maven >=3.6.3 | 4.2.0 là candidate tương thích Java 21 về tài liệu; kiểm tra release/artifact trước pin |
 | Node | Local v24.16.0 | Node 24 LTS, khóa patch cho môi trường đã chọn |
-| npm | Có executable, chưa kiểm tra version | npm với lockfile; không tạo workspace monorepo tool riêng |
-| React | Registry `latest` trả 19.3.1 | React/ReactDOM cùng patch; chưa install |
-| TypeScript | Registry `latest` trả 7.0.2; metadata React Testing Library còn dùng TS 5.9.3 trong dev dependencies | TypeScript 7 chưa được xác nhận với ứng dụng/toolchain; không lấy latest làm bảo đảm tương thích |
-| Vite | Registry trả 8.3.8; guide hiển thị 8.3.7; engine ^20.19 hoặc >=22.12 | 8.3.8 candidate, không coi khác biệt docs/registry là build evidence |
-| React plugin | Registry 6.3.0, peer Vite ^8; engine Node ^20.19 hoặc >=22.12 | Candidate cùng Vite 8, cần kiểm chứng optional peer/toolchain |
+| npm | Local npm 11.13.0; frontend lockfile exact | Chưa chốt package manager policy cho backend/monorepo |
+| React | Frontend exact React/ReactDOM 19.3.1 trong lockfile; build/test slice pass | Chưa là baseline app đầy đủ |
+| TypeScript | Frontend exact 5.9.3 trong lockfile; `tsc -b` pass | Không dùng TypeScript latest 7.0.2 candidate lịch sử |
+| Vite | Frontend exact 8.3.8; client/SSR build pass | Chưa kiểm chứng deployment/host |
+| React plugin | Frontend exact plugin-react 6.3.0; build pass | Chỉ xác nhận frontend slice |
 | supabase-js | Registry 2.119.2, engine Node >=22 | Candidate trên Node 24 |
-| Vitest | Registry 5.1.1; peer Vite ^6.4, ^7 hoặc ^8; engine Node ^22.12, ^24 hoặc >=26 | Candidate tương thích theo khai báo metadata với Vite 8/Node 24; chưa resolve/test |
-| React Testing Library | Registry 16.3.3; peer React/ReactDOM ^18 hoặc ^19, `@testing-library/dom` >=10 | Candidate tương thích theo khai báo peer với React 19; chưa resolve/test |
+| Vitest | Frontend exact 5.1.1; 2 files/5 tests pass trên Node 24.16.0 | Không chứng minh integration/E2E |
+| React Testing Library | Frontend exact 16.3.3 + DOM 10.4.2; component tests pass | Chỉ xác nhận current frontend tests |
 | PostgreSQL | Đọc project trả 17.11 | Không nâng/hạ phiên bản Cloud |
 
 Spring Framework/Security đi theo BOM Spring Boot đã chọn, không pin chồng ngẫu nhiên.
@@ -48,10 +48,13 @@ Build client + SSR và UI tests local đã chạy thành công (xem evidence imp
 [DECISIONS](DECISIONS.md)); điều này chỉ xác nhận lát cắt frontend hiện tại, không là
 baseline pin cho các service Java hay bằng chứng tích hợp/Auth/Data API/RLS.
 
+Production server local tại `PORT=4174 npm run start`: GET `/` SSR và asset JS đều HTTP 200
+ngày 2026-11-23. Port mặc định 4173 đã có dev server đang nghe; không dừng tiến trình đó.
+
 ## 2. Cấu trúc repo đề xuất
 
 ```text
-frontend/           React/TS/Vite và test UI (chưa tạo)
+frontend/           React/TS/Vite UI + SSR slice đã scaffold; không đồng nghĩa toàn ứng dụng hoàn tất
 services/
   catalog/          Spring Boot/Maven độc lập
   collection/       Spring Boot/Maven độc lập
@@ -67,8 +70,8 @@ DESIGN.md           Tokens/component và responsive
 Mỗi service có build/test/artifact/config và migration ownership độc lập; shared thư viện kỹ thuật tối thiểu
 chỉ khi duyệt, không share entities/JPA persistence hoặc một transaction manager xuyên miền.
 Migration có thể đặt dưới từng service; một nguồn chuẩn/owner, không đồng thời Flyway và Supabase SQL trùng nhau.
-Tooling/thứ tự replay chưa chốt G2-P13/G2-P18; không có folder/package/runtime scaffold nào được tạo.
-Renderer SSR đã chọn, cần entry/deployment riêng; không là service nghiệp vụ thứ sáu.
+Tooling/thứ tự replay chưa chốt G2-P13/G2-P18; năm service chưa scaffold.
+Renderer SSR đã chọn và có local entry/server slice; deployment chưa chốt, không là service nghiệp vụ thứ sáu.
 
 ## 3. Tích hợp, credentials và cấu hình
 
