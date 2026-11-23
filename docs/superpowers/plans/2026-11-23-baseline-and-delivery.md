@@ -302,6 +302,29 @@ Kiểm chứng local: `npm test -- --reporter=verbose` (5 tests pass, 2 files);
 SSR chứa landmark/search. Không có browser automation/screenshot; đây không thay cho browser,
 Data API, Auth/RLS, năm Spring service hay migration/replay verification.
 
+### Đối chiếu GRAB-1..GRAB-10 theo evidence
+
+Read-only Jira query gần nhất trả cả 10 issue ở To Do. Đây chỉ là trạng thái tracker,
+không chứng minh không có công việc. Không cập nhật status hoặc nội dung Jira.
+
+| Jira | Đối chiếu nguồn chuẩn/evidence hiện có | Đánh giá |
+| --- | --- | --- |
+| GRAB-1 | Nhóm 1 được duyệt; 6 tài liệu nguồn, 29 requirement/35 rule traceability và review tĩnh ghi tại DECISIONS mục 7 | Đủ căn cứ đề xuất Done; chờ chủ dự án duyệt transition |
+| GRAB-2 | DESIGN/APP-FLOWS và hướng UI đã duyệt; chưa có mockup/wireframe render đã duyệt, screenshot hoặc checklist visual review | Chưa Done; còn thiếu acceptance/evidence |
+| GRAB-3 | B1/preparation, frontend exact pins/build/tests; backend Maven/Spring toolchain và baseline integration manifests chưa pin/kiểm chứng đầy đủ | Đang dở; không suy từ frontend build là toolchain toàn hệ thống xong |
+| GRAB-4 | Spike M1 bị bỏ theo DEC-044; không target/resource/proof, Jira vẫn giữ nguyên timeline | Bỏ/đang dở theo quyết định; không đánh dấu Done |
+| GRAB-5 | GATE-01 chưa proof Data API/RPC role isolation; không migration, grants hoặc RLS runtime test | Blocked ở persistence/security, không cập nhật Jira |
+| GRAB-6 | Frontend Catalog discovery chỉ là UI/search/filter/SSR khung; không Catalog service/API/data, admin, content routes, auth/RLS hay HTML/OG theo entity | Chỉ có lát cắt; milestone chưa hoàn tất |
+| GRAB-7 | Không có Auth/Collection services, real Auth flow, persistence hoặc A/B tests | Chưa bắt đầu |
+| GRAB-8 | Không có Community/Notification services, HMAC/event pipeline hoặc realtime tests | Chưa bắt đầu; GATE-03 còn mở |
+| GRAB-9 | Không có lifecycle/admin orchestration, receipts hoặc cross-owner cleanup runtime | Chưa bắt đầu |
+| GRAB-10 | Chưa có acceptance E2E, từng service/runtime, Cloud permissions, migration/replay, backup/restore hoặc release evidence | Chưa bắt đầu; GATE-05 và các gate khác mở |
+
+Không tự transition Jira. GRAB-1 là ứng viên duy nhất đủ evidence để trình owner duyệt Done;
+GRAB-2 cần visual artifacts; GRAB-3 còn phần toolchain/backend; GRAB-4 không thể coi
+spike bị hủy là hoàn tất; GRAB-5..10 chưa đạt acceptance. Tiếp tục phần độc lập được phép
+theo từng lát cắt và cập nhật evidence tại nguồn chuẩn.
+
 ## 5. Milestones triển khai đầy đủ — chưa là task code có thể chạy
 
 Mỗi milestone cần kế hoạch test-first chi tiết bổ sung sau các gate liên quan: exact files,

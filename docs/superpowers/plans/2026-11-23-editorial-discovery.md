@@ -40,10 +40,10 @@
 - `App` tiếp tục dùng `CatalogDiscovery` với `restaurants` rỗng.
 - `CatalogDiscovery` giữ prop `restaurants: CatalogRestaurant[]` và search/filter behavior.
 
-- [ ] **Step 1: Viết test fail-first** cho nav landmark tên “Điều hướng chính”, hero/editorial heading, feature có nhãn “Gợi ý biên tập · minh họa”, named search landmark và SSR empty state.
-- [ ] **Step 2: Chạy** `npm test -- --reporter=verbose`; xác nhận các assertion cấu trúc mới fail trước implementation.
-- [ ] **Step 3: Cập nhật JSX** tạo header/nav, editorial hero, search hiện hữu, CSS illustration feature có nhãn minh họa, kết quả; không thêm mock quán.
-- [ ] **Step 4: Chạy tests**; mong đợi pass với behavior search/filter/empty hiện hữu không đổi.
+- [x] **Step 1: Viết test fail-first** cho nav landmark tên “Điều hướng chính”, hero/editorial heading, feature có nhãn “Gợi ý biên tập · minh họa”, named search landmark và SSR empty state.
+- [x] **Step 2: Chạy** `npm test -- --reporter=verbose`; assertion mới fail đúng vì nav landmark chưa có.
+- [x] **Step 3: Cập nhật JSX** tạo header/nav, editorial hero, search hiện hữu, CSS illustration feature có nhãn minh họa, kết quả; không thêm mock quán.
+- [x] **Step 4: Chạy tests**; 5 tests pass, search/filter/empty behavior giữ nguyên.
 
 ### Task 2: Responsive editorial visual system
 
@@ -51,16 +51,27 @@
 - Modify: `frontend/src/styles.css`
 - Test: static/SSR assertions của Task 1
 
-- [ ] **Step 1: Xác nhận test contract** từ Task 1 và test hiện hành.
-- [ ] **Step 2: Chạy tests** trước chỉnh CSS; mong đợi pass.
-- [ ] **Step 3: Tạo CSS hierarchy** cho masthead/nav, hero, search panel, editorial feature và results; bố cục 3→2→1 cột, reflow mobile; giữ palette riêng GrabMeFood, không dùng ảnh/gradient phụ thuộc asset.
-- [ ] **Step 4: Chạy test và build** `npm test -- --reporter=verbose`, `npm run build`; mong đợi pass.
-- [ ] **Step 5: Rà tĩnh** search landmark/label, các h-level, nội dung/tài sản; `git diff --check`.
+- [x] **Step 1: Xác nhận test contract** từ Task 1 và test hiện hành.
+- [x] **Step 2: Chạy tests** trước chỉnh CSS; 5 tests pass.
+- [x] **Step 3: Tạo CSS hierarchy** cho masthead/nav, hero, search panel, editorial feature và results; bố cục 3→2→1 cột, reflow mobile; giữ palette riêng GrabMeFood, không dùng ảnh/gradient phụ thuộc asset.
+- [x] **Step 4: Chạy test và build** `npm test -- --reporter=verbose`, `npm run build`; pass 5/5, TypeScript/client/SSR pass.
+- [x] **Step 5: Rà tĩnh** search landmark/label, các h-level, nội dung/tài sản; `git diff --check` không có lỗi (chỉ cảnh báo line ending).
 
 ### Task 3: Runtime verification
 
 **Files:** không sửa thêm nếu kiểm tra pass.
 
-- [ ] **Step 1:** `npm run start` trong tiến trình nền; kiểm tra `GET /` trả HTTP 200, SSR có navigation, feature illustration, search controls và empty state; tải client asset từ HTML và xác nhận HTTP 200.
-- [ ] **Step 2:** Dừng đúng tiến trình server đã khởi chạy; ghi rõ browser visual review chưa thực hiện nếu không có browser tool.
-- [ ] **Step 3:** Rà `git status`, diff và không tuyên bố API/Auth/backend acceptance.
+- [x] **Step 1:** Chạy `PORT=4174 npm run start` do port 4173 đang được dev server sử dụng; `GET /` production SSR và JS asset HTTP 200, có nav/hero/feature/search/empty state.
+- [x] **Step 2:** Dừng production process do task khởi chạy; không dừng dev server có trước trên 4173. Browser visual review chưa thực hiện vì không có browser tool.
+- [x] **Step 3:** Rà `git status`/diff; không tuyên bố API/Auth/backend acceptance. Mọi thay đổi staged/chưa commit ban đầu được giữ; không commit.
+
+**Progress/evidence:** `npm --prefix frontend test -- --reporter=verbose` 5/5;
+`npm --prefix frontend run build` pass; production SSR and asset HTTP 200.
+Ban đầu `task-done` thử npm từ repo root nên lỗi không tìm thấy package.json; chạy lại bằng
+`--prefix frontend` pass. Port 4173 đã có tiến trình `node server.mjs` trước task; không dừng
+tiến trình không thuộc production verification này. Không browser screenshot, API, Cloud, Auth/RLS,
+service, migration/replay hoặc GRAB-6 acceptance.
+
+**Final review:** independent reviewer found no Critical/Important issues. Deferred minor:
+heading-order/feature-results regression assertions could be stronger; browser viewport/
+overflow review at 320/390/desktop remains unavailable. Impeccable detector returned `[]`.
