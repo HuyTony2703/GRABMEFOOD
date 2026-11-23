@@ -2,7 +2,7 @@
 
 Website khám phá ẩm thực dân dã dành cho sinh viên quanh Làng Đại học ĐHQG TP.HCM.
 
-> **Trạng thái: tài liệu đã duyệt; đang triển khai lát cắt frontend Catalog discovery độc lập.**
+> **Trạng thái: tài liệu đã duyệt; đang tiếp tục các lát cắt implementation theo dependency.**
 > **Ba nhóm tài liệu đã được duyệt; B1 tổng hợp phạm vi và hướng kiến trúc đã xác nhận.**
 > Theo DEC-044, bỏ spike M1; GATE-01 và các TBD kỹ thuật vẫn mở.
 > Lát cắt frontend hiện tại không kết nối API/dữ liệu/Auth và không chứng minh quyền.
@@ -73,7 +73,8 @@ Chi tiết kỹ thuật, đường API và schema chưa được thiết kế th
 
 Các dòng chưa viết là kế hoạch tài liệu, không phải file hoặc thiết kế đã hoàn thành.
 README chỉ là tổng quan và bản đồ; không là bản sao đầy đủ của PRD.
-Jira sau này theo dõi công việc và evidence, không là bộ đặc tả cạnh tranh với docs.
+Jira theo dõi timeline/dependency; trạng thái To Do không chứng minh chưa có công việc.
+Đối chiếu gần nhất ghi tại DECISIONS và kế hoạch B1; không tự chuyển issue sang Done.
 Spec Kit chưa được xác minh/cài đặt; chưa có artifact nào của Spec Kit là nguồn chuẩn.
 
 ## Thứ tự và điểm dừng

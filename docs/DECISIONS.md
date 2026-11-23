@@ -12,7 +12,8 @@ Không dùng lại bản nháp một backend như ràng buộc hiện tại.
 - Phạm vi/acceptance: PRD; thuật ngữ/business rules: DOMAIN; luồng: APP-FLOWS.
 - File này giữ lịch sử, tình trạng phê duyệt, evidence và câu hỏi mở; không sao chép toàn bộ đặc tả.
 - Ba nhóm đã có file và được duyệt; registry B1 bên dưới xác định phần đã chốt và các điều kiện còn mở.
-- Thứ tự/dependency/task preparation theo kế hoạch liên kết tại README; chưa tạo Jira/task tracker thứ hai.
+- Thứ tự/dependency theo kế hoạch B1; Jira GRAB-1..GRAB-10 theo dõi timeline/dependency,
+  còn trạng thái thực hiện được đối chiếu theo evidence; không coi To Do là bằng chứng chưa làm.
 - Jira có thể đã thay đổi từ lần khảo sát; kiểm tra trạng thái hiện hành trước đề xuất issue; chưa có artifact Spec Kit.
 - Chưa tạo `docs/adr/`; chỉ tách ADR khi cần ghi quyết định kiến trúc đủ lớn, tránh file lặp.
 
@@ -354,6 +355,19 @@ spec/acceptance/gate/test; nội dung chi tiết ở docs. Timeline T1–T8 tron
 B1 đã được duyệt và tạo thành GRAB-3..GRAB-10; Jira chỉ giữ timeline/dependency.
 Không tự đổi nội dung hoặc status issue khi chưa có phê duyệt riêng.
 
+Đối chiếu read-only gần nhất theo yêu cầu tiếp tục GRAB-1..10: cả GRAB-1..GRAB-10
+đang To Do; title/description đối chiếu với các nguồn chuẩn và evidence working tree.
+GRAB-1: nội dung/6 tài liệu nhóm 1, requirement/rule traceability và review được ghi
+trong DECISIONS mục 7; đủ căn cứ **đề xuất Done**, không thực hiện transition.
+GRAB-2: DESIGN/APP-FLOWS tồn tại và user đã duyệt hướng UI, nhưng issue yêu cầu
+mockup/wireframe đã duyệt cùng checklist keyboard/contrast/responsive; chưa có render
+hoặc screenshot evidence nên chưa đề xuất Done.
+GRAB-3: B1/preparation và frontend package/build/test đã có, nhưng backend toolchain,
+service manifests và toàn bộ baseline evidence chưa đủ để coi timeline issue hoàn tất.
+GRAB-4: spike đã bị bỏ theo DEC-044; không chuyển Done hay tự sửa issue.
+GRAB-5..10: thiếu dependency/runtime và acceptance evidence; frontend slice không
+đóng GRAB-6. Xem đối chiếu tiến độ trong kế hoạch B1 mục 4a.
+
 ### Triển khai theo chỉ đạo DEC-044
 
 Chủ dự án chỉ đạo bỏ bước spike và bắt đầu implementation; chấp nhận khả năng
@@ -364,6 +378,11 @@ frontend được duyệt riêng trong phạm vi lát cắt UI; không có thao 
 Auth, migration, Jira status hay release.
 
 Ngày 2026-11-23 đã tạo lát cắt frontend Catalog discovery/SSR với test-only
-fixtures. Đây mới là UI/search/filter và SSR framework proof local; chưa có
-Catalog API, dữ liệu thật/demo được publish, Auth/RLS/Data API, backend service
-hoặc kiểm chứng quyền. Không đánh dấu T4 hoàn tất hay Jira issue Done.
+fixtures; tiếp đó cập nhật cùng trang thành editorial composition theo thiết kế đã duyệt:
+header/nav, hero, search/filter, feature minh họa CSS-only và kết quả/empty state.
+Local: 5 tests pass; TypeScript/client/SSR build pass; production SSR và JS asset HTTP 200.
+Không có Catalog API, dữ liệu runtime/thật, Auth/RLS/Data API, backend service, browser
+screenshot hoặc kiểm chứng quyền. Không đánh dấu T4/GRAB-6 hoàn tất hay Jira issue Done.
+Review độc lập không có Critical/Important; minor còn lại là chưa assert heading-order/
+separation regression riêng và chưa có browser viewport/overflow evidence. Chưa nghiệm thu
+visual baseline; xem DESIGN mục 8 và plan editorial.

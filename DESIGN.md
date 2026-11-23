@@ -1,10 +1,11 @@
 # GrabMeFood — hướng thiết kế
 
-> Baseline B1 giữ hướng trải nghiệm; chưa có visual render được nghiệm thu.
+> Baseline B1 giữ hướng trải nghiệm; visual render đã có local nhưng chưa được nghiệm thu.
 > Progress xóa, SSR, public ảnh và private upload staging đã chọn; token/copy/layout candidate vẫn cần review.
 
 **Trạng thái:** DRAFT nhóm 2 — đề xuất, chưa duyệt visual baseline.
-Chưa có mockup render, screenshot, component code hoặc bộ asset được tạo.
+Đã có component editorial discovery và CSS-only illustration local; chưa có screenshot/browser review
+hoặc bộ asset thật được tạo.
 Nguồn nghiệp vụ: [PRD](docs/PRD.md), [APP-FLOWS](docs/APP-FLOWS.md).
 **Bổ sung kiến trúc 5 service:** không đổi visual direction hoặc thêm menu service cho người dùng.
 Chỉ cập nhật trạng thái lỗi/pending liên dịch vụ; các lựa chọn UI vẫn là DRAFT, không tự duyệt palette.
@@ -26,7 +27,8 @@ giao diện đã đối chiếu. Cần review visual thật trước implementat
 - Directory thuần bảng/danh sách: dễ scan nhưng thiếu trải nghiệm biên tập tham chiếu.
 - Marketplace đặt món: sai phạm vi, không chọn.
 
-Hướng đầu là đề xuất khuyến nghị; palette/type cụ thể dưới đây vẫn chờ duyệt, không áp đặt thương hiệu.
+Hướng editorial guide đã được chủ dự án xác nhận cho lát cắt frontend ngày 2026-11-23;
+palette/type tổng thể và visual baseline cụ thể vẫn chờ review, không áp đặt thương hiệu.
 
 ## 2. Hướng thị giác đề xuất
 
@@ -167,4 +169,12 @@ Không tạo/gọi dịch vụ AI trong công việc thiết kế tài liệu n�
 - Impeccable: đọc shape/new-work/mode-operate để phân biệt guide/read và admin/operate.
   Không chạy context launcher vì có thể tải binary; không có screenshot critique hoặc detector result.
 - Cần review mockup/render và font/contrast thực trước chốt visual baseline.
-- Nếu chủ dự án muốn, có thể mở visual companion ở bước review UI; chưa chạy server hoặc tạo mockup.
+- Visual companion chưa dùng; đã chạy SSR local phục vụ kiểm tra HTTP, chưa có mockup/screenshot browser.
+- Progress local 2026-11-23: editorial discovery có header/nav, hero/search, CSS-only feature
+  minh họa và results/empty state. `npm test` 5/5; `npm run build` client+SSR thành công;
+  production SSR + bundle HTTP 200 tại local. Chưa có browser screenshot, viewport/zoom audit
+  hay contrast measurement; không gọi visual baseline đã nghiệm thu. Không có ảnh/quán thật,
+  dữ liệu runtime, Michelin assets/copy hoặc API.
+- Code review độc lập không có Critical/Important; đề xuất bổ sung assertion heading-order/
+  separation và browser viewport review còn deferred, không thay acceptance sản phẩm.
+- Impeccable detector cho các UI file: `[]`; đây chỉ là kiểm tra cơ học, không thay visual review.
