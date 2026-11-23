@@ -1,7 +1,7 @@
 # Hướng dẫn agent — GrabMeFood
 
-> DRAFT nhóm 1, chờ review. Không phải quyền triển khai.
-> Các giới hạn thao tác từ chủ dự án có hiệu lực ngay; trạng thái DRAFT không làm yếu các giới hạn này.
+> Nhóm 1 được chủ dự án duyệt ngày 2026-11-23. Không phải quyền triển khai sản phẩm.
+> Chủ dự án đã cho phép soạn nhóm 2; nhóm 2 vẫn chờ review riêng.
 
 ## 1. Đọc và xác định phạm vi trước khi làm
 
@@ -100,4 +100,5 @@ Không tự sửa cảnh báo Cloud chỉ vì vừa phát hiện.
 - Trao đổi tiếng Việt, ngắn gọn; câu hỏi từng nhóm nhỏ cùng chủ đề, cho trả lời tự do.
 - Không hỏi lại câu còn hiệu lực. Gom chi tiết nhỏ thành đề xuất chờ duyệt.
 - Theo dõi checklist công việc trong tài liệu đã được phép, không tạo file kế hoạch thừa.
-- Bản nháp nhóm 1 được phép viết; nhóm tiếp theo phải chờ review nhóm hiện tại.
+- Nhóm 1 đã duyệt, được phép soạn nhóm 2 và cập nhật trạng thái/phần liên kết tài liệu.
+  Nhóm 3 phải chờ review nhóm 2. Không tự đóng TBD trong nhóm đã duyệt.

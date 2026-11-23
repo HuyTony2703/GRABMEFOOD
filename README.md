@@ -3,8 +3,8 @@
 Website khám phá ẩm thực dân dã dành cho sinh viên quanh Làng Đại học ĐHQG TP.HCM.
 
 > **Trạng thái: làm rõ và soạn tài liệu — chưa triển khai sản phẩm.**
-> Nhóm tài liệu sản phẩm dưới đây là **DRAFT, chờ review**, chưa phải baseline được duyệt.
-> Việc duyệt đề cương tài liệu không cấp quyền triển khai, tạo Jira hoặc thay đổi Cloud.
+> **Nhóm 1 đã được chủ dự án duyệt ngày 2026-11-23. Nhóm 2 là DRAFT, chờ review.**
+> Chưa có baseline triển khai toàn dự án. Duyệt tài liệu không cấp quyền tạo Jira hoặc thay đổi Cloud.
 
 ## Mục tiêu
 
@@ -44,17 +44,17 @@ Không có mã ứng dụng, migration, package hoặc lệnh chạy sản phẩ
 
 | Tài liệu | Trách nhiệm / nguồn chuẩn | Trạng thái |
 | --- | --- | --- |
-| [AGENTS.md](AGENTS.md) | Quyền thao tác và quy tắc làm việc của agent | DRAFT |
-| [docs/PRD.md](docs/PRD.md) | Phạm vi, requirement ID và acceptance nghiệp vụ | DRAFT |
-| [docs/DOMAIN.md](docs/DOMAIN.md) | Thuật ngữ, quan hệ và business rules | DRAFT |
-| [docs/APP-FLOWS.md](docs/APP-FLOWS.md) | Luồng người dùng, điều hướng, trạng thái UI | DRAFT |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | Quyết định, bằng chứng, câu hỏi mở và tiến độ review | DRAFT |
-| `docs/ARCHITECTURE.md` | Thành phần, trust boundaries và đường gọi | Chưa viết — nhóm 2 |
-| `docs/TRD.md` | Phiên bản, tích hợp và yêu cầu kỹ thuật | Chưa viết — nhóm 2 |
-| `docs/DATABASE.md` | Thiết kế dữ liệu, constraints, indexes và ownership | Chưa viết — nhóm 2 |
-| `docs/API.md` | Hợp đồng Data API, RPC và Spring đã được quyết định | Chưa viết — nhóm 2 |
-| `docs/SECURITY.md` | Permission matrix, Auth/RLS/Storage và đặc quyền | Chưa viết — nhóm 2 |
-| `DESIGN.md` | Hướng thiết kế riêng, tokens, components và accessibility | Chưa viết — nhóm 2 |
+| [AGENTS.md](AGENTS.md) | Quyền thao tác và quy tắc làm việc của agent | Nhóm 1 đã duyệt |
+| [docs/PRD.md](docs/PRD.md) | Phạm vi, requirement ID và acceptance nghiệp vụ | Nhóm 1 đã duyệt |
+| [docs/DOMAIN.md](docs/DOMAIN.md) | Thuật ngữ, quan hệ và business rules | Nhóm 1 đã duyệt; câu hỏi mở vẫn mở |
+| [docs/APP-FLOWS.md](docs/APP-FLOWS.md) | Luồng người dùng, điều hướng, trạng thái UI | Nhóm 1 đã duyệt; đề xuất ghi rõ chưa chốt vẫn chờ duyệt |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Quyết định, bằng chứng, câu hỏi mở và tiến độ review | Sổ cập nhật; phân biệt từng trạng thái |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Thành phần, trust boundaries và đường gọi | DRAFT — nhóm 2 |
+| [docs/TRD.md](docs/TRD.md) | Phiên bản, tích hợp và yêu cầu kỹ thuật | DRAFT — nhóm 2 |
+| [docs/DATABASE.md](docs/DATABASE.md) | Thiết kế dữ liệu, constraints, indexes và ownership | DRAFT — nhóm 2 |
+| [docs/API.md](docs/API.md) | Hợp đồng Data API, RPC và Spring đề xuất | DRAFT — nhóm 2 |
+| [docs/SECURITY.md](docs/SECURITY.md) | Permission matrix, Auth/RLS/Storage và đặc quyền | DRAFT — nhóm 2 |
+| [DESIGN.md](DESIGN.md) | Hướng thiết kế riêng, tokens, components và accessibility | DRAFT — nhóm 2 |
 | `docs/TEST-STRATEGY.md` | Chiến lược kiểm thử và Definition of Done | Chưa viết — nhóm 3 |
 | `docs/OPERATIONS.md` | Môi trường, email, migration, deploy và recovery | Chưa viết — nhóm 3 |
 
@@ -65,8 +65,8 @@ Spec Kit chưa được xác minh/cài đặt; chưa có artifact nào của Spe
 
 ## Thứ tự và điểm dừng
 
-1. Review nhóm sản phẩm/quy tắc hiện tại.
-2. Khi được duyệt, viết và review nhóm thiết kế.
+1. Nhóm sản phẩm/quy tắc đã được duyệt; TBD không tự trở thành quyết định.
+2. Review nhóm thiết kế hiện tại và các lựa chọn còn mở.
 3. Viết và review kiểm chứng/vận hành.
 4. Duyệt baseline và kế hoạch; đề xuất Jira trước khi tạo.
 5. Duyệt spike kết nối có target, tác động và cleanup rõ ràng.

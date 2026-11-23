@@ -1,6 +1,7 @@
 # Domain — GrabMeFood
 
-**Trạng thái:** DRAFT nhóm 1, chờ review; chưa là thiết kế bảng/SQL.
+**Trạng thái:** Nhóm 1 được duyệt ngày 2026-11-23; chưa là thiết kế bảng/SQL.
+Các OPEN QUESTION/TBD giữ nguyên trạng thái mở.
 Nguồn chuẩn cho thuật ngữ và business rules; phạm vi tính năng ở [PRD.md](PRD.md).
 
 ## 1. Thuật ngữ

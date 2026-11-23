@@ -1,6 +1,7 @@
 # App flows — GrabMeFood
 
-**Trạng thái:** DRAFT nhóm 1, chờ review.
+**Trạng thái:** Nhóm 1 được duyệt ngày 2026-11-23.
+Các đoạn ghi “đề xuất”, OPEN QUESTION hoặc TBD chưa được coi là lựa chọn đã chốt.
 Nguồn chuẩn cho luồng và trạng thái trải nghiệm; không là wireframe hoặc hợp đồng API đã duyệt.
 Phạm vi: [PRD](PRD.md). Quy tắc: [DOMAIN](DOMAIN.md). Chi tiết chưa chốt: [DECISIONS](DECISIONS.md).
 

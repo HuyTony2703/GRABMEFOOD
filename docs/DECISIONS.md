@@ -1,14 +1,14 @@
 # Quyết định, câu hỏi mở và review
 
-**Trạng thái:** DRAFT nhóm 1. Ngày tổng hợp: 2026-11-23.
-Các mục “đã xác nhận” phản ánh phát biểu/chấp thuận trong hội thoại, không có nghĩa tài liệu
-đã được duyệt baseline. Chủ dự án chưa duyệt nhóm tài liệu này.
+**Trạng thái:** Nhóm 1 đã được chủ dự án duyệt ngày 2026-11-23.
+Sổ quyết định đang cập nhật cho **nhóm 2 DRAFT, chờ duyệt**; chưa có baseline triển khai toàn dự án.
+Việc duyệt nhóm 1 không tự đóng các TBD hoặc phê duyệt chi tiết nhóm 2.
 
 ## 1. Nguồn chuẩn
 
 - Phạm vi/acceptance: PRD; thuật ngữ/business rules: DOMAIN; luồng: APP-FLOWS.
 - File này giữ lịch sử, tình trạng phê duyệt, evidence và câu hỏi mở; không sao chép toàn bộ đặc tả.
-- Tài liệu kiến trúc/kỹ thuật là nhóm 2; test/vận hành là nhóm 3, chưa viết.
+- Tài liệu kiến trúc/kỹ thuật là nhóm 2, hiện đã có bản nháp; test/vận hành là nhóm 3, chưa viết.
 - Chưa có Jira issue hoặc artifact Spec Kit được tạo trong công việc này.
 - Chưa tạo `docs/adr/`; chỉ tách ADR khi cần ghi quyết định kiến trúc đủ lớn, tránh file lặp.
 
@@ -42,6 +42,7 @@ Không giả định có phê duyệt độc lập cho các chi tiết triển k
 | DEC-021 | Ẩn quán kéo theo tính không khả dụng của món | Giữ marker; loại khỏi tìm kiếm/random |
 | DEC-022 | Xóa quán kéo theo món, comment/reply; xóa món kéo theo comment/reply | Giữ dấu “Không còn khả dụng” trong bộ sưu tập |
 | DEC-023 | Duyệt đề cương 3 nhóm và bắt đầu nhóm 1 | Chưa duyệt baseline, Jira, spike hoặc triển khai |
+| DEC-024 | Chủ dự án duyệt nhóm 1 và yêu cầu thực hiện nhóm 2 | Chỉ cập nhật trạng thái nhóm 1 và viết bản nháp nhóm 2; không có quyền code/Cloud |
 
 ### Hướng kiến trúc đã duyệt, chưa là thiết kế chi tiết
 
@@ -101,6 +102,38 @@ Chưa sửa grants/function/trigger; cần đánh giá riêng và xin quyền n�
 - Chưa xác minh/cài GitHub Spec Kit hoặc Supabase agent skills.
 - Không cài package/công cụ, không thay cấu hình OpenCode, không chạy Supabase CLI/initializer.
 
+### Khảo sát bổ sung cho nhóm 2
+
+- Kiểm tra lại Git trước khi ghi: sáu file nhóm 1 vẫn untracked, chưa thấy code hoặc tài liệu nhóm 2.
+- Đọc lại schema `public`: chưa có bảng. SQL metadata chỉ đọc trả PostgreSQL **17.11**,
+  publication `supabase_realtime`, extensions pg_stat_statements/pgcrypto/plpgsql/supabase_vault/uuid-ossp.
+  Chưa bật publication cho bảng mới, chưa cài extension.
+- Local: Node **24.16.0**, Java Microsoft **21.0.11**, Python **3.12.10**.
+  Có npm executable nhưng chưa kiểm tra version; `Get-Command` không tìm Maven/Supabase trên PATH,
+  không chứng minh máy hoàn toàn chưa cài các công cụ đó.
+- Registry npm `latest` trả React 19.3.1, TypeScript 7.0.2, Vite 8.3.8,
+  plugin-react 6.3.0, supabase-js 2.119.2. Trang requirements Spring trả 4.2.0.
+  Chỉ là metadata/version candidate, chưa resolve dependencies/build; xem nguồn ở TRD.
+- Đã đọc tài liệu chính thức RLS/grants/functions/JWT/Postgres Changes/Storage/User management,
+  Vite SSR/SSG và Google Share/Embed. Không dùng đọc tài liệu làm bằng chứng tích hợp thật.
+- UI UX Pro Max: Python search không persist, truy vấn đầu rộng, đã thu hẹp;
+  dùng guidance semantics/accessibility cho web, không dùng native-only result.
+- Impeccable: đọc playbook và fallback context bằng tài liệu dự án; không chạy launcher có khả năng
+  tải binary, không tạo PRODUCT.md hoặc artifact ngoài đề cương, không có visual render evidence.
+- Không xác minh plan/quota/SMTP/OAuth bằng cách thử ghi hoặc gửi email; chưa có quyền test Cloud.
+- Khi kiểm tra cuối lượt, Git đã có commit `8fd454a` (Add initial documentation for GrabMeFood project).
+  Agent không chạy commit; chỉ ghi nhận trạng thái mới và kiểm tra diff để bảo toàn nội dung đã duyệt.
+- Reviewer độc lập chỉ đọc đã nêu ba khoảng trống: admin SELECT registry hidden, thành phần kiểm tra byte ảnh,
+  và operation tài khoản cạnh tranh qua HTTP. Đã đối chiếu và sửa rõ draft: thêm ngoại lệ admin hiện tại,
+  đề xuất guard theo target, và G2-P12 buộc chọn cơ chế upload validation. Đây không phải evidence runtime.
+- Reviewer kiểm tra lại đúng ba điểm và xác nhận đã làm rõ ở mức draft; không kết luận
+  toàn bộ thiết kế hết câu hỏi hoặc hệ thống đã an toàn/chạy được.
+- Kiểm tra tĩnh nhóm 2: 12 file Markdown, 32 link local hợp lệ, sáu nhãn DRAFT nhóm 2;
+  29 requirement ID và 35 rule ID không trùng/không có reference ID lạ; fences cân bằng;
+  không thấy trailing whitespace hay mẫu credential trong phép quét. `git diff --check` không có lỗi,
+  có cảnh báo Git LF→CRLF; không thay cấu hình Git hoặc tự tạo .gitattributes.
+  Đây không phải Markdown/Mermaid render test, full secret audit, dependency build hoặc kiểm thử API/RLS.
+
 ## 4. Câu hỏi mở và đề xuất chờ duyệt
 
 Không cần hỏi tất cả ngay; giải quyết theo nhóm trước khi thiết kế/triển khai phần liên quan.
@@ -127,9 +160,33 @@ Không cần hỏi tất cả ngay; giải quyết theo nhóm trước khi thi�
 | OQ-18 | Có dùng Spec Kit không; có cài Supabase skill không | Trình nguồn/lệnh/phạm vi và xin phép trước |
 
 Các trạng thái loading/error/empty trong APP-FLOWS là đề xuất thiết kế cần review; không tự chốt copy.
-Wireframe, design tokens và acceptance UI chi tiết chưa có; không tuyên bố đã tái tạo giao diện Michelin.
+Nhóm 2 hiện có sketch text và token candidate; chưa có wireframe render hoặc acceptance UI được duyệt,
+không tuyên bố đã tái tạo giao diện Michelin.
 
-## 5. Checklist và điểm dừng
+## 5. Nhóm 2 — các đề xuất chờ duyệt
+
+Đây không phải quyết định sản phẩm mới đã được chấp thuận.
+Mọi thông số/tên bảng/RPC/path mới trong nhóm 2 mặc định là proposal cho đến review.
+
+| ID | Đề xuất / phương án cần duyệt | Tài liệu nguồn |
+| --- | --- | --- |
+| G2-P01 | SEO: khuyên React/Vite SSR public + CSR private, thêm Node runtime; so với SSG và Spring HTML | ARCHITECTURE mục 5; host vẫn TBD |
+| G2-P02 | Version candidates, npm/lockfile, Maven Wrapper và cấu trúc frontend/backend/supabase | TRD mục 1–2; chưa install |
+| G2-P03 | Map iframe lấy từ luồng Share/Embed chính thức, validate URL; không tự bật API/key/billing | TRD mục 3 |
+| G2-P04 | Registry ID tối thiểu giữ marker khi xóa payload; hide cha không ghi đè state món; một vùng/quán | DATABASE mục 1, 4–5; retention marker TBD |
+| G2-P05 | Xóa bình luận gốc/user có reply người khác: cần chủ dự án chọn cascade hay giữ thread với marker | DOMAIN OQ-08/OQ-12; chưa chọn FK xóa |
+| G2-P06 | App gate current-state + Spring operation retry; Realtime tín hiệu không chứa nội dung, refetch RLS | ARCHITECTURE, SECURITY; chưa test |
+| G2-P07 | Chọn Storage public/private và quyền truy cập ảnh sau hide; OG/cache và upload constraints | SECURITY mục 6; chưa chọn |
+| G2-P08 | Visual direction sáng/editorial, accent xanh, token/layout và accessibility candidate | DESIGN; chưa render/mockup |
+| G2-P09 | Publication yêu cầu đủ vi/en; giới hạn tên/chữ/trang, selected mode random xác suất đều | TRD/API; giá trị và quy tắc còn chờ duyệt |
+| G2-P10 | Không tự nhận lại thông báo reply của mình; khử trùng người nhận; món mới phải public và cha public; broadcast gửi active users | Đề xuất xử lý OQ-09, chưa áp vào rule/contract baseline |
+| G2-P11 | Ngăn admin tự khóa/xóa và admin cuối bị vô hiệu hóa; cấp admin đầu bằng thao tác được duyệt riêng | OQ-11; cách kiểm tra đồng thời chưa duyệt |
+| G2-P12 | Upload trực tiếp staging private + Spring kiểm tra byte/finalize, hoặc Spring nhận file rồi upload | SECURITY mục 6; thay đổi trách nhiệm phải duyệt trước; không có bucket/API finalize đã tạo |
+
+Các lựa chọn chưa chốt vẫn ngăn implementation/migration phần liên quan.
+Không ghi đáp án giả chỉ để đủ một bộ thiết kế “hoàn chỉnh”.
+
+## 6. Checklist và điểm dừng
 
 - [x] Xác nhận repo và khảo sát Git/cấu trúc chỉ đọc.
 - [x] Làm rõ phạm vi chính, ranh giới kiến trúc cấp cao và ngân sách.
@@ -141,8 +198,10 @@ Wireframe, design tokens và acceptance UI chi tiết chưa có; không tuyên b
   trong phép quét đã chạy. Không thay cho kiểm toán secret đầy đủ hoặc duyệt nội dung của chủ dự án.
 - [x] Kiểm tra Git: chỉ có các tài liệu mới chưa tracked; `git diff --check` không báo lỗi.
   Nội dung file untracked đã kiểm tra riêng, không suy ra từ lệnh diff.
-- [ ] Chủ dự án review/duyệt nhóm 1.
-- [ ] Viết và duyệt nhóm 2.
+- [x] Chủ dự án review/duyệt nhóm 1.
+- [x] Soạn sáu bản nháp nhóm 2; cập nhật link và trạng thái nhóm 1, không đổi các rule đã duyệt.
+- [x] Review builder-readiness và kiểm tra tĩnh nhóm 2; ghi rõ các lựa chọn còn chặn triển khai.
+- [ ] Chủ dự án review/duyệt nhóm 2 và giải quyết các lựa chọn ngăn triển khai.
 - [ ] Viết và duyệt nhóm 3; xác lập baseline.
 - [ ] Trình kế hoạch và Jira để duyệt trước khi tạo issue.
 - [ ] Duyệt target/phạm vi/tác động/cleanup của spike trước chạy.

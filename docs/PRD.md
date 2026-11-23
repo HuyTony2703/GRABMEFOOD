@@ -1,6 +1,7 @@
 # PRD — GrabMeFood
 
-**Trạng thái:** DRAFT nhóm 1, chờ chủ sản phẩm review; chưa là baseline.
+**Trạng thái:** Nhóm 1 được chủ sản phẩm duyệt ngày 2026-11-23.
+Chưa có baseline triển khai toàn dự án; các TBD vẫn cần quyết định riêng.
 **Ngày soạn:** 2026-11-23.
 **Nguồn:** các quyết định trong cuộc trao đổi khởi tạo; xem [DECISIONS.md](DECISIONS.md).
 Requirement ID là mã tổ chức bản nháp, không phải issue Jira đã tạo.
@@ -103,4 +104,4 @@ Không gửi email/push cho thông báo sản phẩm. Email xác thực và khô
 ## 6. Những việc chưa được quyết định
 
 Danh sách câu hỏi mở được quản lý tập trung tại DECISIONS, không biến thành acceptance ngầm.
-Các acceptance trên là mục tiêu kiểm chứng của bản nháp, **chưa phải kết quả test đã đạt**.
+Các acceptance trên là mục tiêu kiểm chứng đã duyệt, **chưa phải kết quả test đã đạt**.
