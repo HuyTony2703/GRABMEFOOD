@@ -4,6 +4,8 @@
 Các đoạn ghi “đề xuất”, OPEN QUESTION hoặc TBD chưa được coi là lựa chọn đã chốt.
 Nguồn chuẩn cho luồng và trạng thái trải nghiệm; không là wireframe hoặc hợp đồng API đã duyệt.
 Phạm vi: [PRD](PRD.md). Quy tắc: [DOMAIN](DOMAIN.md). Chi tiết chưa chốt: [DECISIONS](DECISIONS.md).
+**Bổ sung kiến trúc đã duyệt:** 5 microservices. Luồng nghiệp vụ giữ nguyên;
+progress xóa đã được duyệt B1; copy/layout cụ thể còn cần review, không tự nới acceptance.
 
 ## 1. Sơ đồ điều hướng nghiệp vụ
 
@@ -91,7 +93,7 @@ Lối tắt random từ một bộ sưu tập cụ thể và thuật toán xác 
 5. Admin được xóa bình luận/reply; không có quyền sửa lời người khác được xác nhận.
 
 Chưa có đánh giá điểm, upload ảnh bình luận, like, báo cáo vi phạm hoặc kiểm duyệt trước.
-Xóa bình luận gốc có reply của người khác là TBD.
+Xóa bình luận gốc xóa toàn bộ reply bên dưới, kể cả người khác; xóa user áp dụng cùng quy tắc.
 Lỗi quyền, phiên bị khóa, gửi thất bại và nội dung đích bị gỡ phải được xử lý mà không tuyên bố đã gửi.
 
 ## 7. Thông báo — REQ-NOT-01..04
@@ -123,5 +125,21 @@ Sự kiện hợp lệ ──> Thông báo riêng của người nhận ──> 
 - Gửi thông báo riêng hoặc toàn bộ.
 
 **Đề xuất UX chờ duyệt:** xác nhận trước thao tác xóa/khóa, hiển thị tác động và báo đúng kết quả từng bước.
-Tạo admin đầu tiên, ngăn admin tự khóa/xóa mình, bảo vệ admin cuối và xử lý operation thất bại một phần:
-chưa được chốt, phải giải quyết trước triển khai.
+Đã chốt không tự khóa/xóa admin, bảo vệ admin active cuối; admin đầu do chủ dự án chỉ định.
+Danh tính/admin bootstrap thực tế và kiểm tra race còn phải hoàn thiện trước implementation.
+
+## 9. Trạng thái liên dịch vụ — nguyên tắc B1, chi tiết kỹ thuật còn gate
+
+- Catalog/Community lưu thành công không đồng nghĩa Notification đã nhận và hiển thị sự kiện.
+  Không rollback bình luận đã lưu chỉ vì mất response gửi thông báo; delivery cần retry và theo dõi.
+- Xóa quán: nội dung không khả dụng trước; việc Community xóa comments/replies và Collection giữ marker
+  phải được theo dõi. Chưa đủ xác nhận cleanup thì không báo “xóa toàn bộ hoàn tất”.
+- Xóa user: chặn thao tác tài khoản trước; cleanup dữ liệu riêng, bình luận và Auth có thể lỗi từng bước.
+  UI phân biệt đang xử lý, cần thử lại và hoàn tất; outbox poller trong owner đã duyệt,
+  không suy ra có generic background worker/takeover cho mọi account operation.
+- Catalog hoặc Account Administration không xác nhận được tính khả dụng/quyền:
+  các thao tác nhạy cảm phải báo chưa kiểm tra được và cho thử lại, không coi dependency lỗi là danh sách rỗng.
+- Chọn microservices không mặc định cho phép dữ liệu ẩn xuất hiện khi cache/projection chậm.
+  Độ trễ/TOCTOU và cơ chế recovery vẫn phải chốt trước implementation.
+- Thông báo lưu quán/món kiểm tra hai mốc save; món mới phải public cùng quán.
+  Không self-reply notification, không nhân recipient vì nhiều bộ, broadcast chỉ active users.

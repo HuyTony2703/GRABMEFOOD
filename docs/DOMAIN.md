@@ -1,6 +1,6 @@
 # Domain — GrabMeFood
 
-**Trạng thái:** Nhóm 1 được duyệt ngày 2026-11-23; chưa là thiết kế bảng/SQL.
+**Trạng thái:** Baseline nghiệp vụ B1, tổng hợp các xác nhận ngày 2026-11-23; chưa là SQL.
 Các OPEN QUESTION/TBD giữ nguyên trạng thái mở.
 Nguồn chuẩn cho thuật ngữ và business rules; phạm vi tính năng ở [PRD.md](PRD.md).
 
@@ -39,6 +39,22 @@ Admin ── quản lý ──> Quán / Món / Bài viết / Danh sách tuyển 
 Đây không phải ERD vật lý. Kiểu ID, FK, bảng, cardinality chưa chốt phải để thiết kế database quyết định.
 “Cơm tấm — Quán A” và “Cơm tấm — Quán B” là hai món độc lập.
 
+### Ranh giới nghiệp vụ đã duyệt bổ sung
+
+| Service | Nguồn chuẩn nghiệp vụ |
+| --- | --- |
+| Catalog | Quán, món, khu vực, bài viết, danh sách tuyển chọn và tính khả dụng của nội dung |
+| Collection | Bộ sưu tập, mục đã lưu và random |
+| Community | Bình luận, trả lời và quyền tác giả |
+| Notification | Inbox, trạng thái đọc và gửi thông báo |
+| Account Administration | Quyền ứng dụng, khóa/mở/xóa tài khoản; điều phối Supabase Auth Admin |
+
+Quan hệ nghiệp vụ trong sơ đồ không mặc định là FK, join hoặc cascade database giữa các service.
+Supabase Auth là nguồn danh tính được tận dụng, không tự xây thêm Auth Service.
+Schema/role riêng cùng Supabase DB, HTTP outbox/inbox, helper quyền chỉ đọc và HMAC đã được duyệt.
+Chi tiết thực thi/proof vẫn chịu gate trong DECISIONS. Các BR dưới bao gồm bổ sung đã xác nhận,
+không tự biến phương án kỹ thuật chưa chứng minh thành nghiệp vụ.
+
 ## 3. Business rules đã xác nhận
 
 ### Nội dung và quyền
@@ -75,13 +91,16 @@ Phân phối xác suất chính xác chưa chốt; không diễn giải “ngẫ
 - **BR-LIFE-04:** Xóa quán xóa các món thuộc quán và toàn bộ bình luận/trả lời liên quan.
 - **BR-LIFE-05:** Không dùng marker làm lý do giữ nguyên nội dung đã xóa; trường dữ liệu tối thiểu cần giữ là TBD.
 - **BR-LIFE-06:** Hành vi công khai lại quán, quyền khả dụng của món từng bị ẩn riêng và thời hạn marker: TBD.
+- **BR-LIFE-07:** Xóa liên dịch vụ chặn hiển thị/sử dụng trước; UI hiện đang xử lý,
+  chỉ báo hoàn tất khi đủ xác nhận cleanup, lỗi giữ chưa hoàn tất và retry an toàn.
 
 ### Bình luận
 
 - **BR-COM-01:** Người đăng nhập hợp lệ bình luận được cả quán và món; hiển thị ngay, không chấm điểm.
 - **BR-COM-02:** User sửa/xóa bình luận và trả lời của mình; admin có quyền xóa nội dung của mọi người.
 - **BR-COM-03:** Có trả lời một cấp, không có cây reply lồng nhiều tầng.
-- **BR-COM-04:** Xóa bình luận gốc khi có reply của người khác, số lượng bình luận mỗi user và giới hạn nội dung: TBD.
+- **BR-COM-04:** Xóa bình luận gốc xóa toàn bộ replies bên dưới, kể cả của người khác; không giữ thread marker.
+- **BR-COM-05:** Giới hạn số lượng/độ dài bình luận còn TBD; không tự bổ sung chấm điểm hoặc ảnh.
 
 ### Tài khoản
 
@@ -90,7 +109,11 @@ Phân phối xác suất chính xác chưa chốt; không diễn giải “ngẫ
 - **BR-ACC-03:** Người bị khóa vẫn có thể xem nội dung công khai như khách.
 - **BR-ACC-04:** Mở khóa cho sử dụng lại tài khoản; không tự phục hồi phiên đăng nhập cũ như một yêu cầu ngầm.
 - **BR-ACC-05:** Xóa user xóa bộ sưu tập, mục lưu và bình luận/trả lời của user, không giữ bình luận ẩn danh.
-- **BR-ACC-06:** Xử lý reply của người khác trên bình luận của user bị xóa và dữ liệu thông báo liên quan: TBD.
+- **BR-ACC-06:** Xóa tài khoản xóa bình luận của user cùng toàn bộ replies bên dưới, kể cả người khác;
+  retention của notification/receipts/tombstone còn cần chốt, không tự giữ dữ liệu cá nhân vô hạn.
+- **BR-ACC-07:** Admin không tự khóa/xóa chính mình.
+- **BR-ACC-08:** Không được khóa/xóa admin hoạt động cuối cùng; phải kiểm tra cả operation cạnh tranh.
+- **BR-ACC-09:** Admin đầu do chủ dự án chỉ định và cấp bằng thao tác được duyệt riêng; đăng ký không tự chọn role.
 
 ### Thông báo
 
@@ -109,5 +132,12 @@ Phân phối xác suất chính xác chưa chốt; không diễn giải “ngẫ
 | Quán đã lưu thêm món mới | Người lưu quán |
 | Admin gửi | Tài khoản được chọn hoặc toàn bộ theo phạm vi gửi |
 
-Loại trừ tự thông báo, khử trùng nhiều bộ sưu tập, thêm món đang ẩn, gửi toàn bộ có gồm tài khoản khóa,
-và bảo đảm không gửi lặp khi retry: chưa chốt chi tiết; không tự coi bảng trên là thiết kế delivery.
+- **BR-NOT-07:** Không gửi thông báo khi user tự reply bình luận của mình.
+- **BR-NOT-08:** Một user lưu cùng mục nhiều bộ chỉ nhận một thông báo cho một sự kiện nghiệp vụ.
+- **BR-NOT-09:** Chỉ báo món mới nếu món và quán đều công khai.
+- **BR-NOT-10:** Admin gửi toàn bộ chỉ tới tài khoản đang hoạt động.
+- **BR-NOT-11:** Với saved-target không khả dụng/món mới, user phải đã lưu lúc sự kiện xảy ra
+  và vẫn lưu khi xử lý gửi. Không gửi sự kiện cũ cho user chỉ lưu sau sự kiện.
+
+Hai mốc là quy tắc đã chốt; cách chứng minh historical membership, re-save qua khoảng trống,
+timestamp/version, thời điểm delivery và retention là GATE-03, chưa tự chọn kỹ thuật lưu history.

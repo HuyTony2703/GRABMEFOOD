@@ -2,9 +2,10 @@
 
 Website khám phá ẩm thực dân dã dành cho sinh viên quanh Làng Đại học ĐHQG TP.HCM.
 
-> **Trạng thái: làm rõ và soạn tài liệu — chưa triển khai sản phẩm.**
-> **Nhóm 1 đã được chủ dự án duyệt ngày 2026-11-23. Nhóm 2 là DRAFT, chờ review.**
-> Chưa có baseline triển khai toàn dự án. Duyệt tài liệu không cấp quyền tạo Jira hoặc thay đổi Cloud.
+> **Trạng thái: tài liệu đã duyệt; đang triển khai lát cắt frontend Catalog discovery độc lập.**
+> **Ba nhóm tài liệu đã được duyệt; B1 tổng hợp phạm vi và hướng kiến trúc đã xác nhận.**
+> Theo DEC-044, bỏ spike M1; GATE-01 và các TBD kỹ thuật vẫn mở.
+> Lát cắt frontend hiện tại không kết nối API/dữ liệu/Auth và không chứng minh quyền.
 
 ## Mục tiêu
 
@@ -34,11 +35,22 @@ AI chuẩn bị nội dung trước, **không tích hợp dịch vụ AI vào �
 - Frontend: React + TypeScript + Vite.
 - Backend: Spring Boot, Java 21 LTS, Maven; phiên bản Spring Boot cụ thể chưa chốt.
 - PostgreSQL trên Supabase Cloud; tận dụng Auth, Data API, Storage, Realtime và RPC phù hợp.
-- Hướng phân chia đã duyệt: browser gọi Supabase trực tiếp cho luồng phù hợp;
-  Spring xử lý quản trị đặc quyền và điều phối, không làm proxy cho mọi request.
+- **Kiến trúc mục tiêu đã duyệt: 5 microservices**, mỗi service build/chạy/deploy độc lập:
+  Catalog, Collection, Community, Notification và Account Administration.
+- Mục tiêu microservices là làm quen hệ thống phân tán trong đồ án, không phải nhu cầu chịu tải đã đo.
+- Supabase vẫn cung cấp Auth/Storage/Realtime/PostgreSQL, không tự xây Auth Service.
+  Browser gọi Data API ở surface được service sở hữu cho phép; không dùng truy cập trực tiếp để bỏ qua nghiệp vụ.
+- Hướng Spring chỉ xử lý quản trị trong bản nháp trước đã được thay thế; ownership và đường gọi mới ở
+  [ARCHITECTURE](docs/ARCHITECTURE.md) đã review nhóm 2 nhưng các lựa chọn/TBD vẫn cần chốt.
+- Đã chọn schema/role riêng cùng DB, ưu tiên Data API/RPC; scoped authorization còn phải chứng minh.
+  GATE-01 chỉ chặn triển khai persistence/quyền phụ thuộc proof, không dừng P02/P03 hay thiết kế độc lập.
+- Đã chọn HTTP outbox/inbox, HTTPS/HMAC theo cặp và helper quyền chỉ đọc của Account Administration.
+- Public SSR React/Vite, private CSR; upload private staging → Catalog validate → ảnh public.
+  Không tự thêm Gateway/broker; hosting miễn phí cho năm service và SSR chưa được kiểm chứng.
 
 Chi tiết kỹ thuật, đường API và schema chưa được thiết kế thành baseline.
-Không có mã ứng dụng, migration, package hoặc lệnh chạy sản phẩm ở thời điểm này.
+Đã bắt đầu lát cắt frontend Catalog discovery/SSR theo DEC-044; đây chưa phải ứng dụng
+đầy đủ và chưa kết nối Catalog API, dữ liệu, Auth, RLS hoặc bất kỳ service nào.
 
 ## Bản đồ tài liệu và nguồn chuẩn
 
@@ -49,14 +61,15 @@ Không có mã ứng dụng, migration, package hoặc lệnh chạy sản phẩ
 | [docs/DOMAIN.md](docs/DOMAIN.md) | Thuật ngữ, quan hệ và business rules | Nhóm 1 đã duyệt; câu hỏi mở vẫn mở |
 | [docs/APP-FLOWS.md](docs/APP-FLOWS.md) | Luồng người dùng, điều hướng, trạng thái UI | Nhóm 1 đã duyệt; đề xuất ghi rõ chưa chốt vẫn chờ duyệt |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Quyết định, bằng chứng, câu hỏi mở và tiến độ review | Sổ cập nhật; phân biệt từng trạng thái |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Thành phần, trust boundaries và đường gọi | DRAFT — nhóm 2 |
-| [docs/TRD.md](docs/TRD.md) | Phiên bản, tích hợp và yêu cầu kỹ thuật | DRAFT — nhóm 2 |
-| [docs/DATABASE.md](docs/DATABASE.md) | Thiết kế dữ liệu, constraints, indexes và ownership | DRAFT — nhóm 2 |
-| [docs/API.md](docs/API.md) | Hợp đồng Data API, RPC và Spring đề xuất | DRAFT — nhóm 2 |
-| [docs/SECURITY.md](docs/SECURITY.md) | Permission matrix, Auth/RLS/Storage và đặc quyền | DRAFT — nhóm 2 |
-| [DESIGN.md](DESIGN.md) | Hướng thiết kế riêng, tokens, components và accessibility | DRAFT — nhóm 2 |
-| `docs/TEST-STRATEGY.md` | Chiến lược kiểm thử và Definition of Done | Chưa viết — nhóm 3 |
-| `docs/OPERATIONS.md` | Môi trường, email, migration, deploy và recovery | Chưa viết — nhóm 3 |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Thành phần, trust boundaries và đường gọi | Nhóm 2 đã review; TBD vẫn mở |
+| [docs/TRD.md](docs/TRD.md) | Phiên bản, tích hợp và yêu cầu kỹ thuật | Nhóm 2 đã review; TBD vẫn mở |
+| [docs/DATABASE.md](docs/DATABASE.md) | Thiết kế dữ liệu, constraints, indexes và ownership | Nhóm 2 đã review; TBD vẫn mở |
+| [docs/API.md](docs/API.md) | Hợp đồng Data API, RPC và Spring đề xuất | Nhóm 2 đã review; TBD vẫn mở |
+| [docs/SECURITY.md](docs/SECURITY.md) | Permission matrix, Auth/RLS/Storage và đặc quyền | Nhóm 2 đã review; TBD vẫn mở |
+| [DESIGN.md](DESIGN.md) | Hướng thiết kế riêng, tokens, components và accessibility | Nhóm 2 đã review; TBD vẫn mở |
+| [docs/TEST-STRATEGY.md](docs/TEST-STRATEGY.md) | Chiến lược kiểm thử và Definition of Done | Nhóm 3 đã duyệt; có test frontend slice, chưa test tích hợp |
+| [docs/OPERATIONS.md](docs/OPERATIONS.md) | Môi trường, email, migration, deploy và recovery | Nhóm 3 đã duyệt; chưa quyền vận hành Cloud |
+| [Kế hoạch B1](docs/superpowers/plans/2026-11-23-baseline-and-delivery.md) | Preparation, gate, dependency và các milestone đầy đủ | Jira timeline GRAB-3..10; spike bỏ theo DEC-044 |
 
 Các dòng chưa viết là kế hoạch tài liệu, không phải file hoặc thiết kế đã hoàn thành.
 README chỉ là tổng quan và bản đồ; không là bản sao đầy đủ của PRD.
@@ -66,10 +79,10 @@ Spec Kit chưa được xác minh/cài đặt; chưa có artifact nào của Spe
 ## Thứ tự và điểm dừng
 
 1. Nhóm sản phẩm/quy tắc đã được duyệt; TBD không tự trở thành quyết định.
-2. Review nhóm thiết kế hiện tại và các lựa chọn còn mở.
-3. Viết và review kiểm chứng/vận hành.
-4. Duyệt baseline và kế hoạch; đề xuất Jira trước khi tạo.
-5. Duyệt spike kết nối có target, tác động và cleanup rõ ràng.
-6. Triển khai theo lát cắt do chủ sản phẩm chọn.
+2. Nhóm thiết kế đã được duyệt để tiếp tục; chốt riêng các phương án/TBD trước implementation.
+3. Nhóm kiểm chứng/vận hành đã duyệt; baseline B1 không đóng các gate chưa có proof.
+4. Kế hoạch B1 đã duyệt; Jira GRAB-3..GRAB-10 theo dõi timeline.
+5. Spike M1 đã được bỏ theo DEC-044; không có proof GATE-01.
+6. Triển khai các lát cắt độc lập; dừng persistence/quyền tại gate và xin duyệt thao tác Cloud riêng.
 
 Không tự commit/push, deploy, tạo issue hoặc thao tác ghi Cloud.

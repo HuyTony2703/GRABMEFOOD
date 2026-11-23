@@ -1,8 +1,13 @@
 # GrabMeFood — hướng thiết kế
 
+> Baseline B1 giữ hướng trải nghiệm; chưa có visual render được nghiệm thu.
+> Progress xóa, SSR, public ảnh và private upload staging đã chọn; token/copy/layout candidate vẫn cần review.
+
 **Trạng thái:** DRAFT nhóm 2 — đề xuất, chưa duyệt visual baseline.
 Chưa có mockup render, screenshot, component code hoặc bộ asset được tạo.
 Nguồn nghiệp vụ: [PRD](docs/PRD.md), [APP-FLOWS](docs/APP-FLOWS.md).
+**Bổ sung kiến trúc 5 service:** không đổi visual direction hoặc thêm menu service cho người dùng.
+Chỉ cập nhật trạng thái lỗi/pending liên dịch vụ; các lựa chọn UI vẫn là DRAFT, không tự duyệt palette.
 
 ## 1. Brief và mức độ tham chiếu
 
@@ -82,7 +87,8 @@ Khi query khớp món, nêu món khớp dưới quán thay vì đổi kết qu�
 - Món có trang riêng, tên quán cha và link quay lại; giá có nhãn demo.
 - Bản đồ ở trang quán, nút “Xem trên Google Maps” góc trên phải của container.
   Không che nhãn/attribution/controls có sẵn trong iframe; lỗi embed vẫn còn link và địa chỉ.
-- Ẩn/xóa: không render lại nội dung đã gỡ từ cache; marker không là card ảnh/tên đầy đủ đã xóa.
+- Ẩn/xóa: không render lại payload đã gỡ từ cache; marker không là card ảnh/tên đầy đủ đã xóa.
+  URL ảnh public cũ có thể còn đọc theo quyết định user; không hứa thu hồi cache ảnh.
 - Không tự thêm giờ mở cửa, hotline hoặc tọa độ vào brief khi chưa có dữ liệu được duyệt.
 
 ### Bài viết và tuyển chọn — Read
@@ -113,9 +119,15 @@ Khi query khớp món, nêu món khớp dưới quán thay vì đổi kết qu�
 
 - Navigation riêng; bảng/list dữ liệu, form vi/en, trạng thái Công khai/Ẩn và thao tác Xóa.
 - Không có Nháp/Chờ duyệt.
+- Đã chọn progress xóa: chặn hiển thị/sử dụng trước, “Đang xử lý xóa”, chỉ đủ receipts mới báo hoàn tất;
+  lỗi giữ chưa hoàn tất và retry an toàn. Không phải trạng thái Nháp nội dung.
 - Xóa/khóa có bước xác nhận và tóm tắt tác động là đề xuất UX chờ duyệt.
 - Lỗi Auth/DB một phần phải hiện trạng thái pending/partial và nút thử lại hợp lệ,
   không toast “thành công” khi chỉ hoàn tất một bước.
+- Local command thành công và thông báo đã phát/cleanup liên dịch vụ hoàn tất là kết quả khác nhau.
+  UI không phơi schema/chi tiết hạ tầng nhưng phải phân biệt xóa đang xử lý và đã hoàn tất.
+- Catalog/Account dependency lỗi phải cho thử lại, không hiển thị như không có kết quả hoặc tự cho thao tác.
+  Realtime chậm không tự mất nội dung đã lưu; notification state phải đồng bộ lại với owner.
 - Không tự thêm dashboard analytics, báo cáo kinh doanh hoặc quản trị role đầy đủ.
 
 ## 5. Component inventory đề xuất

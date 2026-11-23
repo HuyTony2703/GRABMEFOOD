@@ -1,13 +1,20 @@
 # Technical requirements — GrabMeFood
 
+> Nhóm 2 đã được duyệt để tiếp tục nhóm 3; phiên bản/thông số có nhiều phương án hoặc TBD
+> chưa tự trở thành lựa chọn đã chốt. B1 chọn SSR, shared schema/role, Data API/RPC priority,
+> HTTP outbox/HMAC và private staging→public; version/library pin vẫn là gate.
+
 **Trạng thái:** DRAFT nhóm 2 — các phiên bản/thông số đề xuất chưa được duyệt.
 Nguồn thành phần/đường gọi: [ARCHITECTURE](ARCHITECTURE.md).
 Nguồn contract: [API](API.md); quyền: [SECURITY](SECURITY.md).
 Không lặp sơ đồ kiến trúc; tài liệu này quy định cách thực hiện và kiểm tra kỹ thuật.
+**Bản chỉnh 5 service:** DEC-025 đã duyệt; deployment, connection, delivery và service identity
+theo trạng thái hiện hành trong DECISIONS, không một backend dùng secret toàn cục.
 
 ## 1. Phiên bản và evidence
 
-Khảo sát ngày 2026-11-23, không cài dependency và không chạy initializer.
+Khảo sát toolchain ban đầu ngày 2026-11-23 không cài dependency/initializer.
+Sau đó chủ dự án duyệt riêng scaffold và dependency cho lát cắt frontend Catalog discovery.
 
 | Thành phần | Đã xác nhận hoặc quan sát | Đề xuất chờ duyệt |
 | --- | --- | --- |
@@ -17,49 +24,84 @@ Khảo sát ngày 2026-11-23, không cài dependency và không chạy initializ
 | Node | Local v24.16.0 | Node 24 LTS, khóa patch cho môi trường đã chọn |
 | npm | Có executable, chưa kiểm tra version | npm với lockfile; không tạo workspace monorepo tool riêng |
 | React | Registry `latest` trả 19.3.1 | React/ReactDOM cùng patch; chưa install |
-| TypeScript | Registry `latest` trả 7.0.2 | Cần kiểm tra plugin/lint/test hỗ trợ trước chọn, không lấy latest làm bảo đảm tương thích |
+| TypeScript | Registry `latest` trả 7.0.2; metadata React Testing Library còn dùng TS 5.9.3 trong dev dependencies | TypeScript 7 chưa được xác nhận với ứng dụng/toolchain; không lấy latest làm bảo đảm tương thích |
 | Vite | Registry trả 8.3.8; guide hiển thị 8.3.7; engine ^20.19 hoặc >=22.12 | 8.3.8 candidate, không coi khác biệt docs/registry là build evidence |
-| React plugin | Registry 6.3.0, peer Vite ^8 | Candidate cùng Vite 8, cần kiểm chứng optional peer/toolchain |
+| React plugin | Registry 6.3.0, peer Vite ^8; engine Node ^20.19 hoặc >=22.12 | Candidate cùng Vite 8, cần kiểm chứng optional peer/toolchain |
 | supabase-js | Registry 2.119.2, engine Node >=22 | Candidate trên Node 24 |
+| Vitest | Registry 5.1.1; peer Vite ^6.4, ^7 hoặc ^8; engine Node ^22.12, ^24 hoặc >=26 | Candidate tương thích theo khai báo metadata với Vite 8/Node 24; chưa resolve/test |
+| React Testing Library | Registry 16.3.3; peer React/ReactDOM ^18 hoặc ^19, `@testing-library/dom` >=10 | Candidate tương thích theo khai báo peer với React 19; chưa resolve/test |
 | PostgreSQL | Đọc project trả 17.11 | Không nâng/hạ phiên bản Cloud |
 
 Spring Framework/Security đi theo BOM Spring Boot đã chọn, không pin chồng ngẫu nhiên.
-Các package test, routing, i18n, styling, SSR chưa chốt. Đề xuất thư viện tối thiểu, không cài cả bộ UI
+Vitest 5.1.1 và React Testing Library 16.3.3 là ứng viên nghiên cứu mới; metadata registry
+không thay cho chọn/pin phiên bản hay kiểm tra dependency resolution. Các package routing, i18n,
+styling, SSR chưa chốt. Đề xuất thư viện tối thiểu, không cài cả bộ UI
 chỉ vì skill nêu tên. Cài package và wrapper cần quyền task cụ thể sau baseline.
+
+### Frontend slice đã cài theo phê duyệt riêng
+
+Ngày 2026-11-23, tại `frontend/`, đã cài các phiên bản exact trong `package.json`/lockfile:
+React/ReactDOM 19.3.1, Vite 8.3.8, plugin-react 6.3.0, TypeScript 5.9.3,
+Vitest 5.1.1, React Testing Library 16.3.3, DOM Testing Library 10.4.2,
+jsdom 31.0.1 và React type definitions 19.3.0.
+Build client + SSR và UI tests local đã chạy thành công (xem evidence implementation tại
+[DECISIONS](DECISIONS.md)); điều này chỉ xác nhận lát cắt frontend hiện tại, không là
+baseline pin cho các service Java hay bằng chứng tích hợp/Auth/Data API/RLS.
 
 ## 2. Cấu trúc repo đề xuất
 
 ```text
 frontend/           React/TS/Vite và test UI (chưa tạo)
-backend/            Spring Boot/Maven và test server (chưa tạo)
-supabase/migrations/ SQL executable có version (chưa tạo)
-supabase/tests/      Kiểm thử DB/grants/RLS (chưa tạo)
+services/
+  catalog/          Spring Boot/Maven độc lập
+  collection/       Spring Boot/Maven độc lập
+  community/        Spring Boot/Maven độc lập
+  notification/     Spring Boot/Maven độc lập
+  account-administration/ Spring Boot/Maven độc lập
+supabase/           Chỉ nền tảng/shared contract nếu được duyệt; không migration ứng dụng dùng chung tùy ý
 docs/               Thiết kế và vận hành
 DESIGN.md           Tokens/component và responsive
 ```
 
-Không có file/package của cấu trúc trên ở hiện tại. Renderer SSR nếu được chọn cần thiết kế entry
-và deployment riêng trong frontend, không tự thêm một service scaffold.
+Đây là monorepo đề xuất, không là một Maven application chứa năm module runtime phụ thuộc nhau.
+Mỗi service có build/test/artifact/config và migration ownership độc lập; shared thư viện kỹ thuật tối thiểu
+chỉ khi duyệt, không share entities/JPA persistence hoặc một transaction manager xuyên miền.
+Migration có thể đặt dưới từng service; một nguồn chuẩn/owner, không đồng thời Flyway và Supabase SQL trùng nhau.
+Tooling/thứ tự replay chưa chốt G2-P13/G2-P18; không có folder/package/runtime scaffold nào được tạo.
+Renderer SSR đã chọn, cần entry/deployment riêng; không là service nghiệp vụ thứ sáu.
 
 ## 3. Tích hợp, credentials và cấu hình
 
 ### Frontend
 
-- Chỉ URL Supabase, publishable key và public API base phù hợp được dùng qua biến `VITE_*`.
+- Chỉ URL Supabase, publishable key và public API base từng owner phù hợp được dùng qua biến `VITE_*`.
+  Chưa có Gateway; frontend mapping năm service phải là config, không hardcode runtime domain/port.
 - Không đưa secret/JWT signing secret/DB password vào bundle hay biến prefix public.
 - PKCE/OAuth redirect allowlist phải bám môi trường được duyệt, không wildcard rộng.
-- Nếu SSR được chọn, renderer public dùng client anon riêng; không chia sẻ session global giữa request.
+- Renderer SSR public dùng client anon riêng; không chia sẻ session global giữa request.
 - Session browser do Supabase SDK quản lý; mô hình lưu token/cookie và CSP cần review.
 
-### Spring
+### Năm Spring service
 
 - Đề xuất HTTP client chuẩn Spring cho Auth Admin/Data API; không giả vờ có official Java Supabase SDK.
+- Auth Admin chỉ Account Administration; các service khác dùng owner API, không Auth Admin key chung.
+- Runtime ưu tiên Data API/RPC. Trước pin adapter phải chứng minh owner role/EXECUTE và actor context
+  qua API thật (GATE-01); không mặc định JDBC hoặc dùng global service_role để vượt lỗi.
+- Nếu cần thay runtime sang JDBC, trình lý do và xin duyệt lại; migration/admin có thể cần DB credential
+  riêng. Không xin password chat hoặc tự tạo Auth machine users/JWT issuer.
 - Base URL cố định theo config, không nhận URL tùy ý từ browser.
 - Secret chỉ từ kênh secret/môi trường được duyệt, không có `.env` thật trong repo.
-- Caller/privileged client riêng; không log Authorization/apikey hoặc gửi user JWT nhầm sang admin request.
+- Caller/privileged/internal-service client riêng; không log Authorization/apikey hoặc gửi user JWT nhầm sang admin.
+  Secret keys riêng nhưng cùng service_role không chứng minh schema isolation.
 - JWT asymmetric: Spring Security Resource Server + JWKS, kiểm tra issuer/expiry/audience/algorithm.
   Nếu project dùng HS256: Auth server `/user` để xác minh, chưa xin/lưu shared JWT secret.
 - Không tắt TLS verification.
+- P01 chưa chứng minh hosted Auth hook cấp arbitrary DB role. Không pin adapter dựa giả định này;
+  xem candidate/trust matrix SECURITY mục 10. Chưa cài SDK, tạo machine users hoặc import signing key.
+- Khảo sát P02 chỉ đọc: Node 24.16.0, npm 11.13.0, Java 21.0.11; có `docker.exe`
+  nhưng chưa kiểm tra daemon; không thấy `mvn`/`supabase` trên PATH. Candidate tối thiểu
+  để trình duyệt sau: Node/npm hiện có; Spring Boot 4.2.0 + Java 21, Maven Wrapper 3.9.x
+  cần pin patch/checksum; Supabase CLI pin version cần xác minh. Không có lệnh cài được duyệt.
 
 ### SMTP và Google
 
@@ -69,8 +111,8 @@ và deployment riêng trong frontend, không tự thêm một service scaffold.
 - Maps: ưu tiên iframe do luồng Share/Embed chính thức sinh cho dataset nhỏ; không nạp raw HTML admin nhập.
   Chỉ lưu URL host/path allowlist, server/UI tự tạo iframe; nút Maps là link độc lập.
 - Không bật Maps Embed API chỉ vì SKU hiện không tính phí: nó vẫn yêu cầu key và cần kiểm tra billing setup.
-- Upload byte validation chưa chốt: xem SECURITY G2-P12. Không coi MIME từ browser là kiểm tra
-  signature/pixel, không tự thêm endpoint/bucket staging khi chưa duyệt phương án.
+- Upload direct private staging → Catalog byte/pixel validation → public đã chọn.
+  Không coi MIME khai báo là đủ; bucket names/limits/finalize DTO vẫn cần contract review và Cloud approval.
 
 ## 4. Lỗi và phân trang
 
@@ -83,10 +125,15 @@ Các giá trị sau là **đề xuất kỹ thuật**, review trước khi biế
 - HTTP/DB errors được chuẩn hóa ở lớp adapter frontend, không giả Supabase trả cùng envelope với Spring.
 - Spring dùng ProblemDetail, có mã nghiệp vụ và request ID; không lộ stack trace/SQL/email/secret.
 - RLS có thể trả 0 rows thay vì 403; đọc 0 row không chứng minh không tồn tại hoặc test deny thành công.
-- RPC thay đổi dữ liệu nhận operation ID cho replay an toàn; version kiểm soát cập nhật đồng thời.
+- Command/API và owned RPC nếu có nhận operation ID để replay; version kiểm soát cập nhật đồng thời.
 - Không retry mutation mù; timeout chưa rõ kết quả phải tra operation hoặc retry đúng ID.
 - Đề xuất timeout HTTP 10 giây cho API ngoài, tối đa 2 retry có backoff cho read/lỗi tạm;
   giá trị thực chờ test. Ban/delete/send chỉ retry theo state machine và idempotency.
+- HTTP outbox/inbox và HMAC đã chọn: mỗi producer quản lý delivery theo consumer,
+  lease và backoff; inbox receipt + owned mutation atomic; claim quá hạn/poison event/manual replay phải thiết kế.
+  Không có service worker thứ sáu hoặc broker/cron platform được tự cấp quyền bởi quyết định này.
+- HTTPS khi triển khai; request HMAC theo cặp service, fresh request timestamp/nonce cho mỗi attempt,
+  eventId ổn định qua retry. Wire format/algorithm/skew/key rotation còn review; không tự chế crypto primitive.
 
 ## 5. Tìm kiếm và song ngữ
 
@@ -103,12 +150,17 @@ Các giá trị sau là **đề xuất kỹ thuật**, review trước khi biế
 ## 6. Logging và chất lượng
 
 - Spring log request ID, operation ID, hành động, mã kết quả và thời lượng; không log body/token.
-- DB function lỗi trả mã nghiệp vụ, không nuốt lỗi notification rồi báo mutation thành công.
+- DB transaction lỗi trả mã nghiệp vụ. Phân biệt local command committed với delivery notification còn pending;
+  không tuyên bố inbox được ghi cùng transaction producer hoặc báo full cleanup khi thiếu receipts.
 - Không thêm nền tảng log tính phí; log platform Free có retention giới hạn.
-- Build riêng frontend/backend; DB replay và RLS test tách khỏi unit test.
+- Build/test/artifact riêng frontend và **từng service**; integration contract/event/DB replay/RLS test riêng.
 - Đề xuất tests: frontend unit/component + E2E; Spring JUnit/HTTP mocks; SQL pgTAP và Data API thật.
   Framework/versions và lệnh executable chưa chốt, sẽ viết kế hoạch sau baseline.
 - TDD khi triển khai; không yêu cầu test chạy cho endpoint chưa tồn tại.
+- Log thêm service name, producer/event ID, consumer/delivery attempt và correlation ID qua các hop;
+  không biến log thành kho lưu comment/email đã xóa.
+- Test bắt buộc: một service down; crash commit→send→ack; duplicate/out-of-order; role không ghi được schema khác;
+  user khóa token cũ; cleanup nhiều owner thất bại một phần. Một backend build không chứng minh microservices.
 
 ## 7. Ngân sách và phi chức năng
 
@@ -119,7 +171,12 @@ Các giá trị sau là **đề xuất kỹ thuật**, review trước khi biế
 - Chưa xác nhận plan/quota project; không cam kết đủ cho traffic công khai.
 - Ảnh chuẩn bị resize/nén sẵn vì Image Transformations không có trên Free.
 - Số user đồng thời, latency percentile, RPO/RTO, dung lượng dataset và SLA: TBD, không tự đặt như đã duyệt.
-- Do chưa chốt host/SEO, chưa có cam kết thời gian cập nhật metadata hoặc quyền thu hồi ảnh qua CDN.
+- SSR đã chọn nhưng host chưa chốt; không cam kết cache invalidation latency. URL ảnh public cũ
+  có thể đọc sau hide theo quyết định user, không hứa thu hồi byte đã tải.
+- Năm service làm tăng RAM/connection và rủi ro free hosting sleep; chưa cam kết public deployment miễn phí
+  đủ năm runtime. Có thể nghiên cứu chạy local riêng process cho đồ án, nhưng chưa chốt môi trường/release.
+- Nếu chỉ bật event-based cache thì phải đo propagation lag, không tự coi đáp ứng random/ẩn/khóa.
+  Consistency/completion và latency budget là G2-P16, chưa có con số được duyệt.
 
 ## 8. Nguồn kiểm tra
 
@@ -128,7 +185,9 @@ Các giá trị sau là **đề xuất kỹ thuật**, review trước khi biế
 - Registry metadata: [React](https://registry.npmjs.org/react/latest),
   [TypeScript](https://registry.npmjs.org/typescript/latest), [Vite](https://registry.npmjs.org/vite/latest),
   [React plugin](https://registry.npmjs.org/@vitejs%2Fplugin-react/latest),
-  [supabase-js](https://registry.npmjs.org/@supabase%2Fsupabase-js/latest).
+  [supabase-js](https://registry.npmjs.org/@supabase%2Fsupabase-js/latest),
+  [Vitest](https://registry.npmjs.org/vitest/latest),
+  [React Testing Library](https://registry.npmjs.org/@testing-library%2Freact/latest).
 - [Maps Share/Embed](https://support.google.com/maps/answer/7101463?hl=en),
   [Embed API pricing](https://developers.google.com/maps/documentation/embed/usage-and-billing)
 - [Supabase pricing](https://supabase.com/pricing), [SMTP](https://supabase.com/docs/guides/auth/auth-smtp)

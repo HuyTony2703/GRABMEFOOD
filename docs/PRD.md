@@ -1,7 +1,9 @@
 # PRD — GrabMeFood
 
 **Trạng thái:** Nhóm 1 được chủ sản phẩm duyệt ngày 2026-11-23.
-Chưa có baseline triển khai toàn dự án; các TBD vẫn cần quyết định riêng.
+Phần đã xác nhận thuộc baseline B1; các gate/TBD vẫn cần quyết định hoặc evidence riêng.
+**Bổ sung đã duyệt:** mục tiêu kiến trúc 5 microservices để học hệ thống phân tán.
+Giữ 29 requirement ID; bổ sung acceptance đã được xác nhận cho comment, notification, admin và progress xóa.
 **Ngày soạn:** 2026-11-23.
 **Nguồn:** các quyết định trong cuộc trao đổi khởi tạo; xem [DECISIONS.md](DECISIONS.md).
 Requirement ID là mã tổ chức bản nháp, không phải issue Jira đã tạo.
@@ -24,7 +26,8 @@ bên dưới, không phải mọi tính năng hiện tại hoặc tương lai c�
 | Người dùng | Quyền của khách; lưu, bộ sưu tập riêng, random, bình luận/trả lời, thông báo cá nhân |
 | Quản trị viên | Quản lý nội dung, xóa bình luận; khóa/mở/xóa tài khoản; gửi thông báo |
 
-Cách cấp quản trị viên đầu tiên và giới hạn thao tác giữa các quản trị viên: TBD.
+Admin không tự khóa/xóa mình hoặc admin active cuối cùng. Chủ dự án chỉ định admin đầu và duyệt
+thao tác cấp riêng; danh tính/cách bootstrap thực tế còn cần xác nhận.
 
 ## 3. Yêu cầu và acceptance nghiệp vụ
 
@@ -66,28 +69,34 @@ Quy tắc gán quán vào nhóm và xử lý chồng lấn còn TBD.
 | --- | --- | --- |
 | REQ-COM-01 | Bình luận chữ trên cả quán và món | Người đăng nhập gửi được, công khai ngay, không điểm số và không duyệt trước |
 | REQ-COM-02 | Trả lời một cấp | User/admin trả lời được; không tạo cây trả lời nhiều tầng |
-| REQ-COM-03 | Quyền sửa/xóa | User chỉ sửa/xóa nội dung của mình; admin xóa được mọi bình luận; không mặc định admin được sửa lời người khác |
-| REQ-NOT-01 | Năm loại thông báo trong website | Có thông báo mục đã lưu không khả dụng, bình luận bị admin xóa, admin gửi, bình luận được reply, quán đã lưu thêm món |
+| REQ-COM-03 | Quyền sửa/xóa | User chỉ sửa/xóa của mình; admin xóa mọi bình luận, không sửa lời người khác; xóa parent cascade replies kể cả người khác |
+| REQ-NOT-01 | Năm loại thông báo trong website | Năm loại theo DOMAIN; không self-reply, dedup nhiều bộ, món/quán public; thông báo saved-target/món mới cần save ở cả hai mốc sự kiện và gửi |
 | REQ-NOT-02 | Realtime và chuông | Thông báo mới tự cập nhật khi đang mở web; có chưa đọc thì chấm đỏ, hết chưa đọc thì bỏ chấm |
 | REQ-NOT-03 | Đọc thông báo | Bấm chuông thấy danh sách; bấm một mục đánh dấu đã đọc và mở nội dung liên quan; có “Đánh dấu tất cả đã đọc”; chỉ xem/sửa trạng thái thông báo của mình |
-| REQ-NOT-04 | Admin gửi thông báo | Gửi riêng một tài khoản hoặc toàn bộ người dùng; người dùng thường không tự gửi thông báo hệ thống |
+| REQ-NOT-04 | Admin gửi thông báo | Gửi riêng hoặc toàn bộ; broadcast chỉ active users; user thường không tự gửi thông báo hệ thống |
 
 Không gửi email/push cho thông báo sản phẩm. Email xác thực và khôi phục là luồng Auth riêng.
-Đích mở khi nội dung liên quan đã xóa và phạm vi người nhận cho các trường hợp biên: TBD.
+Đích mở khi nội dung liên quan đã xóa, retention và chi tiết xử lý thời gian vẫn TBD;
+không hỏi lại các quy tắc recipient đã chốt trong DOMAIN.
 
 ### Quản trị và vòng đời dữ liệu
 
 | ID | Yêu cầu | Acceptance cần chứng minh |
 | --- | --- | --- |
 | REQ-ADM-01 | Trang quản trị trong website | Chỉ admin quản lý quán, món, bài viết, danh sách tuyển chọn và xóa bình luận; user thường bị từ chối cả qua API |
-| REQ-ADM-02 | Công khai / ẩn / xóa, không nháp | Không có bước duyệt/nháp; ẩn không xóa dữ liệu; xóa quán kéo theo món và bình luận/trả lời liên quan |
+| REQ-ADM-02 | Công khai / ẩn / xóa, không nháp | Không nháp; ẩn giữ dữ liệu; xóa quán kéo theo món/comments; chặn đọc trước, báo đang xử lý và chỉ hoàn tất khi đủ receipts |
 | REQ-ADM-03 | Dấu mục không khả dụng | Ẩn/xóa quán/món không làm mất dấu trong bộ sưu tập; hiển thị “Không còn khả dụng”; ẩn quán làm các món của quán không khả dụng |
-| REQ-ADM-04 | Khóa/mở khóa tài khoản | Khóa giữ dữ liệu, chặn đăng nhập và thao tác cần tài khoản từ cả phiên đang mở; vẫn xem như khách; mở khóa cho sử dụng lại |
-| REQ-ADM-05 | Xóa tài khoản | Xóa tài khoản, bộ sưu tập, mục đã lưu và bình luận/trả lời của người đó; không giữ bình luận dưới tên ẩn danh |
+| REQ-ADM-04 | Khóa/mở khóa tài khoản | Khóa giữ dữ liệu và chặn cả phiên cũ; vẫn đọc public; mở cho dùng lại; không tự khóa hoặc vô hiệu hóa admin active cuối |
+| REQ-ADM-05 | Xóa tài khoản | Xóa dữ liệu riêng/comment và replies dưới comment gốc kể cả người khác; không ẩn danh giữ lại; tiến trình partial không báo thành công |
 
 ## 4. Ràng buộc đã xác nhận
 
 - Công nghệ và hướng phân chia: xem README và DECISIONS; thiết kế chi tiết ở nhóm 2.
+- 5 service: Catalog, Collection, Community, Notification, Account Administration; Supabase Auth giữ nguyên.
+  Mỗi service triển khai độc lập; schema/role riêng cùng DB đã chọn, không tự thêm Gateway/broker.
+- Ưu tiên Data API/RPC; shared read-only permission function; HTTP outbox/inbox + HTTPS/HMAC.
+  Scope credential cần evidence, không tự fallback JDBC. Public SSR React/Vite; private CSR.
+- Ảnh đích public, URL cũ có thể tồn tại khi hide; upload private staging, Catalog validate rồi public.
 - Tên/địa chỉ quán thật tham chiếu từ Google Maps; không đồng nghĩa quyền scrape hoặc tái sử dụng mọi dữ liệu.
 - Nội dung và ảnh chuẩn bị trước; không có nút tích hợp AI trong quản trị.
 - SMTP do chủ dự án cho biết đã cấu hình; chưa kiểm chứng gửi email.
@@ -104,4 +113,7 @@ Không gửi email/push cho thông báo sản phẩm. Email xác thực và khô
 ## 6. Những việc chưa được quyết định
 
 Danh sách câu hỏi mở được quản lý tập trung tại DECISIONS, không biến thành acceptance ngầm.
+Progress xóa đã chốt; còn độ trễ, recovery/retention và wire contracts cần kiểm chứng/chốt.
+Chọn microservices không có nghĩa chấp nhận payload ẩn còn đọc được (không tính URL ảnh public đã chấp thuận), random
+ra mục đã gỡ, hoặc báo “đã xóa hoàn tất” khi service khác chưa cleanup.
 Các acceptance trên là mục tiêu kiểm chứng đã duyệt, **chưa phải kết quả test đã đạt**.
