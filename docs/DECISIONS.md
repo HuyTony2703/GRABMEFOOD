@@ -378,11 +378,23 @@ frontend được duyệt riêng trong phạm vi lát cắt UI; không có thao 
 Auth, migration, Jira status hay release.
 
 Ngày 2026-11-23 đã tạo lát cắt frontend Catalog discovery/SSR với test-only
-fixtures; tiếp đó cập nhật cùng trang thành editorial composition theo thiết kế đã duyệt:
-header/nav, hero, search/filter, feature minh họa CSS-only và kết quả/empty state.
-Local: 5 tests pass; TypeScript/client/SSR build pass; production SSR và JS asset HTTP 200.
-Không có Catalog API, dữ liệu runtime/thật, Auth/RLS/Data API, backend service, browser
-screenshot hoặc kiểm chứng quyền. Không đánh dấu T4/GRAB-6 hoàn tất hay Jira issue Done.
-Review độc lập không có Critical/Important; minor còn lại là chưa assert heading-order/
-separation regression riêng và chưa có browser viewport/overflow evidence. Chưa nghiệm thu
-visual baseline; xem DESIGN mục 8 và plan editorial.
+fixtures; tiếp đó cập nhật editorial composition và thêm component trình bày chi tiết quán/món
+độc lập nhận view model/URL qua props; tiếp tục thêm component bài viết/tuyển chọn độc lập.
+Local hiện có 29 tests/4 files pass;
+TypeScript/client/SSR build pass; `npm audit` 0 vulnerabilities.
+Các component detail/editorial chưa nối App route, Catalog API, dữ liệu runtime/thật,
+Auth/RLS/Data API, backend service hoặc provider bản đồ. Không đánh dấu T4/GRAB-6 hoàn tất
+hay Jira issue Done.
+Review discovery trước đó không có Critical/Important; assertion heading-order/separation
+đã bổ sung. Review homepage bằng Chrome headless 157.0.8103.79 tại 1280×900, 1440×1000,
+390×844: không horizontal overflow; Tab focus targets có outline 3px và không bị viewport che.
+Contrast chữ đo 5.53:1–16.2:1; placeholder 6.02:1. Control border cũ chỉ 1.51:1 trên trắng,
+đã đổi sang #7b8b80 (3.59:1) và thêm regression test. Screenshots tại
+`docs/evidence/homepage-ui-review-2026-11-23/`. Đây là bằng chứng local/headless cho homepage,
+không là review browser/device thực, zoom audit, visual baseline nghiệm thu hoặc GRAB-2 Done.
+Xem DESIGN mục 8 và các plan editorial/public-detail/homepage-ui-review.
+Review độc lập cho public detail components không có Critical/Important; minor deferred là
+siết negative assertions cho wrapper elements absent. Component hiện đã omit optional wrappers.
+Review editorial-content phát hiện paragraph chỉ có whitespace tạo container rỗng; đã thêm
+test RED→GREEN và lọc đoạn rỗng. Minor deferred: assertion mô tả mục selection có thể kiểm
+tra chính xác hơn tại `<li>`.

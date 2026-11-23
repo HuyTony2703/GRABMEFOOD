@@ -168,13 +168,22 @@ Không tạo/gọi dịch vụ AI trong công việc thiết kế tài liệu n�
   Dùng guidance web về button semantics, accessible name/state/focus; không áp kết quả native back-button.
 - Impeccable: đọc shape/new-work/mode-operate để phân biệt guide/read và admin/operate.
   Không chạy context launcher vì có thể tải binary; không có screenshot critique hoặc detector result.
-- Cần review mockup/render và font/contrast thực trước chốt visual baseline.
-- Visual companion chưa dùng; đã chạy SSR local phục vụ kiểm tra HTTP, chưa có mockup/screenshot browser.
+- Visual companion chưa dùng; review này mới dùng Chrome headless 157.0.8103.79 qua
+  DevTools Protocol ở local, không phải thiết bị thật hoặc browser manual review.
 - Progress local 2026-11-23: editorial discovery có header/nav, hero/search, CSS-only feature
-  minh họa và results/empty state. `npm test` 5/5; `npm run build` client+SSR thành công;
-  production SSR + bundle HTTP 200 tại local. Chưa có browser screenshot, viewport/zoom audit
-  hay contrast measurement; không gọi visual baseline đã nghiệm thu. Không có ảnh/quán thật,
-  dữ liệu runtime, Michelin assets/copy hoặc API.
-- Code review độc lập không có Critical/Important; đề xuất bổ sung assertion heading-order/
-  separation và browser viewport review còn deferred, không thay acceptance sản phẩm.
+  minh họa và results/empty state; restaurant/dish detail cùng article/selection presentation
+  components chỉ có test fixtures và chưa nối route/runtime data. Production SSR `/` trả HTTP 200.
+  Review headless Chrome ghi tại `docs/evidence/homepage-ui-review-2026-11-23/`:
+  1280×900, 1440×1000 và 390×844; không thấy horizontal overflow.
+  Keyboard Tab qua home, nav, search, area và feature link; visible controls có outline 3px,
+  các focus target quan sát được không bị viewport che.
+  Contrast đo từ computed foreground/background bằng công thức WCAG: text 5.53:1–16.2:1,
+  placeholder 6.02:1; control border ban đầu #cbd5ce chỉ 1.51:1 trên trắng.
+  Đổi border search/select sang #7b8b80; browser đo 3.59:1, có regression test tối thiểu 3:1.
+  Hiện frontend `npm test` 29/29; `npm run build` TypeScript/client/SSR pass;
+  `npm audit --audit-level=moderate` 0 vulnerabilities. Đây chỉ là headless homepage evidence,
+  không audit zoom, browser thật, nội dung runtime, các route detail/editorial, API, Auth/RLS
+  hoặc visual baseline toàn sản phẩm. Không có ảnh/quán thật, dữ liệu runtime, Michelin assets/copy.
+- Review discovery độc lập không có Critical/Important; assertion heading-order/separation đã bổ sung.
+  Review hiện tại không thay acceptance sản phẩm hoặc GRAB-2.
 - Impeccable detector cho các UI file: `[]`; đây chỉ là kiểm tra cơ học, không thay visual review.

@@ -51,6 +51,8 @@ AI chuẩn bị nội dung trước, **không tích hợp dịch vụ AI vào �
 Chi tiết kỹ thuật, đường API và schema chưa được thiết kế thành baseline.
 Đã bắt đầu lát cắt frontend Catalog discovery/SSR theo DEC-044; đây chưa phải ứng dụng
 đầy đủ và chưa kết nối Catalog API, dữ liệu, Auth, RLS hoặc bất kỳ service nào.
+Các component discovery, detail và editorial hiện mới là presentation slice; chưa có route
+nội dung hoặc dữ liệu runtime.
 
 ## Bản đồ tài liệu và nguồn chuẩn
 

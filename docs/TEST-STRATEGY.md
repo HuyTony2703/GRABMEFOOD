@@ -9,7 +9,8 @@ Nhóm 2 được duyệt để tiếp tục tài liệu; các phương án thay 
 Kiểm chứng frontend và năm service Catalog, Collection, Community, Notification, Account Administration.
 Ưu tiên kiểm thử local, dữ liệu tổng hợp và TDD khi triển khai. Không dùng Cloud mặc định làm test sandbox.
 Không triển khai tính năng chưa duyệt chỉ để hoàn tất bộ test.
-Frontend slice hiện có Vitest 5.1.1/React Testing Library 16.3.3 và tests executable;
+Frontend slice hiện có Vitest 5.1.1/React Testing Library 16.3.3 và 29 tests executable
+(SSR structure, detail/editorial components, heading levels/landmark separation, search/filter/empty behavior);
 framework/version/lệnh cho backend services và integration còn chưa chốt.
 
 ## 2. Các tầng bằng chứng
