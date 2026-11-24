@@ -296,11 +296,13 @@ Tìm kiếm hiện khớp chuỗi tên quán/món và khu vực; chưa phải m�
 acceptance M2. M2 không hoàn tất: không có Catalog service/API, admin, storage, auth/RLS,
 HTML/OG route nội dung hay permission proof.
 
-Kiểm chứng local: `npm test -- --reporter=verbose` (5 tests pass, 2 files);
+Kiểm chứng local: `npm test -- --reporter=verbose` (29 tests pass, 4 files);
 `npm run build` (TypeScript, client và SSR bundles pass); `npm audit --audit-level=moderate`
 (0 vulnerabilities). Production server thử local: `GET /` và client asset đều HTTP 200,
-SSR chứa landmark/search. Không có browser automation/screenshot; đây không thay cho browser,
-Data API, Auth/RLS, năm Spring service hay migration/replay verification.
+SSR chứa landmark/search. Có ảnh headless viewport tại
+`docs/evidence/homepage-ui-review-2026-11-23/`; không có browser automation hoặc thiết bị thật.
+Ảnh này không thay cho browser/device review đầy đủ, Data API, Auth/RLS, năm Spring service
+hay migration/replay verification.
 
 ### Đối chiếu GRAB-1..GRAB-10 theo evidence
 
@@ -309,8 +311,8 @@ không chứng minh không có công việc. Không cập nhật status hoặc n
 
 | Jira | Đối chiếu nguồn chuẩn/evidence hiện có | Đánh giá |
 | --- | --- | --- |
-| GRAB-1 | Nhóm 1 được duyệt; 6 tài liệu nguồn, 29 requirement/35 rule traceability và review tĩnh ghi tại DECISIONS mục 7 | Đủ căn cứ đề xuất Done; chờ chủ dự án duyệt transition |
-| GRAB-2 | DESIGN/APP-FLOWS và hướng UI đã duyệt; chưa có mockup/wireframe render đã duyệt, screenshot hoặc checklist visual review | Chưa Done; còn thiếu acceptance/evidence |
+| GRAB-1 | Nhóm 1 được duyệt; 6 tài liệu nguồn, 29 requirement/35 rule traceability và review tĩnh ghi tại DECISIONS mục 7; chủ dự án đã chuyển Jira Done | Done theo xác nhận của chủ dự án |
+| GRAB-2 | Tài liệu được owner duyệt; atlas low-fi và hướng trình bày DEC-049..060/064..080 được chấp thuận; checklist acceptance §7a được lập (DEC-061), sẽ chạy khi sản phẩm/môi trường thật sẵn sàng (DEC-063); OQ còn mở sẽ rà trước luồng liên quan (DEC-062); 9 nhóm traceability ở mức cấu trúc | Jira giữ To Do theo DEC-056; theo DEC-057..058 giữ atlas hiện tại, placeholder VI/EN (DEC-066/068/080) và chưa tạo mockup fidelity cao trước duyệt visual baseline; acceptance sản phẩm, zoom/text scaling, nội dung dài/song ngữ và đầy đủ accessibility chưa test; chưa đề xuất Done |
 | GRAB-3 | B1/preparation, frontend exact pins/build/tests; backend Maven/Spring toolchain và baseline integration manifests chưa pin/kiểm chứng đầy đủ | Đang dở; không suy từ frontend build là toolchain toàn hệ thống xong |
 | GRAB-4 | Spike M1 bị bỏ theo DEC-044; không target/resource/proof, Jira vẫn giữ nguyên timeline | Bỏ/đang dở theo quyết định; không đánh dấu Done |
 | GRAB-5 | GATE-01 chưa proof Data API/RPC role isolation; không migration, grants hoặc RLS runtime test | Blocked ở persistence/security, không cập nhật Jira |
@@ -320,8 +322,8 @@ không chứng minh không có công việc. Không cập nhật status hoặc n
 | GRAB-9 | Không có lifecycle/admin orchestration, receipts hoặc cross-owner cleanup runtime | Chưa bắt đầu |
 | GRAB-10 | Chưa có acceptance E2E, từng service/runtime, Cloud permissions, migration/replay, backup/restore hoặc release evidence | Chưa bắt đầu; GATE-05 và các gate khác mở |
 
-Không tự transition Jira. GRAB-1 là ứng viên duy nhất đủ evidence để trình owner duyệt Done;
-GRAB-2 cần visual artifacts; GRAB-3 còn phần toolchain/backend; GRAB-4 không thể coi
+Không tự transition Jira. GRAB-1 đã Done theo chủ dự án;
+GRAB-2 có wireframe render và evidence tĩnh để owner review nhưng chưa đủ acceptance; GRAB-3 còn phần toolchain/backend; GRAB-4 không thể coi
 spike bị hủy là hoàn tất; GRAB-5..10 chưa đạt acceptance. Tiếp tục phần độc lập được phép
 theo từng lát cắt và cập nhật evidence tại nguồn chuẩn.
 
@@ -356,7 +358,8 @@ user thường không admin mutation, renderer không nhận secret; dùng đư�
 Xóa đa owner chỉ được bật full khi M5; không ship nút delete báo thành công giả.
 
 **Progress:** UI discovery local có tìm tên quán/món trên dữ liệu được truyền vào, lọc theo khu vực,
-empty state, SSR + hydrate; không có fixture runtime hoặc Catalog API. Đây là lát cắt đang làm,
+empty state, SSR + hydrate; có thêm component detail quán/món và bài viết/tuyển chọn độc lập
+nhận nội dung/URL qua props. Không có fixture runtime hoặc Catalog API. Đây là lát cắt đang làm,
 không phải hoàn thành M2/T4 và chưa chứng minh HTML/OG theo route nội dung, public Data API hay quyền.
 
 ### M3 — Auth hoàn chỉnh và Collection/random

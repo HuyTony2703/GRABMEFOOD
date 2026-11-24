@@ -65,13 +65,14 @@
 - [x] **Step 2:** Dừng production process do task khởi chạy; không dừng dev server có trước trên 4173. Browser visual review chưa thực hiện vì không có browser tool.
 - [x] **Step 3:** Rà `git status`/diff; không tuyên bố API/Auth/backend acceptance. Mọi thay đổi staged/chưa commit ban đầu được giữ; không commit.
 
-**Progress/evidence:** `npm --prefix frontend test -- --reporter=verbose` 5/5;
+**Progress/evidence:** `npm --prefix frontend test -- --reporter=verbose` 6/6;
 `npm --prefix frontend run build` pass; production SSR and asset HTTP 200.
 Ban đầu `task-done` thử npm từ repo root nên lỗi không tìm thấy package.json; chạy lại bằng
 `--prefix frontend` pass. Port 4173 đã có tiến trình `node server.mjs` trước task; không dừng
 tiến trình không thuộc production verification này. Không browser screenshot, API, Cloud, Auth/RLS,
 service, migration/replay hoặc GRAB-6 acceptance.
 
-**Final review:** independent reviewer found no Critical/Important issues. Deferred minor:
-heading-order/feature-results regression assertions could be stronger; browser viewport/
-overflow review at 320/390/desktop remains unavailable. Impeccable detector returned `[]`.
+**Final review:** independent reviewer found no Critical/Important issues. Follow-up regression
+assertion now covers heading levels and separation of editorial feature/results (6 tests pass);
+browser viewport/overflow review at 320/390/desktop remains unavailable. Impeccable detector
+returned `[]`.
