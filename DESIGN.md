@@ -1,14 +1,13 @@
 # GrabMeFood — hướng thiết kế
 
-> Baseline B1 giữ hướng trải nghiệm; visual render đã có local nhưng chưa được nghiệm thu.
-> Progress xóa, SSR, public ảnh và private upload staging đã chọn; token/copy/layout candidate vẫn cần review.
+> Baseline B1 giữ hướng trải nghiệm. Bản render tĩnh editorial sáng đã được chủ dự án duyệt làm visual baseline GRAB-2 (DEC-082).
+> Progress xóa, SSR, public ảnh và private upload staging đã chọn; copy cuối và chi tiết ngoài bản render vẫn mở.
 
-**Trạng thái:** DRAFT nhóm 2 — đề xuất, chưa duyệt visual baseline.
-Đã có component editorial discovery và CSS-only illustration local; chưa có screenshot/browser review
-hoặc bộ asset thật được tạo.
+**Trạng thái:** Visual baseline đã duyệt cho phạm vi thể hiện trong [atlas tĩnh GRAB-2](docs/evidence/grab2-wireframe-render-2026-11-23/README.md).
+Có screenshot và kiểm tra Chrome cho atlas; chưa nghiệm thu UI sản phẩm hay bộ asset thật.
 Nguồn nghiệp vụ: [PRD](docs/PRD.md), [APP-FLOWS](docs/APP-FLOWS.md).
 **Bổ sung kiến trúc 5 service:** không đổi visual direction hoặc thêm menu service cho người dùng.
-Chỉ cập nhật trạng thái lỗi/pending liên dịch vụ; các lựa chọn UI vẫn là DRAFT, không tự duyệt palette.
+Trạng thái lỗi/pending liên dịch vụ không thay đổi hướng thị giác hoặc hợp đồng nghiệp vụ.
 
 ## 1. Brief và mức độ tham chiếu
 
@@ -28,7 +27,7 @@ giao diện đã đối chiếu. Cần review visual thật trước implementat
 - Marketplace đặt món: sai phạm vi, không chọn.
 
 Hướng editorial guide đã được chủ dự án xác nhận cho lát cắt frontend ngày 2026-11-23;
-palette/type tổng thể và visual baseline cụ thể vẫn chờ review, không áp đặt thương hiệu.
+palette sáng và system sans trong bản render được duyệt theo DEC-082.
 
 ## 2. Hướng thị giác đề xuất
 
@@ -39,7 +38,7 @@ palette/type tổng thể và visual baseline cụ thể vẫn chờ review, kh�
 - Ảnh quyết định nhịp trang; không dùng gradient/glass/animation phức tạp để thay ảnh thật.
 - Controls và admin dùng chuẩn web quen thuộc, không “trang trí” làm khó nhận biết trạng thái.
 
-## 3. Tokens khởi điểm (đề xuất, chưa kiểm chứng render)
+## 3. Tokens khởi điểm và phạm vi kiểm chứng
 
 Ba lớp primitive → semantic → component; CSS variables sẽ tạo trong task implementation đã duyệt.
 

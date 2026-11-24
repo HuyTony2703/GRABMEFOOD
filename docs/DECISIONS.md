@@ -105,6 +105,7 @@ Không giả định có phê duyệt độc lập cho các chi tiết triển k
 | DEC-079 | Khi map embed unavailable, low-fi giữ vị trí có nguồn hợp lệ, link mở đúng quán trên Google Maps và placeholder rõ cho embed | Chủ dự án chọn ngày 2026-11-24; không chọn provider/API/chi phí hoặc điều kiện sử dụng |
 | DEC-080 | State/CTA copy tiếp tục dùng placeholder VI/EN theo semantics đã xác nhận, chưa viết câu cuối | Chủ dự án chọn ngày 2026-11-24; không duyệt final copy hoặc dịch thuật, state không chỉ phân biệt bằng màu |
 | DEC-081 | Dùng candidate editorial sáng, neutral nền sáng và accent xanh trong DESIGN.md để tạo render review visual-baseline; chưa xác nhận visual baseline cuối | Chủ dự án duyệt proposal ngày 2026-11-24; cho phép render tĩnh để review, chưa cho phép high-fidelity mockup, app UI implementation hoặc chuyển trạng thái baseline |
+| DEC-082 | Chủ dự án duyệt bản render editorial sáng làm visual baseline GRAB-2, thay trạng thái chờ duyệt của DEC-081; ủy quyền agent tự chọn bước tiếp theo trong phạm vi GRAB-2 | Duyệt hướng thị giác thể hiện trong atlas, không duyệt copy VI/EN cuối, không đóng OQ và không thay thế kiểm chứng sản phẩm theo DEC-063 |
 
 ### Hướng trước DEC-025 — lưu lịch sử, không dùng như ràng buộc hiện tại
 
