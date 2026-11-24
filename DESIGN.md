@@ -103,7 +103,9 @@ Khi query khớp món, nêu món khớp dưới quán thay vì đổi kết qu�
 ### Đã lưu / random — Operate
 
 - Tách tab Quán và Món; danh sách bộ sưu tập riêng, loại bộ hiển thị rõ.
+- Một thao tác lưu chọn một bộ phù hợp loại; muốn thêm vào bộ khác thì thao tác riêng (DEC-045).
 - Random nằm trong khu đã lưu: “Toàn bộ đã lưu” hoặc “Tự chọn các mục”; không có mode riêng theo bộ (DEC-046).
+- Login từ thao tác cá nhân quay lại trang nguồn; không tự gửi/lưu, cần user xác nhận lại (DEC-048).
 - Kết quả cho phép mở chi tiết và random tiếp; không vòng quay gây chờ, không tuyên bố tránh lặp.
 - Không mục hợp lệ: giải thích “Chưa có mục khả dụng để chọn”, gợi ý lưu thêm/chọn lại.
 - Marker hiển thị “Không còn khả dụng”; thao tác bỏ marker chờ chốt OQ-07/G2-P04.

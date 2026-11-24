@@ -71,6 +71,40 @@ Không giả định có phê duyệt độc lập cho các chi tiết triển k
 | DEC-045 | Mỗi thao tác lưu chọn một bộ sưu tập phù hợp loại; cùng mục vẫn có thể được thêm vào nhiều bộ bằng các thao tác riêng | Chủ dự án duyệt wireframe GRAB-2; không thay đổi quyền riêng tư hoặc rule nhiều bộ ở REQ-SAV-01..02 |
 | DEC-046 | Không có chế độ random trực tiếp theo bộ sưu tập; giữ hai cách theo PRD: toàn bộ mục đã lưu hoặc tự chọn các mục đã lưu | Chủ dự án duyệt wireframe GRAB-2; xác suất và xử lý item bị gỡ đồng thời vẫn TBD |
 | DEC-047 | Với thao tác admin nguy hiểm, yêu cầu xác nhận trước và nêu tác động; chỉ báo hoàn tất từng bước khi có xác nhận tương ứng, nếu chưa thì thể hiện đang/chưa hoàn tất | Chủ dự án duyệt nguyên tắc UX trong wireframe; không thay đổi authorization, workflow backend, receipts hoặc recovery contract |
+| DEC-048 | Sau đăng nhập từ thao tác cá nhân, quay lại trang trước; không tự thực hiện thao tác đang chờ, người dùng chủ động xác nhận lại | Chủ dự án duyệt luồng UI; callback/account-linking và lỗi xác thực vẫn cần thiết kế |
+| DEC-049 | Atlas render wireframe low-fi được duyệt làm đầu vào cho bước thiết kế tiếp theo | Chủ dự án xác nhận ngày 2026-11-24; không đồng nghĩa duyệt mọi bố cục/copy, visual baseline, acceptance hoặc đóng OQ |
+| DEC-050 | Bước thiết kế tiếp theo dùng responsive reflow hiện tại làm cách biểu diễn mobile, không cần board riêng cho từng màn | Chỉ là cách trình bày để review; không chứng minh mobile usability/feature parity đã đạt |
+| DEC-051 | Giữ `Bình luận & thông báo` thành section tài liệu riêng để đối chiếu requirement | Không hàm ý menu, navigation hay URL sản phẩm |
+| DEC-052 | Bước thiết kế tiếp theo thể hiện dialog mẫu chọn một bộ phù hợp loại cho mỗi thao tác lưu; muốn thêm mục vào bộ khác thì thao tác riêng | Theo DEC-045; OQ-07 (đổi tên/xóa/giới hạn/bỏ lưu) vẫn mở |
+| DEC-053 | Bước thiết kế tiếp theo thể hiện dialog xác nhận admin mẫu, vùng tác động placeholder và trạng thái pending/partial/complete | Theo DEC-047; không duyệt copy/contract/backend receipts/recovery |
+| DEC-054 | Giữ danh sách thông báo thay vì panel trong bước thiết kế tiếp theo | Chỉ là cách trình bày; không quyết định route/URL hay hành vi ngoài yêu cầu hiện có |
+| DEC-055 | Chủ dự án chấp thuận các hướng review trình bày đã đề xuất: giữ cấu trúc section tài liệu hiện tại, responsive reflow thay vì board mobile riêng, hai dialog mẫu đã duyệt và notification list | Xác nhận 2026-11-24; chỉ đóng các câu hỏi về hướng trình bày tương ứng, không phải visual baseline, kiểm thử usability/parity hay acceptance sản phẩm |
+| DEC-056 | Chỉ ghi nhận duyệt tài liệu và các hướng trình bày; chưa đề xuất hoặc cập nhật GRAB-2 sang Done | GRAB-2 vẫn To Do; còn thiếu kiểm chứng sản phẩm, nội dung dài/song ngữ và accessibility; không có Jira write |
+| DEC-057 | Giữ atlas/bố cục hiện tại làm điểm xuất phát; chưa duyệt copy VI/EN cụ thể; chỉ bổ sung state khi đã có căn cứ requirement/OQ; chưa chuẩn bị mockup fidelity cao trước khi có duyệt visual baseline riêng | Chủ dự án chọn toàn bộ đề xuất ngày 2026-11-24; không đóng OQ, không cấm chỉnh sửa sau review chi tiết, không thay đổi trạng thái GRAB-2 |
+| DEC-058 | Tạm giữ điểm dừng hiện tại; chưa bắt đầu mockup fidelity cao | Lựa chọn thứ tự công việc của agent theo ủy quyền ngày 2026-11-24, phù hợp DEC-057; không phải phê duyệt visual baseline, không đóng OQ/acceptance và không đổi Jira |
+| DEC-059 | Giữ nút Tìm/submit, nhãn kết quả và bố trí card trong discovery sketch làm hướng trình bày low-fi | Chủ dự án chọn ngày 2026-11-24; không chốt URL/menu, copy cuối, số lượng/sắp xếp kết quả hay visual baseline |
+| DEC-060 | Thể hiện bước xác nhận phạm vi người nhận trước broadcast admin trong sketch low-fi | Chủ dự án chọn ngày 2026-11-24 theo nguyên tắc an toàn; không chốt copy, audience snapshot, delivery receipt hoặc retry contract |
+| DEC-061 | Ghi checklist acceptance GRAB-2 còn thiếu trong wireframe để làm căn cứ thu thập evidence | Checklist chưa được chạy; không phải kết quả test hay tuyên bố acceptance/Done |
+| DEC-062 | Giữ các chi tiết layout/copy chưa được chọn và OQ/TBD còn lại ở trạng thái mở; rà lại OQ trước khi bắt đầu triển khai luồng liên quan | Chủ dự án chọn cách xử lý ngày 2026-11-24; không tự giải đáp/đóng OQ hoặc trì hoãn gate kỹ thuật bắt buộc |
+| DEC-063 | Chạy acceptance checklist GRAB-2 khi luồng sản phẩm thật và target test environment/device/browser sẵn sàng | Chủ dự án chọn chờ; hiện checklist là kế hoạch kiểm chứng, không phải kết quả; không làm mockup/atlas thay cho runtime acceptance |
+| DEC-064 | Discovery low-fi giữ 3 cột desktop, 1 cột mobile theo reflow và đặt nội dung biên tập sau khu kết quả quán | Chủ dự án chọn ngày 2026-11-24; chỉ chốt bố cục wireframe, không chốt visual baseline, copy, menu/URL hoặc dữ liệu |
+| DEC-065 | Affordance `Lưu` được thể hiện trong mỗi thẻ kết quả quán/món | Chủ dự án chọn ngày 2026-11-24; không chốt vị trí pixel, đăng nhập/callback hay behavior khi bấm |
+| DEC-066 | Giữ empty/error copy ở dạng placeholder; thể hiện hai trạng thái riêng và retry affordance cho error | Chủ dự án chọn ngày 2026-11-24; không duyệt wording VI/EN cuối, retry contract hay behavior sản phẩm |
+| DEC-067 | Random low-fi giữ thứ tự chọn loại → chọn toàn bộ/tự chọn mục → bắt đầu → kết quả với Mở chi tiết/Random tiếp | Chủ dự án chọn ngày 2026-11-24; không thêm mode theo bộ, không đóng OQ-06 hoặc chốt vị trí pixel/copy cuối |
+| DEC-068 | Mỗi notification row low-fi gồm preview nội dung, trạng thái đã/chưa đọc và thời gian placeholder | Chủ dự án chọn ngày 2026-11-24; copy, định dạng timestamp, fallback/click behavior và retention vẫn mở |
+| DEC-069 | Trang Đã lưu low-fi tổ chức bộ sưu tập bằng hai tab Quán/Món | Chủ dự án chọn ngày 2026-11-24; theo loại đã xác nhận; không đóng OQ-07/OQ-13 hoặc chốt behavior quản lý bộ |
+| DEC-070 | Thể hiện Sửa/Xóa cạnh bình luận của chủ sở hữu; reply thụt một cấp trong thread low-fi | Chủ dự án chọn ngày 2026-11-24; không chốt confirm/copy xóa, draft retention hoặc giới hạn OQ-08 |
+| DEC-071 | Admin content low-fi trình bày panel danh sách trước, panel editor minh họa tiếp theo | Chủ dự án chọn ngày 2026-11-24; không hàm ý cùng route/navigation, không chốt fields/validation hoặc filter |
+| DEC-072 | Chi tiết quán low-fi: tên/địa chỉ trước; ảnh/gallery và map cạnh nhau trên desktop; tiếp theo giới thiệu → món → bình luận; mobile reflow theo thứ tự | Chủ dự án chọn ngày 2026-11-24; không chốt provider/URL bản đồ, dữ liệu/copy hoặc visual baseline |
+| DEC-073 | Chi tiết món low-fi: quán cha/quay lại → tên món/Lưu → ảnh → mô tả/giá nếu có → bình luận | Chủ dự án chọn ngày 2026-11-24; không chốt fields, provenance ảnh, giá/copy hoặc visual baseline |
+| DEC-074 | Bài viết/tuyển chọn dùng danh sách chung có loại trên card; trang chi tiết theo loại nội dung | Chủ dự án chọn ngày 2026-11-24; không chốt schema/copy/URL/fallback hoặc visual baseline |
+| DEC-075 | Entry auth low-fi là một màn với nhóm email login, tạo tài khoản, Google và recovery link riêng | Chủ dự án chọn ngày 2026-11-24; không chốt copy/validation hoặc đóng OQ linking/callback/logout |
+| DEC-076 | Admin destructive/account actions low-fi dùng list/table, dialog nêu tác động và kết quả theo bước confirmed/partial/retry | Chủ dự án chọn ngày 2026-11-24 theo rule DEC-047; không chốt UI contract, receipts hay backend behavior |
+| DEC-077 | Xác nhận xóa comment và broadcast low-fi dùng dialog nêu tác động/phạm vi | Chủ dự án chọn ngày 2026-11-24; không chốt copy cuối, số liệu preview, audience snapshot hay receipt |
+| DEC-078 | Affordance quản lý bộ sưu tập được đặt tại từng bộ trong low-fi | Chủ dự án chọn ngày 2026-11-24; không xác định thao tác nào được hỗ trợ hoặc đóng OQ-07/OQ-13 |
+| DEC-079 | Khi map embed unavailable, low-fi giữ vị trí có nguồn hợp lệ, link mở đúng quán trên Google Maps và placeholder rõ cho embed | Chủ dự án chọn ngày 2026-11-24; không chọn provider/API/chi phí hoặc điều kiện sử dụng |
+| DEC-080 | State/CTA copy tiếp tục dùng placeholder VI/EN theo semantics đã xác nhận, chưa viết câu cuối | Chủ dự án chọn ngày 2026-11-24; không duyệt final copy hoặc dịch thuật, state không chỉ phân biệt bằng màu |
+| DEC-081 | Dùng candidate editorial sáng, neutral nền sáng và accent xanh trong DESIGN.md để tạo render review visual-baseline; chưa xác nhận visual baseline cuối | Chủ dự án duyệt proposal ngày 2026-11-24; cho phép render tĩnh để review, chưa cho phép high-fidelity mockup, app UI implementation hoặc chuyển trạng thái baseline |
 
 ### Hướng trước DEC-025 — lưu lịch sử, không dùng như ràng buộc hiện tại
 
@@ -218,7 +252,7 @@ Không cần hỏi tất cả ngay; giải quyết theo nhóm trước khi thi�
 | OQ-11 | Admin safety đã chốt; còn danh tính/bootstrap, user tự xóa chưa thuộc scope | DEC-038; quyền cấp admin cần duyệt riêng |
 | OQ-12 | Reply người khác và progress đã chốt; còn retention thông báo/receipts và recovery kỹ thuật | DEC-034/037; không đổi cascade đã chọn |
 | OQ-13 | Công khai lại quán/món; marker giữ trường gì, bao lâu | Trước schema vòng đời |
-| OQ-14 | Account linking email/Google, OAuth config, provider SMTP/quota | Khảo sát không lộ secret; chỉ test khi duyệt target |
+| OQ-14 | Đã chốt return về trang trước sau đăng nhập và yêu cầu người dùng xác nhận lại (DEC-048); account linking email/Google, OAuth config, provider SMTP/quota còn mở | Khảo sát không lộ secret; chỉ test khi duyệt target |
 | OQ-15 | Môi trường dev/test, hosting miễn phí, backup/recovery, RPO/RTO và mục tiêu hiệu năng | Nhóm 3; chưa deploy |
 | OQ-16 | Chi tiết Data API/RPC/Spring, schema RLS và quyền Realtime khi khóa user | Nhóm 2; không xem hướng đã duyệt là test đã đạt |
 | OQ-17 | Jira hierarchy/transition graph/admin permission còn thiếu | Không tự tạo issue thử hoặc đổi project để kiểm chứng |
@@ -358,13 +392,32 @@ spec/acceptance/gate/test; nội dung chi tiết ở docs. Timeline T1–T8 tron
 B1 đã được duyệt và tạo thành GRAB-3..GRAB-10; Jira chỉ giữ timeline/dependency.
 Không tự đổi nội dung hoặc status issue khi chưa có phê duyệt riêng.
 
-Đối chiếu read-only gần nhất theo yêu cầu tiếp tục GRAB-1..10: cả GRAB-1..GRAB-10
-đang To Do; title/description đối chiếu với các nguồn chuẩn và evidence working tree.
+Đối chiếu Jira read-only gần nhất: chủ dự án đã chuyển GRAB-1 sang Done.
+GRAB-2 vẫn To Do. Không có Jira write trong lượt cập nhật này.
 GRAB-1: nội dung/6 tài liệu nhóm 1, requirement/rule traceability và review được ghi
-trong DECISIONS mục 7; đủ căn cứ **đề xuất Done**, không thực hiện transition.
-GRAB-2: DESIGN/APP-FLOWS tồn tại và user đã duyệt hướng UI, nhưng issue yêu cầu
-mockup/wireframe đã duyệt cùng checklist keyboard/contrast/responsive; chưa có render
-hoặc screenshot evidence nên chưa đề xuất Done.
+trong DECISIONS mục 7; status Done theo xác nhận của chủ dự án.
+GRAB-2: text wireframe đã được duyệt; atlas tĩnh grayscale tại
+`docs/evidence/grab2-wireframe-render-2026-11-23/` có desktop/mobile viewport và full-page.
+Đối chiếu 9 nhóm traceability ghi trong README evidence: các nhóm đều có cấu trúc/nhãn đại diện,
+không đồng nghĩa acceptance nghiệp vụ đã kiểm thử. Captures mới dùng Chrome 158.0.8127.38
+(lượt trước Chrome 157.0.8103.79). Viewport sweep 320–1440px sau khi thêm dialog không tràn
+effective layout viewport; kiểm tra trước đó ở request 195px cho innerWidth 204/clientWidth 195
+trong mobile emulation, không phải browser zoom thực. Forward Tab qua 6 link focusable (5 mục lục
++ link ví dụ checklist) tại 1280×900 và 390×844; focus outline 3px hiển thị ngay.
+Contrast mẫu chữ 5.70:1–14.62:1;
+contrast biên theo nhóm 3.17:1–4.03:1, focus/white 15.57:1. Lượt đầu phát hiện secondary border
+1.74:1–2.21:1; đã làm đậm `--line-soft`, dùng primary line trên hàng bảng xám, đo lại và chụp lại ảnh.
+Chưa kiểm tra browser zoom/text scaling thực, copy VI/EN/tên dài
+hoặc toàn bộ keyboard/assistive technology; các state/behavior như map lỗi, locked session,
+save failure, notification fallback và authorization chưa được kiểm thử trên sản phẩm.
+Chủ dự án duyệt atlas low-fi làm đầu vào cho bước thiết kế tiếp theo (DEC-049), chọn các hướng trình bày
+DEC-050..055, cách xử lý trước mockup fidelity cao (DEC-057..058), hai hướng sketch và checklist
+acceptance (DEC-059..061), cùng điểm hẹn rà OQ/chạy acceptance về sau (DEC-062..063).
+Các review item về nhóm tài liệu,
+reflow mobile, dialog đã chọn và list thông báo được
+đóng ở phạm vi hướng trình bày; chi tiết bố cục/copy, visual baseline và TBD vẫn mở.
+Chỉ là render tĩnh/emulation,
+chưa visual baseline hay bằng chứng hoàn tất GRAB-2; theo DEC-056, Jira vẫn To Do, không có Jira write.
 GRAB-3: B1/preparation và frontend package/build/test đã có, nhưng backend toolchain,
 service manifests và toàn bộ baseline evidence chưa đủ để coi timeline issue hoàn tất.
 GRAB-4: spike đã bị bỏ theo DEC-044; không chuyển Done hay tự sửa issue.

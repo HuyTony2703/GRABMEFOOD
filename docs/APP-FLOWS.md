@@ -55,7 +55,7 @@ Quên mật khẩu ──> Email khôi phục ──> Đặt mật khẩu mới
   cần luồng chi tiết, không tự quyết định cách liên kết tài khoản.
 - Tài khoản bị khóa không được tiếp tục thao tác từ tab đang mở; dữ liệu không bị xóa.
 - Không giả định SMTP đã test chỉ vì chủ dự án đã cấu hình.
-- Quay lại đúng trang trước đăng nhập và cách đăng xuất là chi tiết cần đề xuất, chưa baseline.
+- Sau khi đăng nhập từ thao tác cá nhân, quay lại trang trước; không tự thực hiện thao tác đang chờ, người dùng xác nhận lại (DEC-048). Cách đăng xuất vẫn cần đề xuất.
 
 ## 4. Lưu và bộ sưu tập — REQ-SAV-01..02
 
