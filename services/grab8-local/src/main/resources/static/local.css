@@ -1,0 +1,9 @@
+body { font: 1rem/1.5 system-ui,sans-serif; margin:1rem; color:#18231c; background:white; }
+main { max-width:60rem; margin:auto; }
+h1 { font-size:2rem; } h2 { font-size:1.5rem; }
+button,input { font:inherit; box-sizing:border-box; max-width:100%; }
+button { min-height:2.75rem; padding:.5rem; white-space:normal; }
+label { display:block; } input { display:block; width:100%; }
+p,li,a,h1,h2 { overflow-wrap:anywhere; }
+:focus-visible { outline:3px solid #194a33; outline-offset:2px; }
+#inbox a { display:block; }

@@ -1,0 +1,1 @@
+{"name":"grab-notification-local-test","private":true,"type":"module","dependencies":{"@supabase/realtime-js":"2.119.2"}}
