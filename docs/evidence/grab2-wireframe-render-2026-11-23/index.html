@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Static low-fidelity wireframe atlas for owner review. Not the production application.">
+    <title>GrabMeFood — wireframe atlas (review only)</title>
+    <style>
+      :root {
+        color-scheme: light;
+        /* Primitive tokens: candidate values from DESIGN.md, not app tokens. */
+        --neutral-0: #FFFFFF;
+        --neutral-50: #F6F7F5;
+        --neutral-900: #18231C;
+        --green-700: #256044;
+        --green-800: #194A33;
+        --red-700: #B42318;
+        /* Semantic aliases */
+        --ink: var(--neutral-900);
+        --muted: #405248;
+        --line: #65736A;
+        --line-soft: #87938B;
+        --paper: var(--neutral-0);
+        --ground: var(--neutral-50);
+        --wash: var(--neutral-0);
+        --placeholder: #E5EAE6;
+        --focus: var(--green-800);
+        --action: var(--green-700);
+        --action-hover: var(--green-800);
+        --unread: var(--red-700);
+        /* Component aliases */
+        --button-primary-bg: var(--action);
+        --button-primary-hover: var(--action-hover);
+        --notification-dot-bg: var(--unread);
+        --card-radius: 8px;
+        --card-image-ratio: 4 / 3;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--ground);
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; font-size: 16px; line-height: 1.55; }
+      a { color: var(--ink); text-underline-offset: 0.2em; }
+      a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+      ::selection { color: var(--paper); background: var(--action); }
+
+      .masthead {
+        padding: 1.5rem clamp(16px, 2.5vw, 32px) 1.25rem;
+        border-bottom: 1px solid var(--line);
+        background: var(--paper);
+      }
+      .masthead-inner, main {
+        width: min(100%, 1280px);
+        margin-inline: auto;
+      }
+      .brandline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.5rem 1.5rem;
+      }
+      .brandline strong { font-size: 1.15rem; letter-spacing: 0.015em; }
+      .review-label {
+        color: var(--muted);
+        font-size: 0.875rem;
+        font-weight: 700;
+      }
+      h1 {
+        max-width: 24ch;
+        margin: 1.25rem 0 0.5rem;
+        font-size: clamp(1.7rem, 3vw, 2.5rem);
+        line-height: 1.12;
+      }
+      .intro {
+        max-width: 72ch;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .scope-note {
+        margin-top: 1rem;
+        padding: 0.75rem 0.9rem;
+        border: 1px solid var(--line);
+        background: var(--wash);
+        line-height: 1.45;
+      }
+
+      .jump-nav {
+        position: sticky;
+        z-index: 2;
+        top: 0;
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding: 0.75rem clamp(16px, 2.5vw, 32px);
+        border-bottom: 1px solid var(--line);
+        background: var(--paper);
+        scrollbar-color: var(--line) var(--ground);
+      }
+      @media (max-width: 720px) {
+        .jump-nav { padding-right: 2.5rem; scroll-padding-inline: 0.5rem 2.5rem; }
+        .jump-nav a { scroll-margin-inline: 0.5rem 2.5rem; }
+      }
+      .jump-nav a {
+        flex: 0 0 auto;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid var(--line-soft);
+        background: var(--wash);
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      main { padding: 1.5rem clamp(16px, 2.5vw, 32px) 4rem; }
+      .group {
+        margin-block: 2.5rem;
+        scroll-margin-top: 5.5rem;
+      }
+      .group-heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.4rem 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--line);
+      }
+      h2 { margin: 0; font-size: clamp(1.35rem, 2.4vw, 1.8rem); }
+      h3 { margin: 0 0 0.7rem; font-size: 1.05rem; }
+      p { line-height: 1.5; }
+      .group-tag { color: var(--muted); font-size: 0.9rem; }
+      .screen-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+      .screen {
+        min-width: 0;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        border-radius: var(--card-radius);
+      }
+      .screen.wide { grid-column: 1 / -1; }
+      .screen-kind {
+        margin: 0 0 0.65rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .viewport {
+        display: grid;
+        gap: 0.65rem;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid var(--line-soft);
+        background: var(--wash);
+      }
+      .wire-header, .wire-row, .wire-actions, .field-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .wire-header {
+        justify-content: space-between;
+        padding-bottom: 0.55rem;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .wire-wordmark { font-weight: 700; }
+      .wire-nav { color: var(--muted); font-size: 0.85rem; }
+      .wire-title { margin: 0.1rem 0; font-size: 1.18rem; }
+      .wire-copy { margin: 0; color: var(--muted); font-size: 0.9rem; }
+      .wire-control, .wire-button, .wire-status, .wire-chip {
+        display: inline-flex;
+        min-height: 2.6rem;
+        align-items: center;
+        padding: 0.45rem 0.65rem;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        color: var(--ink);
+        font: inherit;
+        font-size: 0.9rem;
+        line-height: 1.25;
+      }
+      .wire-control { flex: 1 1 14rem; color: var(--muted); }
+      .wire-button { justify-content: center; font-weight: 700; border-color: var(--action); color: var(--action); }
+      .wire-button.primary { border-color: var(--button-primary-bg); background: var(--button-primary-bg); color: var(--paper); }
+      .wire-button.primary:hover { border-color: var(--button-primary-hover); background: var(--button-primary-hover); }
+      .wire-status {
+        min-height: 0;
+        padding: 0.35rem 0.5rem;
+        background: var(--placeholder);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .unread-dot {
+        width: 0.6rem;
+        height: 0.6rem;
+        margin-inline-end: 0.4rem;
+        border-radius: 50%;
+        background: var(--notification-dot-bg);
+      }
+      .wire-chip { min-height: 0; padding: 0.28rem 0.45rem; font-size: 0.8rem; }
+      .wire-divider { height: 1px; background: var(--line-soft); }
+      .placeholder {
+        min-height: 4.25rem;
+        border: 1px dashed var(--line);
+        background: var(--placeholder);
+      }
+      .placeholder.media { min-height: 7rem; aspect-ratio: var(--card-image-ratio); }
+      .placeholder.tall { min-height: 9rem; }
+      .wire-card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.6rem;
+      }
+      .wire-card {
+        display: grid;
+        align-content: start;
+        gap: 0.45rem;
+        min-width: 0;
+        padding: 0.55rem;
+        border: 1px solid var(--line-soft);
+        background: var(--paper);
+        border-radius: var(--card-radius);
+      }
+      .wire-card .placeholder { min-height: 3.5rem; }
+      .wire-card .placeholder.media { min-height: 0; }
+      .line {
+        width: 88%;
+        height: 0.55rem;
+        background: var(--placeholder);
+      }
+      .line.short { width: 54%; }
+      .line.full { width: 100%; }
+      .wire-columns {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(10rem, 0.9fr);
+        gap: 0.65rem;
+      }
+      .wire-list {
+        display: grid;
+        gap: 0.5rem;
+      }
+      .wire-list-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem;
+        border: 1px solid var(--line-soft);
+        background: var(--paper);
+      }
+      .wire-state-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+      }
+      .state-box {
+        display: grid;
+        align-content: start;
+        gap: 0.35rem;
+        min-width: 0;
+        padding: 0.6rem;
+        border: 1px dashed var(--line);
+        background: var(--paper);
+        font-size: 0.82rem;
+      }
+      .state-box strong { font-size: 0.85rem; }
+      .annotation {
+        display: grid;
+        gap: 0.35rem;
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+      .annotation p { margin: 0; }
+      .annotation strong { color: var(--ink); }
+      .admin-table { display: grid; gap: 0.35rem; }
+      .admin-table-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(6rem, 0.8fr) minmax(7rem, 1fr);
+        gap: 0.4rem;
+        align-items: center;
+        padding: 0.45rem;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        font-size: 0.84rem;
+      }
+      .admin-table-row.header { font-weight: 700; background: var(--placeholder); }
+      .focus-sample:focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 3px;
+      }
+      footer {
+        padding: 1.25rem clamp(16px, 2.5vw, 32px);
+        border-top: 1px solid var(--line);
+        background: var(--paper);
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      footer p { max-width: 80ch; margin: 0 auto; }
+
+      @media (max-width: 720px) {
+        .screen-grid { grid-template-columns: minmax(0, 1fr); }
+        .screen.wide { grid-column: auto; }
+        .wire-card-grid { grid-template-columns: minmax(0, 1fr); }
+        .wire-card { grid-template-columns: 4.5rem minmax(0, 1fr); align-items: center; }
+        .wire-card .placeholder { grid-row: span 3; min-height: 3.8rem; }
+        .wire-columns { grid-template-columns: minmax(0, 1fr); }
+        .wire-state-row { grid-template-columns: minmax(0, 1fr); }
+        .admin-table-row {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0.25rem;
+        }
+        .wire-control { flex-basis: 100%; }
+        .wire-header { align-items: flex-start; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead-inner">
+        <div class="brandline">
+          <strong>GrabMeFood · wireframe atlas</strong>
+          <span class="review-label">CANDIDATE VISUAL · REVIEW ONLY · KHÔNG PHẢI ỨNG DỤNG</span>
+        </div>
+        <h1>Luồng màn hình để chủ dự án review</h1>
+        <p class="intro">Bản render low-fi theo candidate editorial sáng. Khối xanh xám là placeholder; các hướng bố cục đã chọn không phải visual baseline cuối hay copy cuối.</p>
+        <div class="scope-note">
+          Không có dữ liệu/quán/ảnh thật, không có route hay hành vi chạy được. Nhãn phân biệt requirement đã xác nhận với gợi ý trình bày và câu hỏi còn mở.
+        </div>
+      </div>
+    </header>
+
+    <nav class="jump-nav" aria-label="Mục wireframe">
+      <a href="#public">Công khai</a>
+      <a href="#personal">Cá nhân</a>
+      <a href="#community">Bình luận &amp; thông báo</a>
+      <a href="#admin">Quản trị</a>
+      <a href="#states">Trạng thái &amp; kiểm tra</a>
+    </nav>
+
+    <main>
+      <section class="group" id="public" aria-labelledby="public-title">
+        <div class="group-heading">
+          <h2 id="public-title">Công khai · khám phá và nội dung</h2>
+          <span class="group-tag">REQ-EXP · REQ-CNT · REQ-UX</span>
+        </div>
+        <div class="screen-grid">
+          <article class="screen wide">
+            <p class="screen-kind">Màn khám phá · bố cục desktop ưu tiên</p>
+            <div class="viewport">
+              <div class="wire-header">
+                <span class="wire-wordmark">GrabMeFood</span>
+                <span class="wire-nav">[Điều hướng công khai?] · [Đã lưu?] · [VI/EN?] · [Tài khoản?]</span>
+              </div>
+              <h3 class="wire-title">Khám phá quán quanh Làng Đại học</h3>
+              <div class="wire-row">
+                <span class="wire-control">Tìm tên quán hoặc món</span>
+                <span class="wire-control">Chọn khu vực</span>
+                <span class="wire-button primary">Tìm</span>
+              </div>
+              <div class="wire-row">
+                <span class="wire-status">Kết quả tìm kiếm quán</span>
+                <span class="wire-chip">Lọc khu vực</span>
+              </div>
+              <div class="wire-card-grid">
+                <div class="wire-card"><div class="placeholder media" aria-hidden="true"></div><strong>Tên quán</strong><span class="line short"></span><span class="wire-chip">Món khớp nếu có</span><span class="wire-button">Lưu · cần đăng nhập</span></div>
+                <div class="wire-card"><div class="placeholder media" aria-hidden="true"></div><strong>Tên quán</strong><span class="line short"></span><span class="wire-chip">Khu vực</span><span class="wire-button">Lưu · cần đăng nhập</span></div>
+                <div class="wire-card"><div class="placeholder media" aria-hidden="true"></div><strong>Tên quán</strong><span class="line short"></span><span class="wire-chip">Món khớp nếu có</span><span class="wire-button">Lưu · cần đăng nhập</span></div>
+              </div>
+              <div class="wire-divider"></div>
+              <p class="wire-copy">[Bài viết / tuyển chọn sau khu kết quả quán] · điểm xuất phát low-fi</p>
+              <p class="wire-copy">[Nhãn dữ liệu demo và provenance nếu có nội dung minh họa]</p>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> kết quả chính là quán; tìm theo món thể hiện món khớp; lọc khu vực.</p>
+              <p><strong>ĐÃ CHỌN LOW-FI:</strong> nút Tìm, nhãn kết quả, 3 cột desktop/1 cột mobile, Lưu trên card, nội dung biên tập sau kết quả (DEC-059/064/065).</p>
+              <p><strong>OPEN:</strong> gán/chồng lấn khu vực (OQ-05), fields/seed (OQ-04), URL/locale (OQ-02).</p>
+            </div>
+          </article>
+
+          <article class="screen">
+            <p class="screen-kind">Chi tiết quán · REQ-EXP-01, 04</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">[Điều hướng?]</span><span class="wire-chip">[Tài khoản?]</span></div>
+              <p class="wire-copy">[Breadcrumb?]</p>
+              <div class="wire-row"><h3 class="wire-title">Tên quán</h3><span class="wire-button">Lưu quán</span></div>
+              <p class="wire-copy">[Địa chỉ / khu vực — nguồn TBD]</p>
+              <div class="wire-columns">
+                <div class="placeholder media" aria-hidden="true"></div>
+                <div class="wire-list">
+                  <div class="placeholder" aria-hidden="true"></div>
+                  <span class="wire-status">[Map embed unavailable · placeholder]</span>
+                  <span class="wire-button">Xem trên Google Maps</span>
+                </div>
+              </div>
+              <p class="wire-copy">[Giới thiệu quán — field/copy TBD]</p>
+              <strong>Món thuộc quán</strong>
+              <div class="wire-card-grid">
+                <div class="wire-card"><div class="placeholder"></div><strong>Tên món</strong><span class="wire-chip">Giá demo?</span></div>
+                <div class="wire-card"><div class="placeholder"></div><strong>Tên món</strong><span class="wire-chip">Giá demo?</span></div>
+                <div class="wire-card"><div class="placeholder"></div><strong>Tên món</strong><span class="wire-chip">Giá demo?</span></div>
+              </div>
+              <strong>Bình luận chữ</strong>
+              <span class="wire-control">Đăng nhập để gửi</span>
+            </div>
+            <div class="annotation">
+               <p><strong>ĐÃ CHỌN LOW-FI:</strong> ảnh/gallery cạnh map trên desktop; khi embed unavailable giữ vị trí có nguồn hợp lệ và link đúng quán (DEC-072/079).</p>
+              <p><strong>OPEN:</strong> map provider/terms (OQ-03), fields/ảnh (OQ-04), URL (OQ-02).</p>
+            </div>
+          </article>
+
+          <article class="screen">
+            <p class="screen-kind">Chi tiết món · REQ-EXP-01, REQ-CNT</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">[Điều hướng?]</span><span class="wire-chip">[VI/EN?]</span></div>
+              <p class="wire-copy">[Quán cha / quay lại]</p>
+              <div class="wire-row"><h3 class="wire-title">Tên món</h3><span class="wire-button">Lưu món</span></div>
+              <div class="placeholder media tall"></div>
+              <p class="wire-copy">[Mô tả — nhãn demo nếu cần]</p>
+              <span class="wire-chip">[Giá nếu có; demo label nếu cần]</span>
+              <strong>Bình luận trên món</strong>
+              <span class="wire-control">Đăng nhập để gửi</span>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> món có trang riêng và chỉ thuộc quán cha đã xác định.</p>
+              <p><strong>OPEN:</strong> fields, giới hạn, provenance (OQ-04).</p>
+            </div>
+          </article>
+
+          <article class="screen wide">
+            <p class="screen-kind">Bài viết &amp; tuyển chọn · REQ-CNT-01..03</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">[Điều hướng công khai?]</span><span class="wire-chip">[VI/EN?]</span></div>
+              <div class="wire-card-grid">
+                 <div class="wire-card"><div class="placeholder media"></div><span class="wire-chip">Bài viết</span><strong>[Tên bài viết]</strong><p class="wire-copy">[Summary]</p></div>
+                 <div class="wire-card"><div class="placeholder media"></div><span class="wire-chip">Tuyển chọn</span><strong>[Tên tuyển chọn]</strong><p class="wire-copy">[Lời dẫn]</p></div>
+                 <div class="wire-card"><div class="placeholder media"></div><span class="wire-chip">Bài viết</span><strong>[Tên bài viết]</strong><p class="wire-copy">[Summary]</p></div>
+              </div>
+              <div class="wire-divider"></div>
+              <h3 class="wire-title">[Tiêu đề nội dung chi tiết]</h3>
+              <p class="wire-copy">[Nội dung bài theo đoạn hoặc lời dẫn tuyển chọn]</p>
+              <span class="wire-button">[Liên kết đến nội dung công khai còn khả dụng]</span>
+            </div>
+            <div class="annotation">
+               <p><strong>ĐÃ CHỌN LOW-FI:</strong> danh sách chung có nhãn loại; detail theo loại nội dung (DEC-074). Nội dung public/VI-EN theo requirements.</p>
+              <p><strong>OPEN:</strong> schema fields/giới hạn và translation fallback/URL (OQ-04, OQ-02).</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="group" id="personal" aria-labelledby="personal-title">
+        <div class="group-heading">
+          <h2 id="personal-title">Cá nhân · tài khoản, lưu và random</h2>
+          <span class="group-tag">REQ-AUTH · REQ-SAV · REQ-RND</span>
+        </div>
+        <div class="screen-grid">
+          <article class="screen">
+            <p class="screen-kind">Đăng nhập / đăng ký / khôi phục</p>
+            <div class="viewport">
+              <h3 class="wire-title">Đăng nhập</h3>
+              <span class="wire-control">Email</span>
+              <span class="wire-control">Mật khẩu</span>
+              <div class="wire-row"><span class="wire-button">Đăng nhập</span><span class="wire-button">Google</span></div>
+              <span class="wire-control">Tạo tài khoản email</span>
+              <span class="wire-control">Quên mật khẩu</span>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Chờ xác thực</strong><span>[Thông báo + mở liên kết email]</span></div>
+                <div class="state-box"><strong>Khôi phục</strong><span>[Email khôi phục → mật khẩu mới]</span></div>
+                <div class="state-box"><strong>Đăng nhập từ thao tác</strong><span>[Quay lại trang nguồn; user xác nhận lại]</span></div>
+              </div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> email/password, Google, verify trước login, recovery, quay lại trang nguồn không auto-submit (DEC-048).</p>
+              <p><strong>OPEN:</strong> account linking, callback/expired/unverified behavior (OQ-14).</p>
+            </div>
+          </article>
+
+          <article class="screen">
+            <p class="screen-kind">Đã lưu &amp; bộ sưu tập · REQ-SAV-01..02</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">Đã lưu</span><span class="wire-row"><span class="wire-chip">Quán</span><span class="wire-chip">Món</span></span></div>
+              <span class="wire-button">Tạo bộ sưu tập</span>
+              <div class="wire-list">
+                <div class="wire-list-item"><span><strong>[Tên bộ]</strong><br><span class="wire-copy">Loại: Quán</span></span><span class="wire-chip">Mở</span></div>
+                <div class="wire-list-item"><span><strong>[Tên bộ]</strong><br><span class="wire-copy">Loại: Món</span></span><span class="wire-chip">Mở</span></div>
+                <p class="wire-copy">[Menu/controls quản lý tại từng bộ — thao tác còn theo OQ-07/OQ-13] (DEC-078)</p>
+              </div>
+              <div class="wire-divider"></div>
+              <h3 class="wire-title">[Bộ sưu tập: loại Quán hoặc Món]</h3>
+              <div class="wire-list-item"><span>[Mục đã lưu]</span><span class="wire-chip">Bỏ lưu?</span></div>
+                <div class="wire-list-item"><span>[Không còn khả dụng]</span><span class="wire-chip">Marker</span></div>
+                <div class="wire-divider"></div>
+                <h3 class="wire-title">Dialog minh họa: chọn một bộ</h3>
+                <p class="wire-copy">Chọn một bộ phù hợp loại cho thao tác lưu này. Muốn thêm vào bộ khác thì lưu riêng.</p>
+                <div class="wire-list">
+                  <div class="wire-list-item"><span>[Bộ Quán · phù hợp]</span><span class="wire-chip">Chọn</span></div>
+                  <div class="wire-list-item"><span>[Bộ Món · không phù hợp]</span><span class="wire-chip">Không chọn</span></div>
+                </div>
+                <div class="wire-actions"><span class="wire-button">Tạo bộ mới</span><span class="wire-button">Hủy</span><span class="wire-button primary">Lưu vào bộ đã chọn</span></div>
+              </div>
+              <div class="annotation">
+                <p><strong>ĐÃ XÁC NHẬN:</strong> riêng tư, tách loại, cùng mục có thể nhiều bộ; mỗi thao tác lưu chọn một bộ (DEC-045).</p>
+                <p><strong>MINH HỌA:</strong> dialog trình bày tĩnh, không phải control hoạt động; mỗi lần lưu chọn một bộ phù hợp loại, thêm vào bộ khác là thao tác riêng (DEC-052).</p>
+                <p><strong>OPEN:</strong> rename/delete/name limits/remove save (OQ-07); marker retention/fields (OQ-13).</p>
+            </div>
+          </article>
+
+          <article class="screen wide">
+            <p class="screen-kind">Random từ mục đã lưu · REQ-RND-01..03</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">Chọn ngẫu nhiên</span><span class="wire-row"><span class="wire-chip">Quán</span><span class="wire-chip">Món</span></span></div>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Toàn bộ đã lưu</strong><span>[Khử trùng mục trùng giữa nhiều bộ]</span></div>
+                <div class="state-box"><strong>Tự chọn các mục</strong><span>[Chỉ mục đã lưu và còn khả dụng]</span></div>
+                <div class="state-box"><strong>Không có mục hợp lệ</strong><span>[Giải thích + gợi ý chọn lại]</span></div>
+              </div>
+              <div class="wire-actions"><span class="wire-button primary">Random</span><span class="wire-button">Mở chi tiết</span><span class="wire-button">Random tiếp</span></div>
+              <div class="placeholder"></div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> hai mode all/selected; không có mode theo bộ (DEC-046); có thể lặp; không dùng mục chưa lưu/không khả dụng.</p>
+              <p><strong>OPEN:</strong> probability và item bị gỡ đồng thời (OQ-06).</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="group" id="community" aria-labelledby="community-title">
+        <div class="group-heading">
+          <h2 id="community-title">Bình luận &amp; thông báo</h2>
+          <span class="group-tag">REQ-COM · REQ-NOT</span>
+        </div>
+        <div class="screen-grid">
+          <article class="screen">
+            <p class="screen-kind">Thread bình luận một cấp · REQ-COM-01..03</p>
+            <div class="viewport">
+              <h3 class="wire-title">Bình luận</h3>
+              <span class="wire-control">Viết bình luận chữ…</span>
+              <span class="wire-button">Gửi</span>
+              <div class="wire-list">
+                <div class="wire-list-item"><span>[Bình luận gốc]</span><span class="wire-chip">Sửa / Xóa của tôi</span></div>
+                <div class="wire-list-item"><span>↳ [Trả lời một cấp]</span><span class="wire-chip">Trả lời / Sửa / Xóa của tôi</span></div>
+              </div>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Đang gửi</strong><span>[Chưa báo thành công]</span></div>
+                <div class="state-box"><strong>Thất bại</strong><span>[Giữ trạng thái chưa gửi; thử lại]</span></div>
+                <div class="state-box"><strong>Đã lưu</strong><span>[Chỉ khi có xác nhận]</span></div>
+              </div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> chữ, một cấp, quyền sửa/xóa và cascade reply.</p>
+              <p><strong>OPEN:</strong> giới hạn chữ/số comment (OQ-08); không rating/ảnh/like/report.</p>
+            </div>
+          </article>
+
+          <article class="screen">
+            <p class="screen-kind">Chuông &amp; danh sách thông báo · REQ-NOT-01..03</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">Thông báo</span><span class="wire-status"><span class="unread-dot" aria-hidden="true"></span>Có mục chưa đọc</span></div>
+              <div class="wire-list">
+                <div class="wire-list-item"><span>[Preview nội dung] · [thời gian]</span><span class="wire-chip">Chưa đọc</span></div>
+                <div class="wire-list-item"><span>[Preview nội dung] · [thời gian]</span><span class="wire-chip">Đã đọc</span></div>
+              </div>
+              <span class="wire-button">Đánh dấu tất cả đã đọc</span>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Loading</strong><span>[Đang tải]</span></div>
+                <div class="state-box"><strong>Empty / error</strong><span>[Rỗng hoặc lỗi; không lẫn nhau]</span></div>
+                <div class="state-box"><strong>Target đã xóa</strong><span>[Fallback TBD]</span></div>
+              </div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> realtime website, unread state, mark read/all, recipient rules, không email/push.</p>
+              <p><strong>OPEN:</strong> target fallback, retention, tabs/order/offline (OQ-10, OQ-12).</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="group" id="admin" aria-labelledby="admin-title">
+        <div class="group-heading">
+          <h2 id="admin-title">Quản trị · nội dung, bình luận, tài khoản</h2>
+          <span class="group-tag">REQ-ADM · REQ-NOT-04</span>
+        </div>
+        <div class="screen-grid">
+          <article class="screen wide">
+            <p class="screen-kind">Danh sách quản trị nội dung · REQ-ADM-01..03</p>
+            <div class="viewport">
+              <div class="wire-header"><span class="wire-wordmark">Quản trị</span><span class="wire-nav">[Quán] · [Món] · [Bài viết] · [Tuyển chọn]</span></div>
+              <div class="wire-actions"><span class="wire-control">Tìm nội dung</span><span class="wire-button">Tạo nội dung</span></div>
+              <div class="admin-table" role="table" aria-label="Ví dụ cấu trúc danh sách admin">
+                <div class="admin-table-row header" role="row"><span role="columnheader">Tên mục</span><span role="columnheader">Trạng thái</span><span role="columnheader">Thao tác</span></div>
+                <div class="admin-table-row" role="row"><span role="cell">[Tên quán / món]</span><span role="cell">Công khai</span><span role="cell">Mở · Ẩn · Xóa</span></div>
+                <div class="admin-table-row" role="row"><span role="cell">[Tên bài / tuyển chọn]</span><span role="cell">Ẩn</span><span role="cell">Mở · Công khai · Xóa</span></div>
+              </div>
+              <div class="wire-divider"></div>
+              <h3 class="wire-title">Editor · trường nội dung TBD</h3>
+              <div class="field-row"><span class="wire-control">Tiếng Việt</span><span class="wire-control">Tiếng Anh</span></div>
+              <div class="placeholder tall"></div>
+              <div class="wire-actions"><span class="wire-button">Lưu / Công khai</span><span class="wire-button">Ẩn</span><span class="wire-button">Xóa · cần xác nhận</span></div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> public/hide/delete, không draft; admin-only enforcement không dựa vào UI.</p>
+              <p><strong>ĐÃ CHỌN LOW-FI:</strong> list/editor panels nối tiếp; dialog nêu tác động; state VI/EN placeholder, không chỉ dựa màu (DEC-071/076/080).</p>
+              <p><strong>OPEN:</strong> fields/publish validation (OQ-04); shared asset cleanup (G2-P07); cross-service cleanup/recovery (OQ-21).</p>
+            </div>
+          </article>
+
+          <article class="screen">
+            <p class="screen-kind">Bình luận &amp; tài khoản admin · REQ-ADM-04..05</p>
+            <div class="viewport">
+              <h3 class="wire-title">Quản lý bình luận</h3>
+              <div class="wire-list-item"><span>[Comment + target]</span><span class="wire-button">Xóa · xác nhận tác động</span></div>
+              <h3 class="wire-title">Tài khoản</h3>
+              <div class="wire-list-item"><span>[Tài khoản]</span><span class="wire-actions"><span class="wire-button">Khóa</span><span class="wire-button">Mở</span></span></div>
+              <div class="wire-list-item"><span>[Tài khoản]</span><span class="wire-button">Xóa · xác nhận tác động</span></div>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Đang xử lý</strong><span>[Chưa hoàn tất]</span></div>
+                <div class="state-box"><strong>Partial</strong><span>[Chưa hoàn tất · thử lại]</span></div>
+                <div class="state-box"><strong>Hoàn tất</strong><span>[Có xác nhận tương ứng]</span></div>
+              </div>
+              <div class="wire-divider"></div>
+              <h3 class="wire-title">Dialog minh họa: xác nhận thao tác</h3>
+              <p class="wire-copy">[Hành động nguy hiểm — placeholder]</p>
+              <p class="wire-copy">[Tóm tắt tác động — placeholder]</p>
+              <div class="wire-actions"><span class="wire-button">Hủy · minh họa</span><span class="wire-button">Xác nhận · minh họa</span></div>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Đang xử lý</strong><span>Chưa hoàn tất</span></div>
+                <div class="state-box"><strong>Một phần hoàn tất</strong><span>Chưa hoàn tất · kết quả theo bước cần xác nhận</span></div>
+                <div class="state-box"><strong>Hoàn tất · chỉ khi xác nhận</strong><span>Không báo xong trước khi có xác nhận tương ứng</span></div>
+              </div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> khóa chặn phiên cũ; admin safety; xóa tài khoản có tiến trình.</p>
+               <p><strong>ĐÃ CHỌN LOW-FI:</strong> dialog nêu tác động cho xóa comment và xác nhận phạm vi broadcast (DEC-076/077); labels state dùng placeholder VI/EN (DEC-080), không định nghĩa contract.</p>
+              <p><strong>OPEN:</strong> bootstrap/quyền admin và race (OQ-11); receipts/recovery (OQ-12, OQ-21).</p>
+            </div>
+          </article>
+
+          <article class="screen">
+            <p class="screen-kind">Gửi thông báo admin · REQ-NOT-04</p>
+            <div class="viewport">
+              <h3 class="wire-title">Gửi thông báo</h3>
+              <span class="wire-control">Người nhận: một user / broadcast active users</span>
+              <span class="wire-control">Nội dung thông báo</span>
+              <span class="wire-button">Gửi</span>
+              <h3 class="wire-title">Dialog minh họa: xác nhận phạm vi broadcast</h3>
+              <p class="wire-copy">[Tóm tắt phạm vi người nhận — placeholder; không phải audience snapshot/receipt]</p>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Đang gửi</strong><span>[Chưa khẳng định delivery]</span></div>
+                <div class="state-box"><strong>Chưa hoàn tất</strong><span>[Có thể thử lại theo contract]</span></div>
+                <div class="state-box"><strong>Hoàn tất</strong><span>[Khi có xác nhận]</span></div>
+              </div>
+            </div>
+            <div class="annotation">
+              <p><strong>ĐÃ XÁC NHẬN:</strong> admin gửi riêng/broadcast active users; không email/push.</p>
+              <p><strong>OPEN:</strong> validation/audience snapshot/retention/retry (OQ-09, OQ-12).</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="group" id="states" aria-labelledby="states-title">
+        <div class="group-heading">
+          <h2 id="states-title">Trạng thái dùng chung &amp; checklist review</h2>
+          <span class="group-tag">Chưa phải kiểm thử sản phẩm</span>
+        </div>
+        <div class="screen-grid">
+          <article class="screen">
+            <p class="screen-kind">Mẫu trạng thái</p>
+            <div class="viewport">
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Loading</strong><span>Skeleton / label trạng thái</span></div>
+                <div class="state-box"><strong>Empty</strong><span>Không có kết quả hợp lệ</span></div>
+                <div class="state-box"><strong>Error</strong><span>Lỗi tải + cách thử lại</span></div>
+              </div>
+              <div class="wire-state-row">
+                <div class="state-box"><strong>Unavailable</strong><span>Marker, không mở payload đã gỡ</span></div>
+                <div class="state-box"><strong>Pending</strong><span>Đang xử lý, chưa báo xong</span></div>
+                <div class="state-box"><strong>Denied</strong><span>Quyền bị từ chối; UI không là gate</span></div>
+              </div>
+            </div>
+          </article>
+          <article class="screen">
+            <p class="screen-kind">Checklist thiết kế</p>
+            <div class="viewport">
+              <div class="wire-list">
+                <div class="wire-list-item"><span>Heading/landmark và focus order</span><span class="wire-status">Kiểm tra khi review</span></div>
+                <div class="wire-list-item"><span>Focus ring / keyboard navigation</span><span class="wire-status">Kiểm tra khi review</span></div>
+                <div class="wire-list-item"><span>Contrast text và boundary</span><span class="wire-status">Đo trên render</span></div>
+                <div class="wire-list-item"><span>Responsive 1280px / 390px</span><span class="wire-status">Kiểm tra overflow</span></div>
+                <div class="wire-list-item"><span>Không giả ảnh hoặc thông tin thật</span><span class="wire-status">Placeholder</span></div>
+              </div>
+              <a class="focus-sample" href="#public">Ví dụ liên kết nội bộ có focus</a>
+            </div>
+          </article>
+        </div>
+        <p class="annotation"><strong>Giới hạn:</strong> render tĩnh này không kiểm thử API, Auth/RLS, dịch vụ, dữ liệu thật, thao tác thực hoặc toàn bộ accessibility. Cần duyệt nội dung/layout trước khi xem xét trạng thái GRAB-2.</p>
+      </section>
+    </main>
+
+    <footer>
+       <p>GrabMeFood · wireframe review artifact · Hướng low-fi đã được chọn; copy/OQ chi tiết vẫn mở. Bản này không phải ứng dụng, visual baseline hoặc bằng chứng Jira GRAB-2 đã hoàn tất.</p>
+    </footer>
+  </body>
+</html>

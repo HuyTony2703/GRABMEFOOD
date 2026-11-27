@@ -77,6 +77,59 @@ try {
     await until(() => js(`location.href===${JSON.stringify(url)} && document.readyState==='complete'`));
   }
   let total = 0, failed = 0, focused = 0;
+  if (process.argv.includes("--dialog")) {
+    await nav("chrome://settings/appearance");
+    await js("chrome.settingsPrivate.setDefaultZoom(2)");
+    await send("Page.bringToFront");
+    const key = async (key, code, windowsVirtualKeyCode, modifiers = 0) => {
+      for (const type of ["keyDown", "keyUp"]) await send("Input.dispatchKeyEvent",
+        { type, key, code, windowsVirtualKeyCode, nativeVirtualKeyCode: windowsVirtualKeyCode, modifiers,
+          ...(type === "keyDown" && key === "Enter" ? { text: "\r" } : {}) });
+    };
+    const tab = (reverse = false) => key("Tab", "Tab", 9, reverse ? 8 : 0);
+    const enter = () => key("Enter", "Enter", 13);
+    const space = () => key(" ", "Space", 32);
+    for (const locale of ["vi", "en"]) for (const path of ["/quan/bep-lau-tre", "/quan/bep-lau-tre/mon/bun-nam"]) {
+      const en = locale === "en";
+      const opener = en ? "Choose a collection (demo)" : "Chọn bộ sưu tập (demo)";
+      const cancel = en ? "Cancel" : "Hủy";
+      await nav(base + path + (en ? "?lang=en" : ""));
+      await wait(500); // Let the production client hydrate before sending keys.
+      assert.equal(await js("devicePixelRatio"), 2);
+      for (let i = 0; i < 10 && !await js("document.activeElement.matches('.collection-demo > button')"); i++) await tab();
+      assert.equal(await js("document.activeElement.textContent"), opener);
+      const closedTree = await send("Accessibility.getFullAXTree");
+      assert.ok(closedTree.nodes.some(n => !n.ignored && n.role?.value === "button" && n.name?.value === opener));
+      await enter();
+      await until(() => js("document.activeElement.matches('dialog[open] input:first-of-type')"));
+      const tree = await send("Accessibility.getFullAXTree");
+      for (const [role, name] of [
+        ["dialog", en ? "Choose one collection" : "Chọn một bộ sưu tập"],
+        ["button", cancel],
+        ["button", en ? "Confirm demo selection" : "Xác nhận lựa chọn demo"],
+      ]) assert.ok(tree.nodes.some(n => !n.ignored && n.role?.value === role && n.name?.value === name), name);
+      await tab(true);
+      assert.equal(await js("document.activeElement.textContent"), cancel);
+      await tab();
+      assert.equal(await js("document.activeElement.matches('dialog[open] input')"), true);
+      await space(); // Select a radio, enabling confirm.
+      await until(() => js("!document.querySelector('dialog button[type=submit]').disabled"));
+      await tab(true);
+      assert.equal(await js("document.activeElement.matches('dialog button[type=submit]')"), true);
+      await tab();
+      assert.equal(await js("document.activeElement.matches('dialog[open] input:checked')"), true);
+      await key("Escape", "Escape", 27);
+      await until(() => js("!document.querySelector('dialog').open && document.activeElement.matches('.collection-demo > button')"));
+      await space();
+      await until(() => js("document.activeElement.matches('dialog[open] input')"));
+      await tab();
+      assert.equal(await js("document.activeElement.textContent"), cancel);
+      await enter();
+      await until(() => js("!document.querySelector('dialog').open && document.activeElement.matches('.collection-demo > button')"));
+      console.log("PASS zoom 200% keyboard and AX names", locale, path);
+    }
+    process.exitCode = 0;
+  } else {
   for (const [mode, width, font, zoom] of [["desktop",1280,16,1],["mobile",390,16,1],["mobile-text",390,32,1],["desktop-zoom",1280,16,2]]) {
     await send("Emulation.clearDeviceMetricsOverride");
     await nav("chrome://settings/appearance");
@@ -90,7 +143,7 @@ try {
       assert.equal(await js("parseFloat(getComputedStyle(document.documentElement).fontSize)"),font);
       if (path.endsWith("goc-bep-mua")) assert.ok(await js("document.querySelector('address').textContent.length>80"));
       const result = await js(`(${inspect})()`);
-      const targets = await js("document.querySelectorAll('a[href],input,select,button').length");
+      const targets = await js("document.querySelectorAll('a[href],input,select,button').length - document.querySelectorAll('dialog:not([open]) input,dialog:not([open]) button').length");
       await send("Page.bringToFront");
       const seen = new Set();
       for(let i=0;i<targets;i++){
@@ -104,4 +157,5 @@ try {
     }
   }
   console.log({total,focused,failed});assert.equal(failed,0);
+  }
 } finally { socket?.close(); chrome.kill(); app.kill(); }
