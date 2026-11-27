@@ -4,8 +4,8 @@
 Các đoạn ghi “đề xuất”, OPEN QUESTION hoặc TBD chưa được coi là lựa chọn đã chốt.
 Nguồn chuẩn cho luồng và trạng thái trải nghiệm; không là wireframe hoặc hợp đồng API đã duyệt.
 Phạm vi: [PRD](PRD.md). Quy tắc: [DOMAIN](DOMAIN.md). Chi tiết chưa chốt: [DECISIONS](DECISIONS.md).
-**Bổ sung kiến trúc đã duyệt:** 5 microservices. Luồng nghiệp vụ giữ nguyên;
-progress xóa đã được duyệt B1; copy/layout cụ thể còn cần review, không tự nới acceptance.
+Kiến trúc mới là một backend Spring Boot và Supabase Data API; luồng nghiệp
+vụ giữ nguyên. Copy/layout cụ thể còn cần review, không tự nới acceptance.
 
 ## 1. Sơ đồ điều hướng nghiệp vụ
 
@@ -128,18 +128,17 @@ Sự kiện hợp lệ ──> Thông báo riêng của người nhận ──> 
 Đã chốt không tự khóa/xóa admin, bảo vệ admin active cuối; admin đầu do chủ dự án chỉ định.
 Danh tính/admin bootstrap thực tế và kiểm tra race còn phải hoàn thiện trước implementation.
 
-## 9. Trạng thái liên dịch vụ — nguyên tắc B1, chi tiết kỹ thuật còn gate
+## 9. Trạng thái nghiệp vụ khi nhiều bước chưa hoàn tất
 
-- Catalog/Community lưu thành công không đồng nghĩa Notification đã nhận và hiển thị sự kiện.
-  Không rollback bình luận đã lưu chỉ vì mất response gửi thông báo; delivery cần retry và theo dõi.
-- Xóa quán: nội dung không khả dụng trước; việc Community xóa comments/replies và Collection giữ marker
-  phải được theo dõi. Chưa đủ xác nhận cleanup thì không báo “xóa toàn bộ hoàn tất”.
+- Bình luận đã lưu không đồng nghĩa thông báo đã hiển thị; nếu quy trình có
+  bước bất đồng bộ phải có cách kiểm chứng/trình bày trạng thái trung thực.
+- Xóa quán: nội dung không khả dụng trước; xóa comments/replies và giữ marker
+  theo yêu cầu. Chưa đủ xác nhận cleanup thì không báo “xóa toàn bộ hoàn tất”.
 - Xóa user: chặn thao tác tài khoản trước; cleanup dữ liệu riêng, bình luận và Auth có thể lỗi từng bước.
-  UI phân biệt đang xử lý, cần thử lại và hoàn tất; outbox poller trong owner đã duyệt,
-  không suy ra có generic background worker/takeover cho mọi account operation.
-- Catalog hoặc Account Administration không xác nhận được tính khả dụng/quyền:
-  các thao tác nhạy cảm phải báo chưa kiểm tra được và cho thử lại, không coi dependency lỗi là danh sách rỗng.
-- Chọn microservices không mặc định cho phép dữ liệu ẩn xuất hiện khi cache/projection chậm.
-  Độ trễ/TOCTOU và cơ chế recovery vẫn phải chốt trước implementation.
+  UI phân biệt đang xử lý, cần thử lại và hoàn tất; backend mới phải chứng
+  minh các bước thực tế trước khi báo thành công.
+- Không xác nhận được tính khả dụng/quyền: thao tác nhạy cảm báo chưa kiểm tra
+  được và cho thử lại, không coi lỗi nguồn dữ liệu là danh sách rỗng.
+- Đổi kiến trúc không cho phép dữ liệu ẩn xuất hiện qua cache hoặc view chậm.
 - Thông báo lưu quán/món kiểm tra hai mốc save; món mới phải public cùng quán.
   Không self-reply notification, không nhân recipient vì nhiều bộ, broadcast chỉ active users.

@@ -2,8 +2,9 @@
 
 > Nhóm 1 được chủ dự án duyệt ngày 2026-11-23. Không phải quyền triển khai sản phẩm.
 > Chủ dự án đã duyệt nhóm 2 để soạn nhóm 3. Các phương án/TBD chưa có đáp án vẫn mở.
-> Bổ sung đã duyệt: 5 microservices; được sửa tài liệu cả nhóm 1 và 2 cho nhất quán,
-> không tự đổi tính năng hoặc phê duyệt các chi tiết phân tán còn mở.
+> Quyết định mới của nhóm: bỏ năm microservices, không tái sử dụng backend/SQL cũ;
+> giữ frontend, làm lại database và kết nối Supabase bằng Data API. Các tài liệu
+> lịch sử về microservices không còn là chỉ dẫn thực hiện.
 
 ## 1. Đọc và xác định phạm vi trước khi làm
 
@@ -60,16 +61,13 @@ Nêu nguồn, lệnh và phạm vi thay đổi để chủ dự án duyệt vi�
 
 - React + TypeScript + Vite; Spring Boot, Java 21 LTS + Maven; PostgreSQL Supabase Cloud.
 - Ưu tiên Auth, Data API, Storage, Realtime và capability Supabase phù hợp.
-- Có 5 service Spring độc lập: Catalog, Collection, Community, Notification, Account Administration.
-  Không gọi năm module trong một process là microservices; không tự thêm/bớt service.
-- Quyết định mới thay hướng Spring chỉ quản trị; không đưa mọi request qua Spring và không bỏ Spring.
-  Surface browser/Data API phải được owner service cho phép, không bypass command/event workflow.
+- Một ứng dụng Spring Boot duy nhất; Catalog, Collection, Community, Notification và
+  Account Administration là các miền nghiệp vụ trong monolith, không phải service riêng.
+- Kết nối Supabase qua Data API. Thiết kế lại schema và contract; không tái sử dụng
+  SQL/backend của phương án năm service.
 - Không tự thêm Gateway, broker, Redis hay Kubernetes; Supabase Auth không là service tự xây thứ sáu.
-- Không ghi bảng service khác, join/FK/cascade/transaction nghiệp vụ xuyên owner.
-  Projection hoặc shared security gate nếu cần phải có contract và duyệt ngoại lệ rõ ràng.
-- Transaction chỉ trong một owner; không ghi inbox service khác trong RPC tạo comment/nội dung.
-  Event delivery, consistency, retry/idempotency và hoàn tất cleanup phải được thiết kế và kiểm chứng riêng.
-- Không dùng chung Supabase secret/service_role rồi tuyên bố đã cô lập quyền giữa các service.
+- Không cần HTTP/HMAC, runtime role riêng hay proof isolation giữa năm process cũ.
+  Vẫn bảo vệ dữ liệu riêng và quyền admin bằng Auth, grants/RLS và kiểm tra người gọi thật.
 - Runtime Data API/RPC và đường migration/admin là những quyết định riêng.
 - Không hứa không bao giờ cần mật khẩu DB; không mặc định JDBC runtime.
 - Hiện chưa cần Edge Functions; muốn thêm phải chứng minh vai trò không trùng Spring.
@@ -95,7 +93,7 @@ Luôn tách các tầng:
 2. Build/test local.
 3. Data API thực tế.
 4. Auth/RLS thực tế, gồm user A không đọc/sửa dữ liệu riêng user B.
-5. Từng Spring service thực tế và giao tiếp liên dịch vụ (không chỉ một backend build).
+5. Một backend Spring Boot thực tế và luồng frontend → backend/Data API.
 6. Migration/replay thực tế.
 
 Không lấy một tầng để tuyên bố cả hệ thống hoạt động.
@@ -110,8 +108,5 @@ Không tự sửa cảnh báo Cloud chỉ vì vừa phát hiện.
 - Trao đổi tiếng Việt, ngắn gọn; câu hỏi từng nhóm nhỏ cùng chủ đề, cho trả lời tự do.
 - Không hỏi lại câu còn hiệu lực. Gom chi tiết nhỏ thành đề xuất chờ duyệt.
 - Theo dõi checklist công việc trong tài liệu đã được phép, không tạo file kế hoạch thừa.
-- Nhóm 1 đã duyệt, được phép soạn nhóm 2 và cập nhật trạng thái/phần liên kết tài liệu.
-  Chủ dự án cho phép điều chỉnh nhóm 1 theo quyết định 5 service; phải ghi rõ phần thay thế,
-  không làm các đề xuất/TBD thành quyết định đã duyệt.
-  Nhóm 2 đã được duyệt để tiếp tục hai bản nháp nhóm 3 (TEST-STRATEGY, OPERATIONS).
-  Dừng review nhóm 3 trước baseline/kế hoạch triển khai; không tự đóng TBD hoặc chọn nhánh thay user.
+- Quyết định monolith mới thay các chỉ dẫn triển khai nhiều service trước đây.
+  Các TBD nghiệp vụ và quyền dữ liệu mới không tự trở thành quyết định đã duyệt.
