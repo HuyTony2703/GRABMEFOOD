@@ -35,7 +35,8 @@ AI chuẩn bị nội dung trước, **không tích hợp dịch vụ AI vào �
 ## Công nghệ đã xác nhận
 
 - Frontend: React + TypeScript + Vite.
-- Backend mới dự kiến Java 21 LTS, Maven, Spring Boot; chưa có POM monolith.
+- Backend shell mới ở [`backend/`](backend/README.md): Java 21 LTS,
+  Spring Boot 4.2.0 và Maven Wrapper 3.10.2; chưa có API nghiệp vụ.
 - PostgreSQL trên Supabase Cloud; tận dụng Auth, Data API, Storage, Realtime và RPC phù hợp.
 - **Kiến trúc mục tiêu mới của nhóm: một Spring Boot monolith**. Catalog, Collection,
   Community, Notification và Account Administration là các miền nghiệp vụ, không phải
@@ -47,8 +48,9 @@ AI chuẩn bị nội dung trước, **không tích hợp dịch vụ AI vào �
 - Public SSR React/Vite, private CSR; upload private staging → Catalog validate → ảnh public.
   Hosting SSR và backend miễn phí chưa được kiểm chứng.
 
-Frontend SSR hiện còn gọi Catalog local cổng 8086, vì vậy chưa chạy độc lập sau khi xóa
-backend cũ; test/evidence local cũ chỉ là lịch sử và không chứng minh monolith mới.
+Frontend SSR hiện còn gọi Catalog local cổng 8086, vì vậy chưa tích hợp backend
+shell mới; test/evidence local cũ chỉ là lịch sử và không chứng minh luồng
+frontend → monolith → Supabase mới.
 Toolchain mục tiêu và giới hạn hiện tại nằm ở [TRD](docs/TRD.md).
 
 ## Bản đồ tài liệu và nguồn chuẩn
@@ -62,7 +64,7 @@ Toolchain mục tiêu và giới hạn hiện tại nằm ở [TRD](docs/TRD.md)
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Quyết định hiện hành và các vấn đề chưa chốt; không khôi phục mã quyết định cũ không còn nguồn | Đang rà soát cho GRAB-1 |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Hướng monolith hiện hành | Chưa có triển khai mới |
 | [docs/TRD.md](docs/TRD.md) | Phiên bản, tích hợp và yêu cầu kỹ thuật | Nhóm 2 đã review; TBD vẫn mở |
-| [docs/DATABASE.md](docs/DATABASE.md) | Thiết kế dữ liệu, constraints, indexes và ownership | Nhóm 2 đã review; TBD vẫn mở |
+| [docs/DATABASE.md](docs/DATABASE.md) | Thiết kế dữ liệu, constraints, indexes và ownership | GRAB-5 Done theo owner duyệt; giới hạn kiểm chứng vẫn được ghi nhận |
 | [docs/API.md](docs/API.md) | Hợp đồng Data API, RPC và Spring đề xuất | Nhóm 2 đã review; TBD vẫn mở |
 | [docs/SECURITY.md](docs/SECURITY.md) | Permission matrix, Auth/RLS/Storage và đặc quyền | Nhóm 2 đã review; TBD vẫn mở |
 | [DESIGN.md](DESIGN.md) | Hướng thiết kế riêng, tokens, components và accessibility | Nhóm 2 đã review; TBD vẫn mở |
