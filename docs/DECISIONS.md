@@ -23,6 +23,24 @@ hosting miễn phí, migration/recovery, Auth hook Dashboard và acceptance th�
 tế sau khi chuyển đổi. Không tuyên bố GATE-01 của hướng cũ “đã đạt”; phép thử
 quyền mới phải được thiết kế theo surface mới. Không tự đóng Jira Done.
 
+## Câu hỏi mở cần quyết định trước khi triển khai phần liên quan
+
+- **Nội dung/UX:** quy tắc gán khu vực và xử lý chồng lấn; copy VI/EN,
+  fallback bản đồ và thông báo khi đích đã xóa. Nguồn chi tiết: [PRD](PRD.md),
+  [APP-FLOWS](APP-FLOWS.md), [DESIGN](../DESIGN.md).
+- **Dữ liệu cá nhân:** trường marker tối thiểu, retention, xử lý công khai lại
+  và mục từng bị ẩn riêng; xác suất random và trường hợp ẩn/xóa đồng thời.
+  Nguồn: [DOMAIN](DOMAIN.md), BR-LIFE-05..06 và BR-RND-05.
+- **Thông báo:** cách chứng minh user đã lưu tại cả thời điểm sự kiện và gửi,
+  trường hợp bỏ lưu/lưu lại, delivery/retry và retention.
+  Nguồn: [DOMAIN](DOMAIN.md), BR-NOT-11.
+- **Quyền/kiến trúc mới:** schema, grants/RLS, hợp đồng Data API/RPC và Spring,
+  quyền admin, Auth hook, migration/replay, hosting miễn phí; chưa có proof
+  thực tế cho luồng mới. Nguồn: [DATABASE](DATABASE.md), [API](API.md),
+  [SECURITY](SECURITY.md), [OPERATIONS](OPERATIONS.md).
+
+Đây là danh mục truy vết, không phải phê duyệt giải pháp hoặc acceptance đã đạt.
+
 ## Quyết định nghiệp vụ và trình bày vẫn còn hiệu lực
 
 Chỉ giữ các mã quyết định có nội dung còn áp dụng và được nêu trực tiếp ở đây.

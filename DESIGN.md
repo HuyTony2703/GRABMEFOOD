@@ -165,7 +165,7 @@ Không tạo/gọi dịch vụ AI trong công việc thiết kế tài liệu n�
 
 ## 8. Evidence và review còn thiếu
 
-**Đối chiếu hiện hành:** visual baseline atlas đã duyệt (DEC-082), có [wireframe và bảng acceptance GRAB-2](docs/superpowers/specs/2026-11-23-grab2-wireframes.md#7a-acceptance-checklist-còn-thiếu-cho-grab-2-dec-061-đang-kiểm-chứng) và [render evidence](docs/evidence/grab2-wireframe-render-2026-11-23/README.md). Theo DEC-063 đã làm rõ, runtime theo GRAB-7/8/9 và tổng hợp GRAB-10; Narrator chưa có lời đọc, Realtime còn chặn. Các bullet ngày 2026-11-23 dưới đây là lịch sử lát cắt discovery, không phải hiện trạng tất cả route hoặc gate đóng ticket thiết kế.
+**Đối chiếu hiện hành:** visual baseline atlas đã duyệt (DEC-082), có [wireframe UX](docs/superpowers/specs/2026-11-23-grab2-wireframes.md) và [render evidence](docs/evidence/grab2-wireframe-render-2026-11-23/README.md). Theo DEC-063, runtime theo GRAB-7/8/9 và tổng hợp GRAB-10; Narrator và Realtime chưa nghiệm thu trên sản phẩm. Các bullet ngày 2026-11-23 dưới đây là lịch sử lát cắt discovery, không phải hiện trạng tất cả route hoặc gate đóng ticket thiết kế.
 
 - UI UX Pro Max: chạy tìm UX cho thông báo; kết quả đầu quá rộng, đã thu hẹp truy vấn.
   Dùng guidance web về button semantics, accessible name/state/focus; không áp kết quả native back-button.

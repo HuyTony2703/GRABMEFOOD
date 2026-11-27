@@ -81,16 +81,15 @@ không tự biến phương án kỹ thuật chưa chứng minh thành nghiệp 
 - **BR-RND-05:** Mục không khả dụng không được tham gia; tập rỗng phải báo rõ và gợi ý chọn lại.
 
 **Làm rõ save/visibility đã được owner duyệt ngày 2026-11-26:** kiểm khả dụng
-qua Catalog trước khi lưu; không cam kết nội dung vẫn public tại thời điểm
-transaction Collection commit. Nếu ẩn/xóa xảy ra đồng thời sau lần kiểm tra,
+trước khi lưu; không cam kết nội dung vẫn public tại thời điểm
+ghi mục đã lưu. Nếu ẩn/xóa xảy ra đồng thời sau lần kiểm tra,
 chỉ giữ tham chiếu riêng tư; lần đọc danh sách/chi tiết/random tiếp theo phải
 kiểm lại, dùng dấu “Không còn khả dụng” hoặc loại khỏi random, không lộ payload
-ẩn. Không thêm transaction/khóa nghiệp vụ xuyên owner. Trường marker, retention
+ẩn. Không tự suy ra transaction/khóa nghiệp vụ giữa các module. Trường marker, retention
 và các consistency window khác vẫn TBD; đây không phải evidence runtime.
 
-Trao đổi trước từng nêu chọn một bộ hoặc tất cả; sau đó user mô tả hai chế độ trên.
-Việc chọn bộ là một nguồn/lối tắt riêng hay chỉ là cách lọc trước khi chọn mục vẫn là OPEN QUESTION;
-không tự tạo thêm chế độ.
+Trao đổi trước từng nêu chọn một bộ hoặc tất cả; hai chế độ được xác nhận ở
+BR-RND-02 thay thế cách hiểu đó. Không tự tạo thêm chế độ random theo một bộ.
 Phân phối xác suất chính xác chưa chốt; không diễn giải “ngẫu nhiên” thành cam kết fairness đã kiểm thử.
 
 ### Ẩn và xóa
@@ -150,4 +149,4 @@ Phân phối xác suất chính xác chưa chốt; không diễn giải “ngẫ
   và vẫn lưu khi xử lý gửi. Không gửi sự kiện cũ cho user chỉ lưu sau sự kiện.
 
 Hai mốc là quy tắc đã chốt; cách chứng minh historical membership, re-save qua khoảng trống,
-timestamp/version, thời điểm delivery và retention là GATE-03, chưa tự chọn kỹ thuật lưu history.
+timestamp/version, thời điểm delivery và retention chưa chốt, không tự chọn kỹ thuật lưu history.

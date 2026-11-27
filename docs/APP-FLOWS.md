@@ -60,7 +60,7 @@ Quên mật khẩu ──> Email khôi phục ──> Đặt mật khẩu mới
 ## 4. Lưu và bộ sưu tập — REQ-SAV-01..02
 
 1. User chọn lưu quán hoặc món.
-2. Chọn một hoặc nhiều bộ sưu tập phù hợp loại, hoặc tạo bộ mới.
+2. Chọn một bộ sưu tập phù hợp loại, hoặc tạo bộ mới rồi chọn bộ đó.
 3. Xem bộ sưu tập riêng của mình; một mục có thể có trong nhiều bộ.
 4. Mục bị ẩn/xóa hiện “Không còn khả dụng”, không mở lại nội dung đã xóa.
 
@@ -88,7 +88,8 @@ Không có chế độ random riêng từ một bộ sưu tập; người dùng 
 
 1. User hợp lệ mở trang quán/món.
 2. Gửi bình luận chữ; hiển thị ngay.
-3. User/admin trả lời một cấp; chủ bình luận nhận thông báo theo quy tắc sẽ chi tiết hóa.
+3. User/admin trả lời một cấp; chủ bình luận nhận thông báo trừ khi tự trả lời
+   bình luận của mình (BR-NOT-07).
 4. Chủ nội dung sửa/xóa bình luận hoặc reply của mình.
 5. Admin được xóa bình luận/reply; không có quyền sửa lời người khác được xác nhận.
 
