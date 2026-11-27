@@ -1,8 +1,8 @@
 # PRD — GrabMeFood
 
 **Trạng thái:** Nhóm 1 được chủ sản phẩm duyệt ngày 2026-11-23.
-Phần đã xác nhận thuộc baseline B1; các gate/TBD vẫn cần quyết định hoặc evidence riêng.
-**Bổ sung đã duyệt:** mục tiêu kiến trúc 5 microservices để học hệ thống phân tán.
+Các quy tắc nghiệp vụ giữ nguyên; kiến trúc đã chuyển sang một backend Spring Boot
+và thiết kế lại Supabase Data API/database. Proof kiến trúc cũ không được tái sử dụng.
 Giữ 29 requirement ID; bổ sung acceptance đã được xác nhận cho comment, notification, admin và progress xóa.
 **Ngày soạn:** 2026-11-23.
 **Nguồn:** các quyết định trong cuộc trao đổi khởi tạo; xem [DECISIONS.md](DECISIONS.md).
@@ -84,7 +84,7 @@ không hỏi lại các quy tắc recipient đã chốt trong DOMAIN.
 | ID | Yêu cầu | Acceptance cần chứng minh |
 | --- | --- | --- |
 | REQ-ADM-01 | Trang quản trị trong website | Chỉ admin quản lý quán, món, bài viết, danh sách tuyển chọn và xóa bình luận; user thường bị từ chối cả qua API |
-| REQ-ADM-02 | Công khai / ẩn / xóa, không nháp | Không nháp; ẩn giữ dữ liệu; xóa quán kéo theo món/comments; chặn đọc trước, báo đang xử lý và chỉ hoàn tất khi đủ receipts |
+| REQ-ADM-02 | Công khai / ẩn / xóa, không nháp | Không nháp; ẩn giữ dữ liệu; xóa quán kéo theo món/comments; chặn đọc trước, báo đang xử lý và chỉ hoàn tất khi các bước xóa đã được xác nhận |
 | REQ-ADM-03 | Dấu mục không khả dụng | Ẩn/xóa quán/món không làm mất dấu trong bộ sưu tập; hiển thị “Không còn khả dụng”; ẩn quán làm các món của quán không khả dụng |
 | REQ-ADM-04 | Khóa/mở khóa tài khoản | Khóa giữ dữ liệu và chặn cả phiên cũ; vẫn đọc public; mở cho dùng lại; không tự khóa hoặc vô hiệu hóa admin active cuối |
 | REQ-ADM-05 | Xóa tài khoản | Xóa dữ liệu riêng/comment và replies dưới comment gốc kể cả người khác; không ẩn danh giữ lại; tiến trình partial không báo thành công |
@@ -92,10 +92,8 @@ không hỏi lại các quy tắc recipient đã chốt trong DOMAIN.
 ## 4. Ràng buộc đã xác nhận
 
 - Công nghệ và hướng phân chia: xem README và DECISIONS; thiết kế chi tiết ở nhóm 2.
-- 5 service: Catalog, Collection, Community, Notification, Account Administration; Supabase Auth giữ nguyên.
-  Mỗi service triển khai độc lập; schema/role riêng cùng DB đã chọn, không tự thêm Gateway/broker.
-- Ưu tiên Data API/RPC; shared read-only permission function; HTTP outbox/inbox + HTTPS/HMAC.
-  Scope credential cần evidence, không tự fallback JDBC. Public SSR React/Vite; private CSR.
+- Một Spring Boot backend, Supabase Auth/Data API/PostgreSQL; schema và quyền dữ liệu
+  thiết kế lại từ đầu. Public SSR React/Vite; private CSR.
 - Ảnh đích public, URL cũ có thể tồn tại khi hide; upload private staging, Catalog validate rồi public.
 - Tên/địa chỉ quán thật tham chiếu từ Google Maps; không đồng nghĩa quyền scrape hoặc tái sử dụng mọi dữ liệu.
 - Nội dung và ảnh chuẩn bị trước; không có nút tích hợp AI trong quản trị.
@@ -114,6 +112,7 @@ không hỏi lại các quy tắc recipient đã chốt trong DOMAIN.
 
 Danh sách câu hỏi mở được quản lý tập trung tại DECISIONS, không biến thành acceptance ngầm.
 Progress xóa đã chốt; còn độ trễ, recovery/retention và wire contracts cần kiểm chứng/chốt.
-Chọn microservices không có nghĩa chấp nhận payload ẩn còn đọc được (không tính URL ảnh public đã chấp thuận), random
-ra mục đã gỡ, hoặc báo “đã xóa hoàn tất” khi service khác chưa cleanup.
+Đổi kiến trúc không có nghĩa chấp nhận payload ẩn còn đọc được (không tính URL ảnh public
+đã chấp thuận), random ra mục đã gỡ, hoặc báo “đã xóa hoàn tất” khi dữ liệu liên quan
+chưa được dọn đầy đủ.
 Các acceptance trên là mục tiêu kiểm chứng đã duyệt, **chưa phải kết quả test đã đạt**.

@@ -1,6 +1,6 @@
 # Domain — GrabMeFood
 
-**Trạng thái:** Baseline nghiệp vụ B1, tổng hợp các xác nhận ngày 2026-11-23; chưa là SQL.
+**Trạng thái:** Quy tắc nghiệp vụ đã xác nhận; chưa là schema/SQL của kiến trúc mới.
 Các OPEN QUESTION/TBD giữ nguyên trạng thái mở.
 Nguồn chuẩn cho thuật ngữ và business rules; phạm vi tính năng ở [PRD.md](PRD.md).
 
@@ -41,7 +41,7 @@ Admin ── quản lý ──> Quán / Món / Bài viết / Danh sách tuyển 
 
 ### Ranh giới nghiệp vụ đã duyệt bổ sung
 
-| Service | Nguồn chuẩn nghiệp vụ |
+| Miền trong một backend | Nguồn chuẩn nghiệp vụ |
 | --- | --- |
 | Catalog | Quán, món, khu vực, bài viết, danh sách tuyển chọn và tính khả dụng của nội dung |
 | Collection | Bộ sưu tập, mục đã lưu và random |
@@ -49,9 +49,11 @@ Admin ── quản lý ──> Quán / Món / Bài viết / Danh sách tuyển 
 | Notification | Inbox, trạng thái đọc và gửi thông báo |
 | Account Administration | Quyền ứng dụng, khóa/mở/xóa tài khoản; điều phối Supabase Auth Admin |
 
-Quan hệ nghiệp vụ trong sơ đồ không mặc định là FK, join hoặc cascade database giữa các service.
-Supabase Auth là nguồn danh tính được tận dụng, không tự xây thêm Auth Service.
-Schema/role riêng cùng Supabase DB, HTTP outbox/inbox, helper quyền chỉ đọc và HMAC đã được duyệt.
+Quan hệ nghiệp vụ trong sơ đồ chưa tự quyết định FK, join hoặc cascade cho
+database thiết kế lại.
+Supabase Auth là nguồn danh tính được tận dụng, không tự xây thêm dịch vụ Auth.
+Hướng năm service và HTTP outbox/HMAC đã bị thay thế; một monolith dùng Supabase
+Data API, schema/quyền sẽ thiết kế lại.
 Chi tiết thực thi/proof vẫn chịu gate trong DECISIONS. Các BR dưới bao gồm bổ sung đã xác nhận,
 không tự biến phương án kỹ thuật chưa chứng minh thành nghiệp vụ.
 
@@ -78,6 +80,14 @@ không tự biến phương án kỹ thuật chưa chứng minh thành nghiệp 
 - **BR-RND-04:** Random toàn bộ loại trừ trùng ID quán/món xuất hiện ở nhiều bộ.
 - **BR-RND-05:** Mục không khả dụng không được tham gia; tập rỗng phải báo rõ và gợi ý chọn lại.
 
+**Làm rõ save/visibility đã được owner duyệt ngày 2026-11-26:** kiểm khả dụng
+qua Catalog trước khi lưu; không cam kết nội dung vẫn public tại thời điểm
+transaction Collection commit. Nếu ẩn/xóa xảy ra đồng thời sau lần kiểm tra,
+chỉ giữ tham chiếu riêng tư; lần đọc danh sách/chi tiết/random tiếp theo phải
+kiểm lại, dùng dấu “Không còn khả dụng” hoặc loại khỏi random, không lộ payload
+ẩn. Không thêm transaction/khóa nghiệp vụ xuyên owner. Trường marker, retention
+và các consistency window khác vẫn TBD; đây không phải evidence runtime.
+
 Trao đổi trước từng nêu chọn một bộ hoặc tất cả; sau đó user mô tả hai chế độ trên.
 Việc chọn bộ là một nguồn/lối tắt riêng hay chỉ là cách lọc trước khi chọn mục vẫn là OPEN QUESTION;
 không tự tạo thêm chế độ.
@@ -91,7 +101,7 @@ Phân phối xác suất chính xác chưa chốt; không diễn giải “ngẫ
 - **BR-LIFE-04:** Xóa quán xóa các món thuộc quán và toàn bộ bình luận/trả lời liên quan.
 - **BR-LIFE-05:** Không dùng marker làm lý do giữ nguyên nội dung đã xóa; trường dữ liệu tối thiểu cần giữ là TBD.
 - **BR-LIFE-06:** Hành vi công khai lại quán, quyền khả dụng của món từng bị ẩn riêng và thời hạn marker: TBD.
-- **BR-LIFE-07:** Xóa liên dịch vụ chặn hiển thị/sử dụng trước; UI hiện đang xử lý,
+- **BR-LIFE-07:** Quy trình xóa nhiều bước chặn hiển thị/sử dụng trước; UI hiện đang xử lý,
   chỉ báo hoàn tất khi đủ xác nhận cleanup, lỗi giữ chưa hoàn tất và retry an toàn.
 
 ### Bình luận
