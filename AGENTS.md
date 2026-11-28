@@ -110,3 +110,37 @@ Không tự sửa cảnh báo Cloud chỉ vì vừa phát hiện.
 - Theo dõi checklist công việc trong tài liệu đã được phép, không tạo file kế hoạch thừa.
 - Quyết định monolith mới thay các chỉ dẫn triển khai nhiều service trước đây.
   Các TBD nghiệp vụ và quyền dữ liệu mới không tự trở thành quyết định đã duyệt.
+
+<a id="skill-workflow"></a>
+## 8. Phân vai công cụ và skills
+
+**Owner duyệt 2026-11-28:** đồng bộ hướng dẫn vào Jira và plan, không đổi
+phạm vi, dependency, acceptance hoặc trạng thái nghiệm thu.
+
+| Công cụ/skill | Khi dùng | Đầu ra và giới hạn |
+| --- | --- | --- |
+| GitHub Spec Kit | Làm rõ yêu cầu, chuẩn hóa spec/plan/task và đối chiếu tính nhất quán khi công cụ hoạt động trở lại | Không tạo một bản spec/task song song với docs/Jira; chỉ chọn một nguồn chuẩn cho mỗi nội dung. Khôi phục công cụ/template phải được duyệt riêng. |
+| Superpowers | Chọn skill quy trình theo việc: brainstorming, writing-plans, executing-plans, TDD, systematic-debugging, review, verification | Theo dõi kế hoạch hiện hành, test và evidence; không tạo plan trùng chỉ để đủ mẫu, không hỏi lại thiết kế đã duyệt. |
+| UI UX Pro Max (`ui-ux-pro-max`) | Tra cứu vấn đề UX/accessibility, form, navigation, responsive hoặc hướng dẫn React cụ thể khi có quyết định cần giải quyết | Dùng kết quả đã kiểm tra là phù hợp web/React; không tự thay visual baseline, sinh design system thứ hai hoặc áp quy tắc native vào web. |
+| Impeccable (`impeccable`) | Triển khai/rà frontend, hierarchy, trạng thái lỗi/rỗng/loading, responsive, accessibility và polish | Bám `DESIGN.md` và UI đã duyệt; có kiểm rendered/browser theo phạm vi, không chỉ nêu tên skill. |
+
+**Nguồn chuẩn:** PRD/DOMAIN giữ requirement/rule; DESIGN/APP-FLOWS giữ hướng UI.
+Jira theo dõi phạm vi, dependency, acceptance và liên kết tới plan/evidence;
+plan hiện hành giữ bước triển khai/checklist. Quy ước dùng skill nằm ở mục
+này; các plan/Jira chỉ thêm áp dụng theo task và liên kết, không sao chép spec.
+
+**Tình trạng Spec Kit đã xác minh:** Git history có `.specify/` và `specs/`,
+init options ghi `speckit_version: 1.3.3`, integration `opencode`; các artifact
+đó bị xóa tại commit `ed7f345`. Ngày 2026-11-28 tìm thấy `specify.exe` nhưng
+`specify --help` bị Application Control chặn. Đây là **đã có artifact lịch sử,
+hiện chưa vận hành được**, không phải chưa từng dùng và không phải đang active.
+Không tự khôi phục spec kiến trúc cũ, chạy initializer, cài lại, đổi cấu hình
+hoặc lách Application Control. Trong lúc bị chặn, tiếp tục nguồn docs/plan
+hiện hành; không ghi một bước Spec Kit đã chạy thành công.
+
+Mỗi task phân biệt **yêu cầu dùng**, **đã nạp hướng dẫn**, **đã chạy
+CLI/script** và **kết quả kiểm chứng**. Có tên skill, artifact cũ, hoặc đã
+nạp hướng dẫn không chứng minh CLI/detector đã chạy hay acceptance đạt.
+Nếu thiếu công cụ/quyền, ghi giới hạn và cách kiểm thay thế, không bịa evidence.
+Plan lịch sử giữ nguyên phạm vi và kết quả cũ; bổ sung liên kết quy ước chỉ áp
+dụng khi tiếp tục/sửa công việc, không xác nhận hồi tố công cụ đã được dùng.

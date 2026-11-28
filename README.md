@@ -4,8 +4,8 @@ Website khám phá ẩm thực dân dã dành cho sinh viên quanh Làng Đại 
 
 > **Trạng thái: đang chuyển kiến trúc sang một ứng dụng Spring Boot dùng Supabase Data API.**
 > Mã backend thử nghiệm theo năm microservices đã bị loại bỏ theo quyết định mới của nhóm;
-> frontend được giữ nhưng còn các đường gọi backend local cần sửa sau. Chưa có backend monolith
-> hay schema sản phẩm mới chạy được. Các tài liệu lịch sử có thể còn nhắc hướng cũ, không phải
+> frontend public SSR hiện đọc Supabase Data API thật; backend monolith đã có API GRAB-7 local,
+> schema sản phẩm đã có. Các tài liệu lịch sử có thể còn nhắc hướng cũ, không phải
 > chỉ dẫn triển khai hiện hành.
 > GRAB-2 đã Done ở phạm vi thiết kế; các proof backend cũ không nghiệm thu kiến trúc mới.
 
@@ -36,7 +36,8 @@ AI chuẩn bị nội dung trước, **không tích hợp dịch vụ AI vào �
 
 - Frontend: React + TypeScript + Vite.
 - Backend shell mới ở [`backend/`](backend/README.md): Java 21 LTS,
-  Spring Boot 4.2.0 và Maven Wrapper 3.10.2; chưa có API nghiệp vụ.
+  Spring Boot 4.2.0 và Maven Wrapper 3.10.2; API collections/random GRAB-7
+  đang kiểm tích hợp, chưa nghiệm thu Auth/RLS thật qua luồng mới.
 - PostgreSQL trên Supabase Cloud; tận dụng Auth, Data API, Storage, Realtime và RPC phù hợp.
 - **Kiến trúc mục tiêu mới của nhóm: một Spring Boot monolith**. Catalog, Collection,
   Community, Notification và Account Administration là các miền nghiệp vụ, không phải
@@ -48,9 +49,10 @@ AI chuẩn bị nội dung trước, **không tích hợp dịch vụ AI vào �
 - Public SSR React/Vite, private CSR; upload private staging → Catalog validate → ảnh public.
   Hosting SSR và backend miễn phí chưa được kiểm chứng.
 
-Frontend SSR hiện còn gọi Catalog local cổng 8086, vì vậy chưa tích hợp backend
-shell mới; test/evidence local cũ chỉ là lịch sử và không chứng minh luồng
-frontend → monolith → Supabase mới.
+Frontend public SSR đọc Data API trực tiếp theo hướng GRAB-6 đã duyệt,
+không còn gọi Catalog cũ cổng 8086. Đây không là bằng chứng frontend → Spring
+runtime → Supabase; các nghiệp vụ riêng/admin vẫn thuộc task sau.
+Lệnh chạy và giới hạn: [frontend/README.md](frontend/README.md).
 Toolchain mục tiêu và giới hạn hiện tại nằm ở [TRD](docs/TRD.md).
 
 ## Bản đồ tài liệu và nguồn chuẩn
@@ -75,7 +77,10 @@ Các dòng chưa viết là kế hoạch tài liệu, không phải file hoặc 
 README chỉ là tổng quan và bản đồ; không là bản sao đầy đủ của PRD.
 Jira theo dõi timeline/dependency; trạng thái To Do không chứng minh chưa có công việc.
 Đối chiếu quyết định mới ở DECISIONS; không tự chuyển issue sang Done.
-Spec Kit chưa được xác minh/cài đặt; chưa có artifact nào của Spec Kit là nguồn chuẩn.
+Spec Kit đã có artifact lịch sử (init ghi 1.3.3), nhưng `.specify/` và `specs/`
+đã bị xóa ở `ed7f345`. CLI hiện bị Application Control chặn; chưa là nguồn
+vận hành hiện hành. Phân vai Spec Kit/Superpowers/UI UX Pro Max/Impeccable:
+[quy ước dùng skill](AGENTS.md#skill-workflow). Không tự tạo spec/task trùng.
 
 ## Thứ tự và điểm dừng
 

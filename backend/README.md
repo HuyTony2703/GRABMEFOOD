@@ -2,7 +2,9 @@
 
 Một ứng dụng Spring Boot 4.2.0, Java 21 và Maven Wrapper 3.10.2 được tạo mới
 từ Spring Initializr; không sử dụng mã backend/SQL của phương án cũ.
-Chưa có route sản phẩm, credential, client Supabase, schema hay migration.
+Mốc GRAB-3 ban đầu chỉ có shell. GRAB-7 hiện đã có API collections/random,
+Auth caller verification và Data API client dùng JWT user; chưa nghiệm thu
+Auth/RLS Cloud qua các route này. Không có credential hardcode hoặc JDBC.
 
 ## Chạy local trên Windows
 
@@ -16,14 +18,14 @@ cache local. Chạy trong `backend/`:
 java -jar target/grabmefood-backend-0.0.1-SNAPSHOT.jar --server.port=8080
 ```
 
-Mở `http://127.0.0.1:8080/`: **404 là kết quả dự kiến** cho shell rỗng,
+Mở `http://127.0.0.1:8080/`: **404 là kết quả dự kiến** cho root không có route,
 không phải lỗi build hay proof rằng API nghiệp vụ đã chạy. Test hiện chỉ
-kiểm Spring context khởi động được. Để dừng ứng dụng, dùng Ctrl+C.
+kiểm Spring context và các ca GRAB-7 local. Để dừng ứng dụng, dùng Ctrl+C.
 
 Frontend chạy riêng tại `frontend/` bằng `npm test` và `npm run build`.
-Frontend SSR vẫn gọi backend Catalog cũ cổng 8086 và trả 503 khi không có
-nguồn dữ liệu; GRAB-3 không tích hợp hai bên. GRAB-4 sẽ kiểm đường Data API
-mới; GRAB-5 thiết kế schema và quyền, các task sau mới làm route sản phẩm.
+Frontend public SSR đọc Supabase trực tiếp (GRAB-6 Done), không gọi Catalog
+cũ cổng 8086. Private frontend chuyển `/api/collections...` và `/api/random`
+qua proxy cùng origin tới Spring cổng 8080; xem contract GRAB-7 trong docs/API.md.
 Không đặt secret, service_role hoặc password trong repo.
 
 ## GRAB-4: request chỉ đọc, chưa tích hợp sản phẩm
